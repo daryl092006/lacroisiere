@@ -15,14 +15,16 @@ export default function ComingSoon({ title }: { title: string }) {
         className="max-w-2xl w-full"
       >
         <div className="mb-12 flex justify-center">
-          <Image
-            src="/icon.png"
-            alt="Logo La Croisière"
-            width={200}
-            height={60}
-            className="h-10 w-auto"
-            style={{ height: "auto" }}
-          />
+          <Link href="/">
+            <Image
+              src="/icon.png"
+              alt="Logo La Croisière"
+              width={200}
+              height={60}
+              className="h-10 w-auto"
+              style={{ height: "auto" }}
+            />
+          </Link>
         </div>
 
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full text-[#233D8C] text-[10px] font-black uppercase tracking-widest mb-8">
@@ -39,18 +41,16 @@ export default function ComingSoon({ title }: { title: string }) {
           Cette section sera bientôt disponible pour vous offrir le meilleur de La Croisière.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+        <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8">
           <Link 
             href="/"
-            className="group flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#233D8C] hover:text-black transition-colors"
+            className="group flex items-center gap-3 px-10 py-4 bg-slate-900 text-white rounded-full text-[11px] font-black uppercase tracking-[0.2em] hover:bg-white hover:text-slate-900 border border-slate-900 transition-all duration-300 shadow-xl"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Retour à l'accueil
           </Link>
           
-          <div className="h-px w-12 bg-slate-100 hidden sm:block" />
-          
-          <span className="text-slate-300 text-[10px] font-black uppercase tracking-widest">
+          <span className="text-slate-400 text-[9px] font-black uppercase tracking-[0.4em]">
             Ouverture prochaine
           </span>
         </div>
@@ -58,7 +58,8 @@ export default function ComingSoon({ title }: { title: string }) {
 
       {/* Éléments décoratifs discrets */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#233D8C] to-transparent opacity-20" />
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#233D8C] to-transparent opacity-20" />
+      <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none" />
     </div>
   );
 }

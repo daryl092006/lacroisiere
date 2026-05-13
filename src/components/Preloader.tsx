@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useTranslation } from "@/i18n/client";
 
 export default function Preloader() {
   const [loading, setLoading] = useState(true);
@@ -15,6 +16,8 @@ export default function Preloader() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const { t } = useTranslation();
 
   return (
     <AnimatePresence>
@@ -79,7 +82,7 @@ export default function Preloader() {
             transition={{ delay: 1, duration: 0.8 }}
             className="absolute bottom-16 text-slate-400 text-[10px] font-black uppercase tracking-[0.5em]"
           >
-            L'exceptionnel se prépare...
+            {t('Preloader.tagline')}
           </motion.div>
         </motion.div>
       )}

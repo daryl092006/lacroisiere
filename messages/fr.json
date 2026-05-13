@@ -1,0 +1,47 @@
+{
+  "Index": {
+    "title": "Résidence La Croisière | Votre appartement d'exception au Bénin",
+    "hero": {
+      "subtitle": "L'Élégance Résidentielle à Cotonou",
+      "title": "Votre demeure",
+      "italic": "d'exception.",
+      "discover": "Découvrir"
+    },
+    "booking": {
+      "arrival": "Arrivée",
+      "departure": "Départ",
+      "guests": "Voyageurs",
+      "check": "Vérifier la Disponibilité",
+      "choose": "Choisir une date",
+      "persons": "2 Personnes"
+    },
+    "about": {
+      "badge": "Une Signature Unique",
+      "title": "L'art de vivre",
+      "italic": "à la Croisière.",
+      "quote": "Plus qu'une résidence, une escale de sérénité au cœur du tumulte urbain.",
+      "text": "Composée de 14 unités d'exception, La Résidence La Croisière redéfinit les codes de l'hospitalité au Bénin. Entre élégance intemporelle et confort ultra-moderne, chaque detail a été pensé pour offrir une expérience sensorielle inoubliable.",
+      "cta": "Notre Vision"
+    }
+  },
+  "Navigation": {
+    "home": "Accueil",
+    "apartments": "Nos appartements",
+    "experience": "Expérience",
+    "infos": "Infos pratiques",
+    "clientSpace": "Espace Client",
+    "book": "Réserver",
+    "viewAll": "Voir tous les appartements",
+    "checkAvail": "Vérifier les disponibilités",
+    "whyUs": "Pourquoi nous choisir",
+    "gallery": "Galerie Photos",
+    "reviews": "Avis Clients",
+    "map": "Carte & Repères",
+    "offers": "Nos Offres",
+    "business": "Espace Entreprises",
+    "partners": "Nos Partenaires"
+  },
+  "Preloader": {
+    "tagline": "L'exceptionnel se prépare..."
+  }
+}

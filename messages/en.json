@@ -1,0 +1,47 @@
+{
+  "Index": {
+    "title": "Residence La Croisière | Your premium furnished apartment in Benin",
+    "hero": {
+      "subtitle": "Residential Elegance in Cotonou",
+      "title": "Your exceptional",
+      "italic": "home in Benin.",
+      "discover": "Discover"
+    },
+    "booking": {
+      "arrival": "Arrival",
+      "departure": "Departure",
+      "guests": "Guests",
+      "check": "Check Availability",
+      "choose": "Choose a date",
+      "persons": "2 Persons"
+    },
+    "about": {
+      "badge": "A Unique Signature",
+      "title": "The art of living",
+      "italic": "at La Croisière.",
+      "quote": "More than a residence, a sanctuary of serenity in the heart of the city.",
+      "text": "Composed of 14 exceptional units, La Résidence La Croisière redefines the codes of hospitality in Benin. Between timeless elegance and ultra-modern comfort, every detail has been thought of to offer an unforgettable sensory experience.",
+      "cta": "Our Vision"
+    }
+  },
+  "Navigation": {
+    "home": "Home",
+    "apartments": "Apartments",
+    "experience": "Experience",
+    "infos": "Practical Infos",
+    "clientSpace": "Client Space",
+    "book": "Book Now",
+    "viewAll": "View all apartments",
+    "checkAvail": "Check availability",
+    "whyUs": "Why choose us",
+    "gallery": "Photo Gallery",
+    "reviews": "Customer Reviews",
+    "map": "Map & Landmarks",
+    "offers": "Our Offers",
+    "business": "Business Space",
+    "partners": "Our Partners"
+  },
+  "Preloader": {
+    "tagline": "Exceptional things are coming..."
+  }
+}

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "@/i18n/client";
 import { 
   Calendar, Users, ArrowRight, MapPin, Phone, Mail, Globe, 
   ChevronDown, Star, ShieldCheck, Zap, Waves, Layout, 
@@ -11,48 +12,63 @@ import {
 } from "lucide-react";
 
 export default function Home() {
+  const { t, i18n } = useTranslation();
+  
+  // Local state for the dropdown UI, initialized with i18n.language
+  const [currentLang, setCurrentLang] = useState(i18n.language || "fr");
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+
+  // Sync local state when i18n language changes
+  useEffect(() => {
+    if (i18n.language && i18n.language !== currentLang) {
+      setCurrentLang(i18n.language);
+    }
+  }, [i18n.language]);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 120);
     };
-    
-    // Vérification initiale au chargement pour éviter la disparition au rafraîchissement
     handleScroll();
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const switchLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    setCurrentLang(lng);
+    setLangMenuOpen(false);
+  };
+
   const menuItems = [
     { 
-      label: "Nos appartements", 
+      label: t('Navigation.apartments'), 
       id: "appartements",
       links: [
-        { label: "Voir tous les appartements", href: "/appartements" },
-        { label: "Vérifier les disponibilités", href: "/appartements" }
+        { label: t('Navigation.viewAll'), href: "/appartements" },
+        { label: t('Navigation.checkAvail'), href: "/appartements" }
       ]
     },
     { 
-      label: "Expérience", 
+      label: t('Navigation.experience'), 
       id: "experience",
       links: [
-        { label: "Pourquoi nous choisir", href: "/experience" },
-        { label: "Galerie Photos", href: "/experience" },
-        { label: "Avis Clients", href: "/experience" }
+        { label: t('Navigation.whyUs'), href: "/experience" },
+        { label: t('Navigation.gallery'), href: "/experience" },
+        { label: t('Navigation.reviews'), href: "/experience" }
       ]
     },
     { 
-      label: "Infos pratiques", 
+      label: t('Navigation.infos'), 
       id: "infos",
       links: [
-        { label: "Carte & Repères", href: "/infos" },
-        { label: "Nos Offres", href: "/infos" },
-        { label: "Espace Entreprises", href: "/infos" },
-        { label: "Nos Partenaires", href: "/infos" }
+        { label: t('Navigation.map'), href: "/infos" },
+        { label: t('Navigation.offers'), href: "/infos" },
+        { label: t('Navigation.business'), href: "/infos" },
+        { label: t('Navigation.partners'), href: "/infos" }
       ]
     }
   ];
@@ -60,9 +76,9 @@ export default function Home() {
   const fadeIn = {
     initial: { opacity: 0, y: 30 },
     whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.8 }
-  };
+    viewport: { once: true, margin: "-50px" },
+    transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
+  } as const;
 
   return (
     <div className="relative min-h-screen bg-white selection:bg-[#233D8C] selection:text-white font-sans overflow-x-hidden">
@@ -75,7 +91,7 @@ export default function Home() {
         onMouseLeave={() => setActiveMenu(null)}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
+          <Link href="/" className="flex items-center">
             <Image
               src="/icon.png"
               alt="Logo"
@@ -85,13 +101,13 @@ export default function Home() {
               style={{ height: "auto" }}
               priority
             />
-          </div>
+          </Link>
           
           {/* Desktop Menu */}
           <div className={`hidden lg:flex items-center gap-10 text-[11px] font-bold uppercase tracking-[0.4em] transition-colors duration-500 ${
             isScrolled ? "text-slate-600" : "text-white"
           }`}>
-            <a href="#" className="hover:text-[#233D8C] transition-colors">Accueil</a>
+            <a href="#" className="hover:text-[#233D8C] transition-colors">{t('Navigation.home')}</a>
             
             {menuItems.map((item) => (
               <div 
@@ -127,13 +143,41 @@ export default function Home() {
 
             <Link href="/mon-espace" className="flex items-center gap-2 hover:text-[#233D8C] transition-colors group">
               <User className="w-3 h-3 group-hover:scale-110 transition-transform" />
-              Mon Espace
+              {t('Navigation.clientSpace')}
             </Link>
+
+            {/* Language Selector */}
+            <div 
+              className="relative py-4 cursor-pointer"
+              onMouseEnter={() => setLangMenuOpen(true)}
+              onMouseLeave={() => setLangMenuOpen(false)}
+            >
+              <div className="flex items-center gap-2 hover:text-[#233D8C] transition-colors uppercase">
+                <Globe className="w-3.5 h-3.5" />
+                <span>{currentLang}</span>
+              </div>
+              
+              <AnimatePresence>
+                {langMenuOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full right-0 mt-2 bg-white shadow-xl rounded-sm p-3 min-w-[80px] border border-slate-100"
+                  >
+                    <div className="flex flex-col gap-3 text-slate-900 tracking-widest text-[10px] font-black">
+                      <button onClick={() => switchLanguage("fr")} className={`hover:text-[#233D8C] text-left ${currentLang === "fr" ? "text-[#233D8C]" : ""}`}>FR</button>
+                      <button onClick={() => switchLanguage("en")} className={`hover:text-[#233D8C] text-left ${currentLang === "en" ? "text-[#233D8C]" : ""}`}>EN</button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           <div className="flex items-center gap-6">
             <button className="hidden sm:block bg-[#233D8C] text-white px-6 py-2.5 rounded-sm text-[10px] font-black tracking-[0.2em] uppercase transition-all hover:bg-black shadow-lg">
-              Réserver
+              {t('Navigation.book')}
             </button>
             <button onClick={() => setMobileMenuOpen(true)} className={`lg:hidden p-2 transition-colors ${isScrolled ? "text-slate-900" : "text-white"}`}>
               <Menu className="w-8 h-8" />
@@ -150,11 +194,13 @@ export default function Home() {
             className="fixed inset-0 z-[200] bg-white p-8 overflow-y-auto"
           >
             <div className="flex justify-between items-center mb-16">
-              <Image src="/icon.png" alt="Logo" width={180} height={60} className="h-10 w-auto" style={{ height: "auto" }} />
+              <Link href="/" onClick={() => setMobileMenuOpen(false)}>
+                <Image src="/icon.png" alt="Logo" width={180} height={60} className="h-10 w-auto" style={{ height: "auto" }} />
+              </Link>
               <button onClick={() => setMobileMenuOpen(false)}><X className="w-8 h-8" /></button>
             </div>
             <div className="flex flex-col gap-10">
-              <a href="#" className="text-3xl font-serif text-slate-900">Accueil</a>
+              <a href="#" className="text-3xl font-serif text-slate-900">{t('Navigation.home')}</a>
               {menuItems.map((item) => (
                 <div key={item.id} className="flex flex-col gap-4">
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#233D8C]">{item.label}</span>
@@ -169,7 +215,7 @@ export default function Home() {
               ))}
               <div className="mt-12 pt-12 border-t border-slate-100">
                 <button className="w-full bg-[#233D8C] text-white py-6 rounded-sm font-black text-xs uppercase tracking-[0.3em]">
-                  Réserver
+                  {t('Navigation.book')}
                 </button>
               </div>
             </div>
@@ -188,49 +234,85 @@ export default function Home() {
         <div className="relative z-20 text-center text-white px-6 pt-48 md:pt-56">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }}>
             <h1 className="text-4xl md:text-8xl lg:text-9xl font-serif font-light leading-[0.9] tracking-tighter mb-12">
-              Votre appartement <br /><span className="italic">d'exception au Bénin.</span>
+              {t('Index.hero.title')} <br /><span className="italic">{t('Index.hero.italic')}</span>
             </h1>
             <div className="w-16 h-[1px] bg-white/60 mx-auto mb-12" />
             <p className="max-w-xl mx-auto text-[10px] font-black uppercase tracking-[0.4em] text-white/80 mb-12">
-              Le prestige résidentiel à Cotonou.
+              {t('Index.hero.subtitle')}
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* 3. WIDGET */}
-      <div className="relative z-40 -mt-12 px-6">
-        <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-sm overflow-hidden flex flex-col lg:flex-row border border-slate-100">
+      <motion.div 
+        className="relative z-40 -mt-12 px-6"
+        whileHover="hover"
+        initial="initial"
+      >
+        <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-sm overflow-hidden flex flex-col lg:flex-row border border-slate-100 relative">
           <div className="flex-1 grid grid-cols-1 md:grid-cols-3">
             {[
-              { label: "Arrivée", icon: <Calendar className="w-4 h-4" />, val: "Choisir une date" },
-              { label: "Départ", icon: <Calendar className="w-4 h-4" />, val: "Choisir une date" },
-              { label: "Voyageurs", icon: <Users className="w-4 h-4" />, val: "2 Personnes" }
+              { label: t('Index.booking.arrival'), icon: <Calendar className="w-4 h-4" />, val: t('Index.booking.choose') },
+              { label: t('Index.booking.departure'), icon: <Calendar className="w-4 h-4" />, val: t('Index.booking.choose') },
+              { label: t('Index.booking.guests'), icon: <Users className="w-4 h-4" />, val: t('Index.booking.persons') }
             ].map((field, i) => (
-              <div key={i} className="px-10 py-8 border-b md:border-b-0 md:border-r border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer group">
+              <motion.div 
+                key={i} 
+                whileHover="hover"
+                initial="initial"
+                className="relative px-10 py-8 border-b md:border-b-0 md:border-r border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
+              >
                 <div className="flex items-center gap-3 text-[#233D8C] mb-2">
                   {field.icon} <span className="text-[10px] font-black uppercase tracking-widest">{field.label}</span>
                 </div>
                 <span className="text-slate-900 font-serif text-xl">{field.val}</span>
-              </div>
+                
+                {/* Barre individuelle pour cette case */}
+                <motion.div 
+                  variants={{
+                    initial: { width: 0 },
+                    hover: { width: "100%" }
+                  }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute bottom-0 left-0 h-[3px] bg-[#233D8C] z-10"
+                />
+              </motion.div>
             ))}
           </div>
-          <button className="bg-[#233D8C] text-white px-12 py-8 lg:py-0 font-black text-[11px] uppercase tracking-[0.3em] hover:bg-black transition-all">
-            Vérifier la Disponibilité
-          </button>
+          
+          <motion.button 
+            whileHover="hover"
+            initial="initial"
+            className="relative bg-[#233D8C] text-white px-12 py-8 lg:py-0 font-black text-[11px] uppercase tracking-[0.3em] hover:bg-black transition-all flex-shrink-0"
+          >
+            {t('Index.booking.check')}
+            
+            {/* Barre spécifique pour le bouton */}
+            <motion.div 
+              variants={{
+                initial: { width: 0 },
+                hover: { width: "100%" }
+              }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute bottom-0 left-0 h-[3px] bg-white z-10"
+            />
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
       {/* 4. ABOUT */}
       <section className="max-w-7xl mx-auto px-6 md:px-16 py-32">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           <motion.div {...fadeIn}>
-            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-6 block">Héritage & Vision</span>
-            <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8 text-slate-900">L'art de vivre à la Croisière.</h2>
-            <p className="text-slate-900 font-serif text-xl italic mb-6 leading-relaxed">"L'intimité d'un chez-soi, le raffinement d'un service 4 étoiles."</p>
-            <p className="text-slate-700 font-normal leading-relaxed mb-10 text-lg">La Résidence La Croisière est une escale de prestige composée de 14 unités uniques au cœur de Cotonou. Elle offre un cadre sécurisé et luxueux pour les voyageurs d'affaires et de loisirs. Notre ambition est de redéfinir l'hospitalité au Bénin en alliant modernité architecturale et chaleur humaine.</p>
+            <span className="text-[11px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-6 block">{t('Index.about.badge')}</span>
+            <h2 className="text-4xl md:text-6xl font-serif font-light leading-tight mb-8 text-slate-900">
+              {t('Index.about.title')} <span className="italic">{t('Index.about.italic')}</span>
+            </h2>
+            <p className="text-slate-900 font-serif text-xl italic mb-6 leading-relaxed">"{t('Index.about.quote')}"</p>
+            <p className="text-slate-700 font-normal leading-relaxed mb-10 text-lg">{t('Index.about.text')}</p>
             <button className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-slate-900">
-              En savoir plus sur nous <div className="w-8 h-px bg-slate-900 group-hover:w-12 transition-all" />
+              {t('Index.about.cta')} <div className="w-8 h-px bg-slate-900 group-hover:w-12 transition-all" />
             </button>
           </motion.div>
           <div className="grid grid-cols-2 gap-6 relative">
@@ -291,25 +373,43 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. REVIEWS */}
-      <section className="bg-[#233D8C] text-white py-32">
-        <div className="max-w-7xl mx-auto px-6 md:px-16">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-24 items-center">
+      {/* 7. REVIEWS (PREMIUM STYLE) */}
+      <section className="bg-slate-900 text-white py-40 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 md:px-16 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-32 items-center">
             <div className="lg:col-span-1">
-              <div className="flex items-center gap-4 mb-6"><div className="flex text-amber-400">{[...Array(5)].map((_, i) => <Star key={i} className="w-6 h-6 fill-current" />)}</div><span className="text-2xl font-serif">4.9 / 5</span></div>
-              <h2 className="text-4xl font-serif font-light mb-8">Ce que nos hôtes disent de nous.</h2>
-            </div>
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { name: "Marc T.", text: "Une expérience incroyable. Le personnel est aux petits soins." },
-                { name: "Sarah L.", text: "Sécurité et confort au top." },
-                { name: "Jean-Philippe", text: "On se sent comme à la maison." }
-              ].map((review, i) => (
-                <div key={i} className="bg-white/5 p-8 border border-white/10 rounded-sm">
-                  <Quote className="w-8 h-8 text-white/20 mb-6" />
-                  <p className="text-sm font-light leading-relaxed mb-8 italic">"{review.text}"</p>
-                  <span className="text-[10px] font-black uppercase tracking-widest">{review.name}</span>
+              <div className="flex items-center gap-6 mb-12">
+                <div className="flex text-amber-500">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-current" />)}
                 </div>
+                <span className="text-3xl font-serif border-l border-white/20 pl-6">4.9/5</span>
+              </div>
+              <h2 className="text-5xl font-serif font-light mb-12 leading-tight text-white/90">L'expérience vécue par nos hôtes.</h2>
+              <p className="text-white/40 text-sm leading-relaxed max-w-xs font-light">
+                La satisfaction de nos résidents est notre plus grande ferté.
+              </p>
+            </div>
+            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-12">
+              {[
+                { name: "Marc Traoré", text: "Une expérience incroyable. Le personnel est aux petits soins et le cadre est tout simplement sublime.", role: "CEO Tech Africa" },
+                { name: "Sarah Lawson", text: "Sécurité et confort au top. On se sent vraiment comme chez soi avec les services d'un palace.", role: "Architecte" }
+              ].map((review, i) => (
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.3 }}
+                  className="bg-white/[0.03] p-12 border border-white/10 rounded-sm hover:bg-white/[0.05] transition-colors"
+                >
+                  <Quote className="w-10 h-10 text-[#233D8C] mb-10 opacity-50" />
+                  <p className="text-xl font-serif font-light leading-relaxed mb-12 italic text-white/80">
+                    "{review.text}"
+                  </p>
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-white mb-2">{review.name}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-[#233D8C]">{review.role}</span>
+                  </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -320,7 +420,9 @@ export default function Home() {
       <footer className="bg-white border-t border-slate-100 pt-32 pb-16">
         <div className="max-w-7xl mx-auto px-6 md:px-16 flex flex-col md:flex-row justify-between items-start gap-16 mb-24">
           <div className="max-w-sm">
-            <Image src="/icon.png" alt="Logo" width={240} height={80} className="h-16 md:h-20 w-auto mb-10" style={{ height: "auto" }} />
+            <Link href="/">
+              <Image src="/icon.png" alt="Logo" width={240} height={80} className="h-16 md:h-20 w-auto mb-10" style={{ height: "auto" }} />
+            </Link>
             <p className="text-slate-800 font-normal text-base leading-relaxed">
               L'excellence hôtelière au Bénin. <br />
               Une expérience unique pour vos séjours d'affaires et de loisirs à Cotonou.
