@@ -16,12 +16,60 @@
       "persons": "2 Personnes"
     },
     "about": {
-      "badge": "Une Signature Unique",
+      "badge": "Héritage & Vision",
       "title": "L'art de vivre",
       "italic": "à la Croisière.",
-      "quote": "Plus qu'une résidence, une escale de sérénité au cœur du tumulte urbain.",
-      "text": "Composée de 14 unités d'exception, La Résidence La Croisière redéfinit les codes de l'hospitalité au Bénin. Entre élégance intemporelle et confort ultra-moderne, chaque detail a été pensé pour offrir une expérience sensorielle inoubliable.",
-      "cta": "Notre Vision"
+      "quote": "L'intimité d'un chez-soi, le raffinement d'un service 4 étoiles.",
+      "text": "La Résidence La Croisière est une escale de prestige composée de 14 unités uniques au cœur de Cotonou. Elle offre un cadre sécurisé et luxueux pour les voyageurs d'affaires et de loisirs.",
+      "cta": "En savoir plus sur nous"
+    },
+    "amenities": {
+      "badge": "Le Confort Absolu",
+      "title": "Équipements Signature",
+      "items": {
+        "rooftop": { "label": "Rooftop Lounge", "desc": "Vue panoramique sur la ville" },
+        "pool": { "label": "Piscine Privée", "desc": "Détente & sérénité assurées" },
+        "concierge": { "label": "Conciergerie 24/7", "desc": "Un service attentif et discret" },
+        "autonomy": { "label": "Autonomie Totale", "desc": "Groupe électrogène & fibre haut débit" }
+      }
+    },
+    "apartments": {
+      "badge": "Collections",
+      "title": "Une Signature pour chaque séjour.",
+      "viewAll": "Voir tous nos appartements",
+      "items": {
+        "royal": { "title": "Suite Royale", "price": "À partir de 150.000 FCFA" },
+        "executive": { "title": "Appartement Executive", "price": "À partir de 120.000 FCFA" },
+        "premium": { "title": "Studio Premium", "price": "À partir de 80.000 FCFA" }
+      }
+    },
+    "offers": {
+      "badge": "Privilèges",
+      "title": "Offres Exclusives",
+      "items": {
+        "longstay": {
+          "title": "Séjour Longue Durée",
+          "desc": "Profitez de -20% pour tout séjour de plus de 7 nuits.",
+          "cta": "En profiter"
+        },
+        "weekend": {
+          "title": "Escapade Week-end",
+          "desc": "Petit-déjeuner offert et départ tardif inclus.",
+          "cta": "Réserver"
+        }
+      }
+    },
+    "partners": {
+      "title": "Ils nous font confiance",
+      "subtitle": "Agences et entreprises partenaires"
+    },
+    "reviews": {
+      "title": "L'expérience vécue par nos hôtes.",
+      "subtitle": "La satisfaction de nos résidents est notre plus grande fierté.",
+      "items": {
+        "marc": { "name": "Marc Traoré", "text": "Une expérience incroyable. Le personnel est aux petits soins et le cadre est tout simplement sublime.", "role": "CEO Tech Africa" },
+        "sarah": { "name": "Sarah Lawson", "text": "Sécurité et confort au top. On se sent vraiment comme chez soi avec les services d'un palace.", "role": "Architecte" }
+      }
     }
   },
   "Navigation": {
@@ -41,7 +89,19 @@
     "business": "Espace Entreprises",
     "partners": "Nos Partenaires"
   },
+  "Footer": {
+    "desc": "L'excellence hôtelière au Bénin. Une expérience unique pour vos séjours d'affaires et de loisirs à Cotonou.",
+    "contact": "Contactez-nous",
+    "address": "Cotonou, Bénin",
+    "rights": "© 2026 Résidence La Croisière — Tous droits réservés"
+  },
   "Preloader": {
     "tagline": "L'exceptionnel se prépare..."
+  },
+  "ComingSoon": {
+    "badge": "En cours de finition",
+    "text": "Nous préparons une expérience digitale à la hauteur du prestige de notre résidence. Cette section sera bientôt disponible pour vous offrir le meilleur de La Croisière.",
+    "backHome": "Retour à l'accueil",
+    "nextOpening": "Ouverture prochaine"
   }
 }

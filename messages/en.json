@@ -1,10 +1,10 @@
 {
   "Index": {
-    "title": "Residence La Croisière | Your premium furnished apartment in Benin",
+    "title": "La Croisière Residence | Your exceptional apartment in Benin",
     "hero": {
       "subtitle": "Residential Elegance in Cotonou",
-      "title": "Your exceptional",
-      "italic": "home in Benin.",
+      "title": "Your home",
+      "italic": "away from home.",
       "discover": "Discover"
     },
     "booking": {
@@ -16,32 +16,92 @@
       "persons": "2 Persons"
     },
     "about": {
-      "badge": "A Unique Signature",
+      "badge": "Heritage & Vision",
       "title": "The art of living",
       "italic": "at La Croisière.",
-      "quote": "More than a residence, a sanctuary of serenity in the heart of the city.",
-      "text": "Composed of 14 exceptional units, La Résidence La Croisière redefines the codes of hospitality in Benin. Between timeless elegance and ultra-modern comfort, every detail has been thought of to offer an unforgettable sensory experience.",
-      "cta": "Our Vision"
+      "quote": "The intimacy of home, the refinement of a 4-star service.",
+      "text": "La Croisière Residence is a prestigious stopover composed of 14 unique units in the heart of Cotonou. It offers a secure and luxurious setting for business and leisure travelers.",
+      "cta": "Learn more about us"
+    },
+    "amenities": {
+      "badge": "Absolute Comfort",
+      "title": "Signature Amenities",
+      "items": {
+        "rooftop": { "label": "Rooftop Lounge", "desc": "Panoramic city views" },
+        "pool": { "label": "Private Pool", "desc": "Relaxation & serenity guaranteed" },
+        "concierge": { "label": "24/7 Concierge", "desc": "Attentive and discreet service" },
+        "autonomy": { "label": "Full Autonomy", "desc": "Power generator & high-speed fiber" }
+      }
+    },
+    "apartments": {
+      "badge": "Collections",
+      "title": "A Signature for every stay.",
+      "viewAll": "View all our apartments",
+      "items": {
+        "royal": { "title": "Royal Suite", "price": "From 150,000 FCFA" },
+        "executive": { "title": "Executive Apartment", "price": "From 120,000 FCFA" },
+        "premium": { "title": "Premium Studio", "price": "From 80,000 FCFA" }
+      }
+    },
+    "offers": {
+      "badge": "Privileges",
+      "title": "Exclusive Offers",
+      "items": {
+        "longstay": {
+          "title": "Long Stay Discount",
+          "desc": "Enjoy 20% off for any stay longer than 7 nights.",
+          "cta": "Take Offer"
+        },
+        "weekend": {
+          "title": "Weekend Getaway",
+          "desc": "Complimentary breakfast and late check-out included.",
+          "cta": "Book Now"
+        }
+      }
+    },
+    "partners": {
+      "title": "They trust us",
+      "subtitle": "Partner agencies and companies"
+    },
+    "reviews": {
+      "title": "The experience lived by our guests.",
+      "subtitle": "Our residents' satisfaction is our greatest pride.",
+      "items": {
+        "marc": { "name": "Marc Traore", "text": "An amazing experience. The staff is very attentive and the setting is simply sublime.", "role": "CEO Tech Africa" },
+        "sarah": { "name": "Sarah Lawson", "text": "Security and comfort at the top. You really feel at home with the services of a palace.", "role": "Architect" }
+      }
     }
   },
   "Navigation": {
     "home": "Home",
-    "apartments": "Apartments",
+    "apartments": "Our apartments",
     "experience": "Experience",
-    "infos": "Practical Infos",
+    "infos": "Practical Info",
     "clientSpace": "Client Space",
     "book": "Book Now",
     "viewAll": "View all apartments",
     "checkAvail": "Check availability",
     "whyUs": "Why choose us",
     "gallery": "Photo Gallery",
-    "reviews": "Customer Reviews",
+    "reviews": "Guest Reviews",
     "map": "Map & Landmarks",
     "offers": "Our Offers",
     "business": "Business Space",
     "partners": "Our Partners"
   },
+  "Footer": {
+    "desc": "Hotel excellence in Benin. A unique experience for your business and leisure stays in Cotonou.",
+    "contact": "Contact Us",
+    "address": "Cotonou, Benin",
+    "rights": "© 2026 La Croisière Residence — All rights reserved"
+  },
   "Preloader": {
-    "tagline": "Exceptional things are coming..."
+    "tagline": "The exceptional is being prepared..."
+  },
+  "ComingSoon": {
+    "badge": "Work in progress",
+    "text": "We are preparing a digital experience that matches the prestige of our residence. This section will soon be available to offer you the best of La Croisière.",
+    "backHome": "Back to Home",
+    "nextOpening": "Opening soon"
   }
 }

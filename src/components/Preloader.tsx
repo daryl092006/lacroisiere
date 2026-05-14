@@ -7,8 +7,11 @@ import { useTranslation } from "@/i18n/client";
 
 export default function Preloader() {
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
+    setMounted(true);
     // Simuler un temps de chargement pour l'élégance ou attendre le chargement réel
     const timer = setTimeout(() => {
       setLoading(false);
@@ -16,8 +19,6 @@ export default function Preloader() {
 
     return () => clearTimeout(timer);
   }, []);
-
-  const { t } = useTranslation();
 
   return (
     <AnimatePresence>
@@ -82,7 +83,7 @@ export default function Preloader() {
             transition={{ delay: 1, duration: 0.8 }}
             className="absolute bottom-16 text-slate-400 text-[10px] font-black uppercase tracking-[0.5em]"
           >
-            {t('Preloader.tagline')}
+            {mounted && t('Preloader.tagline')}
           </motion.div>
         </motion.div>
       )}
