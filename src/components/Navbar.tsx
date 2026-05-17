@@ -81,15 +81,18 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* LOGO */}
-          <Link href="/" className="relative z-50">
-            <Image 
-              src="/icon.png" 
-              alt="Logo Résidence La Croisière" 
-              width={50} 
-              height={50} 
-              className={`w-12 h-12 transition-all duration-500 ${navBrandTheme}`}
-              priority
-            />
+          {/* ⚠️ NE SOUS AUCUN PRÉTEXTE MODIFIER CE BLOC LOGO : Les marges négatives (-my-12) et dimensions (220px) sont parfaitement calibrées pour annuler la transparence du fichier icon.png sans casser la hauteur de la navbar */}
+          <Link href="/" className="relative z-50 flex items-center h-12">
+            <div className="-ml-4 -my-12">
+              <Image 
+                src="/icon.png" 
+                alt="Logo Résidence La Croisière" 
+                width={220} 
+                height={220} 
+                className={`w-[160px] md:w-[220px] object-contain transition-all duration-500 ${navBrandTheme}`}
+                priority
+              />
+            </div>
           </Link>
 
           {/* DESKTOP MENU */}
@@ -170,9 +173,11 @@ export default function Navbar() {
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed inset-0 z-[200] bg-white flex flex-col p-10 overflow-y-auto"
           >
-            <div className="flex justify-between items-center mb-20">
-              <Link href="/" onClick={() => setMobileMenuOpen(false)}>
-                <Image src="/icon.png" alt="Logo" width={40} height={40} className="w-10 h-10" />
+            <div className="flex justify-between items-center mb-12 h-10">
+              <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center">
+                <div className="-ml-4 -my-12">
+                  <Image src="/icon.png" alt="Logo" width={220} height={220} className="w-[180px] object-contain" />
+                </div>
               </Link>
               <button onClick={() => setMobileMenuOpen(false)} className="p-2 bg-slate-50 rounded-full">
                 <X className="w-8 h-8 text-slate-900" />

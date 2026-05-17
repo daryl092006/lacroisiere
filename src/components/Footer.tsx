@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Mail, Phone, MapPin, Share2 } from 'lucide-react';
 import { useTranslation } from "@/i18n/client";
 
@@ -9,14 +10,21 @@ export default function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className="bg-white border-t border-slate-100 pt-32 pb-16">
+    <footer className="bg-white border-t border-slate-100 pt-16 pb-16">
       <div className="max-w-7xl mx-auto px-6 md:px-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-12">
           {/* BRAND */}
-          <div className="space-y-8">
-            <div className="flex flex-col">
-              <span className="text-2xl font-serif font-bold text-slate-900 leading-none">RÉSIDENCE</span>
-              <span className="text-[11px] font-black tracking-[0.4em] text-[#233D8C]">LA CROISIÈRE</span>
+          {/* ⚠️ NE SOUS AUCUN PRÉTEXTE MODIFIER CE BLOC LOGO : Les marges négatives (-my-8, -ml-4) et dimensions (220px) sont parfaitement calibrées pour annuler la transparence du fichier icon.png */}
+          <div className="space-y-4">
+            <div className="flex items-center -ml-4 -my-8">
+              <Image 
+                src="/icon.png" 
+                alt="Logo La Croisière" 
+                width={220} 
+                height={220} 
+                className="object-contain"
+                priority
+              />
             </div>
             <p className="text-slate-500 text-sm font-light leading-relaxed">
               L'excellence de l'hospitalité à Cotonou. Des appartements meublés premium pour vos séjours d'exception.
@@ -67,7 +75,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-12 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="pt-6 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
             © {new Date().getFullYear()} Résidence La Croisière. Tous droits réservés.
           </p>
