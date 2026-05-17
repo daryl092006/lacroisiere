@@ -33,11 +33,11 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Force dark text only on the listing page (light background)
-  const isListingPage = pathname === '/apartments';
-  const navTextTheme = (isScrolled || isListingPage) ? "text-slate-900" : "text-white";
-  const navBrandTheme = (isScrolled || isListingPage) ? "brightness-100" : "brightness-0 invert";
-  const navBgTheme = (isScrolled || isListingPage) ? "bg-white/90 backdrop-blur-md shadow-lg border-b border-slate-100" : "bg-transparent";
+  // Force dark text on all pages except home (which has a dark hero)
+  const isLightPage = pathname !== '/';
+  const navTextTheme = (isScrolled || isLightPage) ? "text-slate-900" : "text-white";
+  const navBrandTheme = (isScrolled || isLightPage) ? "brightness-100" : "brightness-0 invert";
+  const navBgTheme = (isScrolled || isLightPage) ? "bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-100" : "bg-transparent";
 
   const switchLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -58,18 +58,18 @@ export default function Navbar() {
       label: t('Navigation.experience'),
       id: "experience",
       links: [
-        { label: t('Navigation.whyUs'), href: "/#experience" },
+        { label: t('Navigation.whyUs'), href: "/difference" },
         { label: t('Navigation.gallery'), href: "/gallery" },
-        { label: t('Navigation.reviews'), href: "/#reviews" }
+        { label: t('Navigation.reviews'), href: "/reviews" }
       ]
     },
     {
       label: t('Navigation.infos'),
       id: "infos",
       links: [
-        { label: t('Navigation.map'), href: "/contact" },
+        { label: t('Navigation.map'), href: "/location" },
         { label: t('Navigation.offers'), href: "/offers" },
-        { label: "Espace Business", href: "/business" }
+        { label: "Espace Business", href: "/corporate" }
       ]
     }
   ];
@@ -85,7 +85,7 @@ export default function Navbar() {
           <Link href="/" className="relative z-50 flex items-center h-12">
             <div className="-ml-4 -my-12">
               <Image 
-                src="/icon.png" 
+                src="/favicon.png" 
                 alt="Logo Résidence La Croisière" 
                 width={220} 
                 height={220} 
@@ -131,7 +131,7 @@ export default function Navbar() {
               </div>
             ))}
 
-            <Link href="/mon-espace" className="flex items-center gap-2 hover:text-[#233D8C] transition-colors group">
+            <Link href="/client" className="flex items-center gap-2 hover:text-[#233D8C] transition-colors group">
               <User className="w-3 h-3 group-hover:scale-110 transition-transform" />
               {t('Navigation.clientSpace')}
             </Link>
@@ -176,7 +176,7 @@ export default function Navbar() {
             <div className="flex justify-between items-center mb-12 h-10">
               <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center">
                 <div className="-ml-4 -my-12">
-                  <Image src="/icon.png" alt="Logo" width={220} height={220} className="w-[180px] object-contain" />
+                  <Image src="/favicon.png" alt="Logo" width={220} height={220} className="w-[180px] object-contain" />
                 </div>
               </Link>
               <button onClick={() => setMobileMenuOpen(false)} className="p-2 bg-slate-50 rounded-full">

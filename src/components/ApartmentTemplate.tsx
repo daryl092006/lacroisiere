@@ -37,7 +37,7 @@ interface ApartmentTemplateProps {
   sqm: number;
   capacity: number;
   price: number;
-  images: string[];
+  image?: string;
 }
 
 const FeatureIcon = ({ name, className }: { name: string, className?: string }) => {
@@ -63,7 +63,7 @@ export default function ApartmentTemplate({
   sqm,
   capacity,
   price,
-  images
+  image
 }: ApartmentTemplateProps) {
   return (
     <main className="min-h-screen bg-white">
@@ -76,7 +76,7 @@ export default function ApartmentTemplate({
           className="absolute inset-0"
         >
           <Image 
-            src={images[0] || "/hero.png"} 
+            src={image || "/hero.png"} 
             alt={name} 
             fill 
             className="object-cover"

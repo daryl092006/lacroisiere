@@ -46,8 +46,8 @@ export default function Preloader() {
               className="relative z-10"
             >
               <Image
-                src="/icon.png"
-                alt="Logo La Croisière"
+                src="/favicon.png"
+                alt="La Croisière Logo"
                 width={300}
                 height={100}
                 className="h-14 md:h-16 w-auto"

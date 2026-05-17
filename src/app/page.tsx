@@ -342,10 +342,10 @@ export default function Home() {
             <p className="text-slate-600 text-lg leading-relaxed mb-10 max-w-xl font-normal">
               {t('Index.about.text')}
             </p>
-            <button className="group flex items-center gap-4 text-[11px] font-black uppercase tracking-widest text-[#233D8C]">
-              <span>En savoir plus</span>
+            <Link href="/difference" className="group inline-flex items-center gap-4 text-[11px] font-black uppercase tracking-widest text-[#233D8C]">
+              <span>En savoir plus sur notre philosophie</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Link>
           </motion.div>
           <div className="grid grid-cols-2 gap-6 relative">
             <div className="aspect-[4/5] relative rounded-sm overflow-hidden shadow-2xl"><Image src="/exterior.png" alt="Exterior" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" /></div>
@@ -385,7 +385,7 @@ export default function Home() {
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">{t('Index.apartments.badge')}</span>
             <h2 className="text-4xl md:text-6xl font-serif font-light">{t('Index.apartments.title')}</h2>
           </div>
-          <button className="text-[10px] font-black uppercase tracking-[0.3em] border-b border-slate-900 pb-2">{t('Index.apartments.viewAll')}</button>
+          <Link href="/apartments" className="text-[10px] font-black uppercase tracking-[0.3em] border-b border-slate-900 pb-2 hover:text-[#233D8C] hover:border-[#233D8C] transition-colors">{t('Index.apartments.viewAll')}</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {[
@@ -405,6 +405,27 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 6.5. GALLERY PREVIEW */}
+      <section className="bg-slate-900 py-32 text-white">
+        <div className="max-w-7xl mx-auto px-6 md:px-16">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div className="max-w-xl">
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-4 block">Immersion Visuelle</span>
+              <h2 className="text-4xl md:text-5xl font-serif font-light text-white">Découvrez nos espaces en images.</h2>
+            </div>
+            <Link href="/gallery" className="text-[10px] font-black uppercase tracking-[0.3em] border-b border-white pb-2 hover:text-slate-300 hover:border-slate-300 transition-colors">
+              Ouvrir la galerie
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="aspect-square relative rounded-sm overflow-hidden group"><Image src="/living.png" alt="Gallery 1" fill className="object-cover group-hover:scale-110 transition-transform duration-700" /></div>
+            <div className="aspect-square relative rounded-sm overflow-hidden group"><Image src="/room.png" alt="Gallery 2" fill className="object-cover group-hover:scale-110 transition-transform duration-700" /></div>
+            <div className="aspect-square relative rounded-sm overflow-hidden group hidden md:block"><Image src="/exterior.png" alt="Gallery 3" fill className="object-cover group-hover:scale-110 transition-transform duration-700" /></div>
+            <div className="aspect-square relative rounded-sm overflow-hidden group hidden md:block"><Image src="/hero.png" alt="Gallery 4" fill className="object-cover group-hover:scale-110 transition-transform duration-700" /></div>
+          </div>
+        </div>
+      </section>
+
       {/* 7. REVIEWS (PREMIUM STYLE) */}
       <section className="bg-slate-900 text-white py-40 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 md:px-16 relative z-10">
@@ -417,9 +438,12 @@ export default function Home() {
                 <span className="text-3xl font-serif border-l border-white/20 pl-6">4.9/5</span>
               </div>
               <h2 className="text-5xl font-serif font-light mb-12 leading-tight text-white/90">{t('Index.reviews.title')}</h2>
-              <p className="text-white/40 text-sm leading-relaxed max-w-xs font-light">
+              <p className="text-white/40 text-sm leading-relaxed max-w-xs font-light mb-10">
                 {t('Index.reviews.subtitle')}
               </p>
+              <Link href="/reviews" className="inline-flex items-center gap-4 bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-sm font-black text-[10px] uppercase tracking-[0.2em] transition-colors border border-white/20">
+                Lire le Livre d'Or
+              </Link>
             </div>
             <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-12">
               {[
@@ -447,6 +471,38 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* 7.5. LOCATION PREVIEW */}
+      <section className="py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6 md:px-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="aspect-square md:aspect-video lg:aspect-square relative rounded-sm overflow-hidden bg-slate-100 flex items-center justify-center">
+              {/* Map placeholder or actual map image */}
+              <Image src="/exterior.png" alt="Map Location" fill className="object-cover opacity-80" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-16 h-16 bg-[#233D8C] text-white rounded-full flex items-center justify-center shadow-2xl">
+                  <MapPin className="w-8 h-8" />
+                </div>
+              </div>
+            </div>
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-6 block">Emplacement Idéal</span>
+              <h2 className="text-4xl md:text-5xl font-serif font-light text-slate-900 mb-8 leading-tight">Au cœur de Cotonou,<br />proche de l'essentiel.</h2>
+              <p className="text-slate-600 text-lg leading-relaxed mb-10 font-light">
+                Située dans l'un des quartiers les plus prisés, la Résidence La Croisière vous offre un accès rapide aux centres d'affaires, aux restaurants gastronomiques et aux plages.
+              </p>
+              <ul className="space-y-4 mb-10">
+                <li className="flex items-center justify-between border-b border-slate-100 pb-2"><span className="text-sm font-bold text-slate-900">Aéroport International</span><span className="text-xs text-slate-500 uppercase tracking-widest">15 min</span></li>
+                <li className="flex items-center justify-between border-b border-slate-100 pb-2"><span className="text-sm font-bold text-slate-900">Centre Ville</span><span className="text-xs text-slate-500 uppercase tracking-widest">5 min</span></li>
+                <li className="flex items-center justify-between border-b border-slate-100 pb-2"><span className="text-sm font-bold text-slate-900">Plage Fidjrossè</span><span className="text-xs text-slate-500 uppercase tracking-widest">10 min</span></li>
+              </ul>
+              <Link href="/location" className="inline-flex items-center gap-4 bg-slate-900 text-white px-8 py-4 rounded-sm font-black text-[10px] uppercase tracking-[0.2em] hover:bg-[#233D8C] transition-colors">
+                Voir la carte détaillée
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* 8. SPECIAL OFFERS */}
       <section className="bg-slate-50 py-32 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 md:px-16">
@@ -455,6 +511,9 @@ export default function Home() {
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">{t('Index.offers.badge')}</span>
               <h2 className="text-4xl md:text-5xl font-serif font-light text-slate-900">{t('Index.offers.title')}</h2>
             </div>
+            <Link href="/offers" className="text-[10px] font-black uppercase tracking-[0.3em] border-b border-slate-900 pb-2 hover:text-[#233D8C] hover:border-[#233D8C] transition-colors">
+              Voir toutes nos offres
+            </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <motion.div
@@ -482,6 +541,63 @@ export default function Home() {
                 {t('Index.offers.items.weekend.cta')}
               </button>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* 8.2. CONCIERGERIE & SERVICES */}
+      <section className="py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6 md:px-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="order-2 lg:order-1">
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-6 block">L'Art de Recevoir</span>
+              <h2 className="text-4xl md:text-5xl font-serif font-light text-slate-900 mb-8 leading-tight">Conciergerie <br />& Services Exclusifs.</h2>
+              <p className="text-slate-600 text-lg leading-relaxed mb-10 font-light">
+                À La Croisière, votre confort est notre seule priorité. Notre équipe dédiée est à votre entière disposition pour anticiper le moindre de vos désirs et transformer votre séjour en une expérience inoubliable.
+              </p>
+              <div className="grid grid-cols-2 gap-6 mb-10">
+                <div className="border-l-2 border-[#233D8C] pl-4">
+                  <h4 className="text-sm font-bold text-slate-900 mb-1">Chauffeur Privé</h4>
+                  <p className="text-xs text-slate-500">Transferts aéroport & ville</p>
+                </div>
+                <div className="border-l-2 border-[#233D8C] pl-4">
+                  <h4 className="text-sm font-bold text-slate-900 mb-1">Chef à Domicile</h4>
+                  <p className="text-xs text-slate-500">Gastronomie sur-mesure</p>
+                </div>
+                <div className="border-l-2 border-[#233D8C] pl-4">
+                  <h4 className="text-sm font-bold text-slate-900 mb-1">Bien-être</h4>
+                  <p className="text-xs text-slate-500">Massages & Soins en chambre</p>
+                </div>
+                <div className="border-l-2 border-[#233D8C] pl-4">
+                  <h4 className="text-sm font-bold text-slate-900 mb-1">Excursions</h4>
+                  <p className="text-xs text-slate-500">Découverte du Bénin</p>
+                </div>
+              </div>
+            </div>
+            <div className="order-1 lg:order-2 aspect-square relative rounded-sm overflow-hidden shadow-2xl">
+              <Image src="/living.png" alt="Conciergerie" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
+              <div className="absolute inset-0 bg-[#233D8C]/10 mix-blend-multiply" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 8.5. CORPORATE & PARTNERS PREVIEW */}
+      <section className="py-32 bg-[#233D8C] text-white text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/exterior.png')] opacity-10 bg-cover bg-center mix-blend-overlay" />
+        <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-200 mb-6 block">B2B, Entreprises & Institutions</span>
+          <h2 className="text-4xl md:text-6xl font-serif font-light mb-8">Devenez partenaire privilégié.</h2>
+          <p className="text-blue-100 text-lg font-light leading-relaxed mb-12 max-w-2xl mx-auto">
+            Vous cherchez un pied-à-terre de haut standing régulier pour vos cadres dirigeants, vos délégations ou vos expatriés à Cotonou ? Bénéficiez de nos tarifs négociés, d'une facturation centralisée et d'une discrétion absolue.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <Link href="/corporate" className="inline-flex items-center justify-center gap-4 bg-white text-[#233D8C] px-10 py-5 rounded-sm font-black text-[10px] uppercase tracking-[0.3em] hover:bg-slate-100 transition-colors w-full sm:w-auto">
+              Découvrir nos offres B2B
+            </Link>
+            <Link href="/partners" className="inline-flex items-center justify-center gap-4 bg-transparent border border-white/30 text-white px-10 py-5 rounded-sm font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white/10 transition-colors w-full sm:w-auto">
+              Réseau de partenaires
+            </Link>
           </div>
         </div>
       </section>

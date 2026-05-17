@@ -20,9 +20,9 @@ export default function ComingSoon({ title }: { title: string }) {
         <div className="mb-12 flex justify-center">
           <Link href="/">
             <Image
-              src="/icon.png"
-              alt="Logo La Croisière"
-              width={200}
+              src="/favicon.png"
+              alt="Logo Résidence La Croisière"
+              width={220}
               height={60}
               className="h-10 w-auto"
               style={{ height: "auto" }}
