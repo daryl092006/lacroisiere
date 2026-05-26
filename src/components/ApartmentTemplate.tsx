@@ -95,7 +95,7 @@ export default function ApartmentTemplate({
                 <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-2" /> Retour à la collection
               </Link>
               <div className="flex justify-center gap-3 mb-6">
-                {type === "Luxury" && [1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 text-amber-400 fill-current" />)}
+                {type === "Luxury" && [1, 2, 3, 4, 5].map((i: number) => <Star key={i} className="w-3 h-3 text-amber-400 fill-current" />)}
               </div>
               <h1 className="text-6xl md:text-9xl font-serif font-light italic leading-none">{name}</h1>
               <div className="w-20 h-px bg-white/30 mx-auto mt-12" />
@@ -136,7 +136,7 @@ export default function ApartmentTemplate({
             >
               <span className="text-[10px] font-black uppercase tracking-[0.5em] text-[#233D8C]">Excellence & Privilèges</span>
               <div className="grid grid-cols-1 gap-8">
-                {advantages.map((adv, i) => (
+                {advantages.map((adv, i: number) => (
                   <div key={i} className="flex items-start gap-6">
                     <div className="w-8 h-px bg-[#233D8C] mt-3" />
                     <span className="text-lg font-serif italic text-white/80">{adv}</span>
@@ -149,7 +149,7 @@ export default function ApartmentTemplate({
             <div className="space-y-16 py-16">
               <span className="text-[10px] font-black uppercase tracking-[0.5em] text-[#233D8C]">Équipements & Confort</span>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-                {features.map((feat, i) => (
+                {features.map((feat, i: number) => (
                   <div key={i} className="flex flex-col items-center gap-4 bg-slate-50 p-10 rounded-sm border border-slate-100 group hover:border-[#233D8C]/30 transition-all text-center">
                     <div className="w-14 h-14 flex items-center justify-center bg-white rounded-full shadow-sm text-[#233D8C]">
                       <FeatureIcon name={feat} className="w-6 h-6" />
@@ -164,13 +164,13 @@ export default function ApartmentTemplate({
 
             <div className="space-y-24 border-t border-slate-100 pt-24">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-20">
-                {Object.entries(composition).map(([zone, items], idx) => (
+                {Object.entries(composition).map(([zone, items], idx: number) => (
                   <motion.div key={zone} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}>
                     <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-8">
                       {zone === 'sleeping' ? 'The Sleeping Sanctuary' : zone === 'wellness' ? 'The Wellness Experience' : zone === 'living' ? 'The Living Art' : 'Muted Connectivity'}
                     </h3>
                     <div className="space-y-4">
-                      {items.map((item: string, i) => (
+                      {items.map((item: string, i: number) => (
                         <div key={i} className="flex items-center gap-4 text-slate-500 font-light text-sm italic">
                           <div className="w-1 h-1 bg-slate-200 rounded-full" /> {item}
                         </div>
