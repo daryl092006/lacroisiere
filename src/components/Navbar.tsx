@@ -4,13 +4,14 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Menu, 
-  X, 
-  Globe, 
-  User, 
-  ChevronDown, 
+import {
+  Menu,
+  X,
+  Globe,
+  User,
+  ChevronDown,
   ChevronRight,
+  ArrowRight,
   Calendar,
   Phone,
   Mail
@@ -27,17 +28,19 @@ export default function Navbar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const currentLang = i18n.language || "fr";
 
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Force dark text on all pages except home (which has a dark hero)
-  const isLightPage = pathname !== '/';
-  const navTextTheme = (isScrolled || isLightPage) ? "text-slate-900" : "text-white";
-  const navBrandTheme = (isScrolled || isLightPage) ? "brightness-100" : "brightness-0 invert";
-  const navBgTheme = (isScrolled || isLightPage) ? "bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-100" : "bg-transparent";
+  // Use a default theme for server-side and pre-hydration
+  const isTransparentNavPage = pathname === '/' || pathname === '/location';
+  const navTextTheme = (!mounted || isScrolled || !isTransparentNavPage) ? "text-slate-900" : "text-white";
+  const navBrandTheme = (!mounted || isScrolled || !isTransparentNavPage) ? "brightness-100" : "brightness-0 invert";
+  const navBgTheme = (!mounted || isScrolled || !isTransparentNavPage) ? "bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-100" : "bg-transparent";
 
   const switchLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -84,11 +87,11 @@ export default function Navbar() {
           {/* ⚠️ NE SOUS AUCUN PRÉTEXTE MODIFIER CE BLOC LOGO : Les marges négatives (-my-12) et dimensions (220px) sont parfaitement calibrées pour annuler la transparence du fichier icon.png sans casser la hauteur de la navbar */}
           <Link href="/" className="relative z-50 flex items-center h-12">
             <div className="-ml-4 -my-12">
-              <Image 
-                src="/favicon.png" 
-                alt="Logo Résidence La Croisière" 
-                width={220} 
-                height={220} 
+              <Image
+                src="/favicon.png"
+                alt="Logo Résidence La Croisière"
+                width={220}
+                height={220}
                 className={`w-[160px] md:w-[220px] object-contain transition-all duration-500 ${navBrandTheme}`}
                 priority
               />
@@ -156,66 +159,137 @@ export default function Navbar() {
             <Link href="/apartments" className="hidden sm:block bg-[#233D8C] text-white px-8 py-3 rounded-sm text-[10px] font-black tracking-[0.2em] uppercase transition-all hover:bg-black shadow-lg">
               {t('Navigation.book')}
             </Link>
-            <button onClick={() => setMobileMenuOpen(true)} className={`lg:hidden p-2 transition-colors ${isScrolled ? "text-slate-900" : "text-white"}`}>
+            <button onClick={() => setMobileMenuOpen(true)} className={`lg:hidden p-2 transition-colors ${navTextTheme}`}>
               <Menu className="w-8 h-8" />
             </button>
           </div>
         </div>
       </nav>
 
-      {/* MOBILE MENU */}
+      {/* MOBILE MENU (PREMIUM DARK RE-DESIGN) */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[200] bg-white flex flex-col p-10 overflow-y-auto"
-          >
-            <div className="flex justify-between items-center mb-12 h-10">
-              <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center">
-                <div className="-ml-4 -my-12">
-                  <Image src="/favicon.png" alt="Logo" width={220} height={220} className="w-[180px] object-contain" />
-                </div>
-              </Link>
-              <button onClick={() => setMobileMenuOpen(false)} className="p-2 bg-slate-50 rounded-full">
-                <X className="w-8 h-8 text-slate-900" />
-              </button>
-            </div>
+          <>
+            {/* Backdrop Blur Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[190] bg-slate-900/60 backdrop-blur-sm"
+              onClick={() => setMobileMenuOpen(false)}
+            />
 
-            <div className="flex flex-col gap-12">
-              <Link href="/" className="text-4xl font-serif text-slate-900 italic" onClick={() => setMobileMenuOpen(false)}>{t('Navigation.home')}</Link>
-              {menuItems.map((item) => (
-                <div key={item.id} className="space-y-6">
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C]">{item.label}</span>
-                  <div className="flex flex-col gap-6 pl-4 border-l border-slate-100">
-                    {item.links.map((link) => (
-                      <Link 
-                        key={link.label} 
-                        href={link.href} 
-                        className="text-2xl text-slate-700 font-light flex items-center justify-between"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {link.label} <ChevronRight className="w-5 h-5 text-slate-300" />
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-auto pt-12 space-y-8">
-              <div className="flex items-center gap-8 text-slate-400">
-                <Phone className="w-5 h-5" />
-                <Mail className="w-5 h-5" />
-                <Globe className="w-5 h-5" />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 200 }}
+              className="fixed right-0 top-0 bottom-0 w-[85%] max-w-sm z-[200] bg-white text-slate-900 flex flex-col shadow-2xl"
+            >
+              {/* Header */}
+              <div className="flex justify-between items-center px-8 py-8 border-b border-white/5">
+                <Link href="/" onClick={() => setMobileMenuOpen(false)} className="brightness-100 opacity-80">
+                  <Image src="/favicon.png" alt="Logo" width={140} height={140} className="w-[120px] object-contain" />
+                </Link>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-900 hover:bg-slate-200 transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <button className="w-full bg-[#233D8C] text-white py-6 rounded-sm font-black text-xs uppercase tracking-[0.3em]">
-                {t('Navigation.book')}
-              </button>
-            </div>
-          </motion.div>
+
+              {/* Navigation */}
+              <div className="flex-1 overflow-y-auto py-10 px-8 custom-scrollbar">
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/"
+                    className="group py-4 flex items-center justify-between border-b border-white/5"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span className="text-2xl font-serif italic text-slate-900 group-hover:text-[#233D8C] transition-colors">Accueil</span>
+                    <ChevronRight className="w-4 h-4 text-slate-200 group-hover:text-slate-400 transition-all" />
+                  </Link>
+
+                  {menuItems.map((item, idx) => {
+                    const isExpanded = activeMenu === `mobile-${item.id}`;
+                    return (
+                      <div key={item.id} className="flex flex-col border-b border-white/5">
+                        <button
+                          onClick={() => setActiveMenu(isExpanded ? null : `mobile-${item.id}`)}
+                          className="w-full py-6 flex items-center justify-between text-left group"
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-1">{`0${idx + 1}`}</span>
+                            <span className="text-xl font-medium tracking-widest uppercase hover:text-[#233D8C] transition-colors">{item.label}</span>
+                          </div>
+                          <motion.div
+                            animate={{ rotate: isExpanded ? 180 : 0 }}
+                            className="text-slate-200"
+                          >
+                            <ChevronDown className="w-5 h-5" />
+                          </motion.div>
+                        </button>
+
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="flex flex-col gap-5 pb-8 pl-4 border-l border-slate-100">
+                                {item.links.map((link) => (
+                                  <Link
+                                    key={link.label}
+                                    href={link.href}
+                                    className="text-sm font-light text-slate-500 hover:text-[#233D8C] transition-colors flex items-center justify-between group/link"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                  >
+                                    {link.label}
+                                    <ArrowRight className="w-4 h-4 opacity-0 group-hover/link:opacity-100 -translate-x-2 group-hover/link:translate-x-0 transition-all" />
+                                  </Link>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+
+                  <Link
+                    href="/client"
+                    className="group py-8 flex items-center justify-between border-b border-slate-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <div className="flex items-center gap-4">
+                      <User className="w-5 h-5 text-slate-300" />
+                      <span className="text-lg font-medium tracking-widest uppercase text-slate-900">{t('Navigation.clientSpace')}</span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-8 bg-slate-50 mt-auto border-t border-slate-100">
+                <div className="flex items-center gap-8 mb-8 text-slate-400">
+                  <Phone className="w-5 h-5 hover:text-[#233D8C] transition-colors cursor-pointer" />
+                  <Mail className="w-5 h-5 hover:text-[#233D8C] transition-colors cursor-pointer" />
+                  <Globe className="w-5 h-5 hover:text-[#233D8C] transition-colors cursor-pointer" />
+                </div>
+                <Link
+                  href="/apartments"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full bg-[#233D8C] text-white py-5 rounded-sm font-black text-[10px] uppercase tracking-[0.4em] flex items-center justify-center gap-3 hover:bg-[#1a2d6a] transition-all"
+                >
+                  <Calendar className="w-4 h-4 text-white/60" />
+                  {t('Navigation.book')}
+                </Link>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

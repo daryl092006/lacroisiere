@@ -25,7 +25,7 @@ export default function Home() {
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
   const [activeTab, setActiveTab] = useState<"arrival" | "departure" | "guests" | null>(null);
-  
+
   // Dynamic Popover Positioning
   const [popoverPosition, setPopoverPosition] = useState<"top" | "bottom">("bottom");
   const widgetRef = useRef<HTMLDivElement>(null);
@@ -102,18 +102,18 @@ export default function Home() {
           <div className="flex flex-row items-stretch">
             {/* FIELD 1: ARRIVAL */}
             <div className="relative flex-1 group">
-              <div 
+              <div
                 onClick={() => setActiveTab('arrival')}
                 className={`px-10 py-7 border-r border-slate-100 hover:bg-slate-50/50 transition-all duration-300 cursor-pointer h-full flex flex-col justify-center ${activeTab === 'arrival' ? 'bg-slate-50' : ''}`}
               >
                 <div className="flex items-center gap-2 text-[#233D8C] mb-1.5">
-                  <Calendar className="w-3.5 h-3.5" /> 
+                  <Calendar className="w-3.5 h-3.5" />
                   <span className="text-[9px] font-black uppercase tracking-[0.2em]">{t('Index.booking.arrival')}</span>
                 </div>
                 <div className={`font-serif italic text-xl transition-colors ${!arrivalDate ? 'text-slate-400' : 'text-slate-900 group-hover:text-[#233D8C]'}`}>
                   {arrivalInput || t('Index.booking.choose')}
                 </div>
-                <motion.div 
+                <motion.div
                   animate={{ scaleX: activeTab === 'arrival' ? 1 : 0 }}
                   className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#233D8C] origin-left"
                 />
@@ -128,26 +128,25 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: popoverPosition === 'top' ? -15 : 15 }}
                     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    className={`absolute left-0 bg-white shadow-[0_24px_80px_rgba(0,0,0,0.18)] p-8 z-[100] rounded-sm w-[720px] border border-slate-100 ${
-                      popoverPosition === 'top' ? 'bottom-full mb-3' : 'top-full mt-3'
-                    }`}
+                    className={`absolute left-0 bg-white shadow-[0_24px_80px_rgba(0,0,0,0.18)] p-8 z-[100] rounded-sm w-[720px] border border-slate-100 ${popoverPosition === 'top' ? 'bottom-full mb-3' : 'top-full mt-3'
+                      }`}
                   >
                     {/* CLOSE BUTTON */}
-                    <button 
+                    <button
                       onClick={(e) => { e.stopPropagation(); setActiveTab(null); }}
                       className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-[#233D8C] transition-colors"
                       aria-label="Fermer le calendrier"
                     >
                       <X className="w-5 h-5" />
                     </button>
-                    
+
                     <div className="flex gap-10 mt-2">
                       {[0, 1].map((offset) => {
                         const monthDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1);
                         const monthName = monthDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
                         const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate();
                         const startDay = (new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).getDay() + 6) % 7;
-                        const today = new Date(); today.setHours(0,0,0,0);
+                        const today = new Date(); today.setHours(0, 0, 0, 0);
 
                         return (
                           <div key={offset} className="flex-1">
@@ -179,7 +178,7 @@ export default function Home() {
                                       if (isPast) return;
                                       if (!arrivalDate || (arrivalDate && departureDate)) {
                                         setArrivalDate(date);
-                                        setArrivalInput(date.toLocaleDateString('fr-FR', {day: '2-digit', month: 'short', year: 'numeric'}));
+                                        setArrivalInput(date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }));
                                         setDepartureDate(null);
                                         setDepartureInput("");
                                         setActiveTab("departure");
@@ -188,10 +187,10 @@ export default function Home() {
                                         setArrivalInput("");
                                       } else if (date < arrivalDate) {
                                         setArrivalDate(date);
-                                        setArrivalInput(date.toLocaleDateString('fr-FR', {day: '2-digit', month: 'short', year: 'numeric'}));
+                                        setArrivalInput(date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }));
                                       } else {
                                         setDepartureDate(date);
-                                        setDepartureInput(date.toLocaleDateString('fr-FR', {day: '2-digit', month: 'short', year: 'numeric'}));
+                                        setDepartureInput(date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }));
                                         setActiveTab(null);
                                       }
                                     }}
@@ -217,8 +216,8 @@ export default function Home() {
                           ? `${Math.round((departureDate.getTime() - arrivalDate.getTime()) / 86400000)} nuit${Math.round((departureDate.getTime() - arrivalDate.getTime()) / 86400000) > 1 ? 's' : ''} sélectionnée${Math.round((departureDate.getTime() - arrivalDate.getTime()) / 86400000) > 1 ? 's' : ''}`
                           : activeTab === 'arrival' ? 'Sélectionnez votre date d\'arrivée' : 'Sélectionnez votre date de départ'}
                       </span>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); setArrivalDate(null); setDepartureDate(null); setArrivalInput(''); setDepartureInput(''); }} 
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setArrivalDate(null); setDepartureDate(null); setArrivalInput(''); setDepartureInput(''); }}
                         className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-700 transition-colors"
                       >
                         Effacer
@@ -231,18 +230,18 @@ export default function Home() {
 
             {/* FIELD 2: DEPARTURE */}
             <div className="relative flex-1 group">
-              <div 
+              <div
                 onClick={() => setActiveTab('departure')}
                 className={`px-10 py-7 border-r border-slate-100 hover:bg-slate-50/50 transition-all duration-300 cursor-pointer h-full flex flex-col justify-center ${activeTab === 'departure' ? 'bg-slate-50' : ''}`}
               >
                 <div className="flex items-center gap-2 text-[#233D8C] mb-1.5">
-                  <Calendar className="w-3.5 h-3.5" /> 
+                  <Calendar className="w-3.5 h-3.5" />
                   <span className="text-[9px] font-black uppercase tracking-[0.2em]">{t('Index.booking.departure')}</span>
                 </div>
                 <div className={`font-serif italic text-xl transition-colors ${!departureDate ? 'text-slate-400' : 'text-slate-900 group-hover:text-[#233D8C]'}`}>
                   {departureInput || t('Index.booking.choose')}
                 </div>
-                <motion.div 
+                <motion.div
                   animate={{ scaleX: activeTab === 'departure' ? 1 : 0 }}
                   className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#233D8C] origin-left"
                 />
@@ -251,18 +250,18 @@ export default function Home() {
 
             {/* FIELD 3: GUESTS */}
             <div className="relative flex-1 group">
-              <div 
+              <div
                 onClick={() => setActiveTab('guests')}
                 className={`px-10 py-7 border-r border-slate-100 hover:bg-slate-50/50 transition-all duration-300 cursor-pointer h-full flex flex-col justify-center ${activeTab === 'guests' ? 'bg-slate-50' : ''}`}
               >
                 <div className="flex items-center gap-2 text-[#233D8C] mb-1.5">
-                  <Users className="w-3.5 h-3.5" /> 
+                  <Users className="w-3.5 h-3.5" />
                   <span className="text-[9px] font-black uppercase tracking-[0.2em]">{t('Index.booking.guests')}</span>
                 </div>
                 <div className="font-serif italic text-xl text-slate-900 group-hover:text-[#233D8C] transition-colors">
                   {adults + children} {t('Index.booking.persons')}{infants > 0 ? `, ${infants} bébés` : ""}
                 </div>
-                <motion.div 
+                <motion.div
                   animate={{ scaleX: activeTab === 'guests' ? 1 : 0 }}
                   className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#233D8C] origin-left"
                 />
@@ -276,12 +275,11 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: popoverPosition === 'top' ? -15 : 15 }}
                     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    className={`absolute right-0 bg-white shadow-[0_24px_80px_rgba(0,0,0,0.18)] p-8 z-[100] rounded-sm w-[350px] border border-slate-100 ${
-                      popoverPosition === 'top' ? 'bottom-full mb-3' : 'top-full mt-3'
-                    }`}
+                    className={`absolute right-0 bg-white shadow-[0_24px_80px_rgba(0,0,0,0.18)] p-8 z-[100] rounded-sm w-[350px] border border-slate-100 ${popoverPosition === 'top' ? 'bottom-full mb-3' : 'top-full mt-3'
+                      }`}
                   >
                     {/* CLOSE BUTTON */}
-                    <button 
+                    <button
                       onClick={(e) => { e.stopPropagation(); setActiveTab(null); }}
                       className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-[#233D8C] transition-colors"
                       aria-label="Fermer les voyageurs"
@@ -315,8 +313,8 @@ export default function Home() {
             </div>
 
             {/* CTA BUTTON — FULL HEIGHT SECTION */}
-            <Link 
-              href="/apartments"
+            <Link
+              href={`/apartments?arrival=${arrivalDate?.toISOString() || ''}&departure=${departureDate?.toISOString() || ''}&adults=${adults}&children=${children}&infants=${infants}`}
               className="group relative overflow-hidden bg-[#233D8C] text-white px-12 transition-all duration-300 hover:bg-black flex items-center justify-center gap-3 shrink-0"
             >
               <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.3em]">{t('Index.booking.check')}</span>
@@ -329,7 +327,7 @@ export default function Home() {
       {/* 4. ABOUT */}
       <section className="max-w-7xl mx-auto px-6 md:px-16 py-32">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -658,212 +656,212 @@ export default function Home() {
         <AnimatePresence>
           {activeTab && (
             <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActiveTab(null)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-md z-[9998]"
-            />
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setActiveTab(null)}
+                className="fixed inset-0 bg-black/60 backdrop-blur-md z-[9998]"
+              />
 
-            <motion.div
-              initial={typeof window !== 'undefined' && window.innerWidth < 1024 ? { y: "100%" } : { opacity: 0, scale: 0.95 }}
-              animate={typeof window !== 'undefined' && window.innerWidth < 1024 ? { y: 0 } : { opacity: 1, scale: 1 }}
-              exit={typeof window !== 'undefined' && window.innerWidth < 1024 ? { y: "100%" } : { opacity: 0, scale: 0.95 }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className={`
+              <motion.div
+                initial={typeof window !== 'undefined' && window.innerWidth < 1024 ? { y: "100%" } : { opacity: 0, scale: 0.95 }}
+                animate={typeof window !== 'undefined' && window.innerWidth < 1024 ? { y: 0 } : { opacity: 1, scale: 1 }}
+                exit={typeof window !== 'undefined' && window.innerWidth < 1024 ? { y: "100%" } : { opacity: 0, scale: 0.95 }}
+                transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                className={`
                 z-[9999] bg-white shadow-2xl
                 fixed inset-0 lg:inset-auto lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 lg:rounded-2xl lg:w-full lg:max-w-4xl
                 flex flex-col overflow-hidden
               `}
-            >
-              {/* HEADER */}
-              <div className="px-8 py-6 flex justify-between items-center border-b border-slate-50 shrink-0">
-                <div>
-                  <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900">
-                    {activeTab === 'guests' ? 'Voyageurs' : 'Choisir vos dates'}
-                  </h3>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">
-                    {arrivalDate && departureDate 
-                      ? `${arrivalDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} — ${departureDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`
-                      : 'Sélectionnez votre séjour'}
-                  </p>
-                </div>
-                <button 
-                  onClick={() => setActiveTab(null)}
-                  className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-full text-slate-400 hover:text-slate-900 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              {/* CONTENT */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar bg-white">
-                {activeTab !== 'guests' ? (
-                  <div className="relative">
-                    {/* QUICK YEAR SELECTOR */}
-                    <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-50 px-8 py-8 shrink-0 flex items-center justify-center gap-16">
-                      {[2026, 2027, 2028].map((y) => (
-                        <button 
-                          key={y}
-                          onClick={() => {
-                            const target = new Date(y, y === 2026 ? 4 : 0, 1);
-                            setViewDate(target);
-                            const container = document.querySelector('.custom-scrollbar');
-                            if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className={`text-sm font-black uppercase tracking-[0.4em] transition-all ${viewDate.getFullYear() === y ? 'text-[#233D8C] scale-110' : 'text-slate-300 hover:text-slate-500'}`}
-                        >
-                          {y}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="p-8">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-                      {[0, 1, 2, 3, 4, 5].map((offset) => {
-                        const monthDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1);
-                        const monthName = monthDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-                        const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate();
-                        const startDay = (new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).getDay() + 6) % 7;
-
-                        return (
-                          <div key={offset} className="space-y-8">
-                            <h4 className="text-xl font-serif text-slate-900 capitalize text-center mb-6">{monthName}</h4>
-                            <div className="grid grid-cols-7 gap-2 text-center text-[10px] font-black text-slate-300 mb-4">
-                              {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, idx) => <div key={idx}>{d}</div>)}
-                            </div>
-                            <div className="grid grid-cols-7 gap-y-1">
-                              {[...Array(startDay)].map((_, i) => <div key={`empty-${i}`} />)}
-                              {[...Array(daysInMonth)].map((_, i) => {
-                                const day = i + 1;
-                                const date = new Date(monthDate.getFullYear(), monthDate.getMonth(), day);
-                                const isArrival = arrivalDate?.toDateString() === date.toDateString();
-                                const isDeparture = departureDate?.toDateString() === date.toDateString();
-                                const isSelected = isArrival || isDeparture;
-                                const effectiveDeparture = departureDate || (activeTab === "departure" ? hoveredDate : null);
-                                const isInRange = arrivalDate && effectiveDeparture && (
-                                  (date > arrivalDate && date < effectiveDeparture) ||
-                                  (date < arrivalDate && date > effectiveDeparture)
-                                );
-
-                                return (
-                                  <button
-                                    key={i}
-                                    onMouseEnter={() => setHoveredDate(date)}
-                                    onClick={() => {
-                                      if (!arrivalDate || (arrivalDate && departureDate)) {
-                                        setArrivalDate(date);
-                                        setArrivalInput(date.toLocaleDateString('fr-FR'));
-                                        setDepartureDate(null);
-                                        setDepartureInput("");
-                                        setActiveTab("departure");
-                                      } else if (date.getTime() === arrivalDate.getTime()) {
-                                        setArrivalDate(null);
-                                        setArrivalInput("");
-                                      } else if (date < arrivalDate) {
-                                        setArrivalDate(date);
-                                        setArrivalInput(date.toLocaleDateString('fr-FR'));
-                                      } else {
-                                        setDepartureDate(date);
-                                        setDepartureInput(date.toLocaleDateString('fr-FR'));
-                                        setActiveTab("guests");
-                                      }
-                                    }}
-                                    className={`relative h-12 w-full text-sm transition-all flex items-center justify-center group ${isSelected ? 'text-white z-20' : 'text-slate-700 hover:bg-slate-50 rounded-full'} ${isInRange ? 'text-[#233D8C]' : ''}`}
-                                  >
-                                    {isInRange && <div className="absolute inset-y-1 left-0 right-0 bg-[#233D8C]/5 z-0" />}
-                                    {isSelected && <motion.div layoutId="selection-zen" className="absolute inset-1 bg-[#233D8C] rounded-full z-10 shadow-lg shadow-blue-900/20" />}
-                                    {isArrival && effectiveDeparture && date < effectiveDeparture && <div className="absolute inset-y-1 left-1/2 right-0 bg-[#233D8C]/5 -z-10" />}
-                                    {isDeparture && arrivalDate && date > arrivalDate && <div className="absolute inset-y-1 left-0 right-1/2 bg-[#233D8C]/5 -z-10" />}
-                                    <span className="relative z-30 font-medium">{day}</span>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+              >
+                {/* HEADER */}
+                <div className="px-8 py-6 flex justify-between items-center border-b border-slate-50 shrink-0">
+                  <div>
+                    <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-900">
+                      {activeTab === 'guests' ? 'Voyageurs' : 'Choisir vos dates'}
+                    </h3>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">
+                      {arrivalDate && departureDate
+                        ? `${arrivalDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} — ${departureDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`
+                        : 'Sélectionnez votre séjour'}
+                    </p>
                   </div>
-                </div>
-              ) : (
-                  <div className="p-12 max-w-lg mx-auto w-full space-y-12">
-                    {[
-                      { id: 'adults', label: 'Adultes', sub: '13 ans et plus', count: adults, setter: setAdults, min: 1 },
-                      { id: 'children', label: 'Enfants', sub: 'De 2 à 12 ans', count: children, setter: setChildren, min: 0 },
-                      { id: 'infants', label: 'Bébés', sub: 'Moins de 2 ans', count: infants, setter: setInfants, min: 0 }
-                    ].map((cat) => (
-                      <div key={cat.id} className="flex items-center justify-between">
-                        <div>
-                          <span className="block text-base font-serif text-slate-900">{cat.label}</span>
-                          <span className="text-[10px] text-slate-400 uppercase tracking-widest">{cat.sub}</span>
-                        </div>
-                        <div className="flex items-center gap-8">
-                          <button 
-                            onClick={() => cat.setter(Math.max(cat.min, cat.count - 1))}
-                            className="w-12 h-12 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-[#233D8C] hover:text-white hover:border-[#233D8C] transition-all"
-                          >
-                            <span className="text-xl font-light">-</span>
-                          </button>
-                          <span className="text-xl font-serif w-6 text-center">{cat.count}</span>
-                          <button 
-                            onClick={() => cat.setter(cat.count + 1)}
-                            className="w-12 h-12 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-[#233D8C] hover:text-white hover:border-[#233D8C] transition-all"
-                          >
-                            <span className="text-xl font-light">+</span>
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* FOOTER ACTION BAR */}
-              <div className="p-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center gap-6 shrink-0">
-                <div className="flex-1 hidden sm:block">
-                  <div className="flex items-center gap-4 text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-3.5 h-3.5" /> 
-                      <span className="text-slate-900">{arrivalDate ? arrivalDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : 'Arrivée'}</span>
-                    </div>
-                    <div className="w-4 h-[1px] bg-slate-200" />
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-900">{departureDate ? departureDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : 'Départ'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 w-full sm:w-auto">
-                  {activeTab === 'guests' && (
-                    <button 
-                      onClick={() => setActiveTab('arrival')}
-                      className="px-6 py-4 rounded-full border border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-white transition-colors"
-                    >
-                      Retour
-                    </button>
-                  )}
-                  
-                  <button 
-                    onClick={() => {
-                      if (activeTab !== 'guests' && arrivalDate && departureDate) {
-                        setActiveTab('guests');
-                      } else if (activeTab === 'guests') {
-                        setActiveTab(null);
-                      }
-                    }}
-                    disabled={!arrivalDate || (!departureDate && activeTab !== 'guests')}
-                    className={`flex-1 sm:flex-none px-12 py-4 rounded-full font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl
-                      ${(!arrivalDate || !departureDate) ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none' : 'bg-[#233D8C] text-white hover:bg-black hover:scale-[1.02] active:scale-[0.98]'}
-                    `}
+                  <button
+                    onClick={() => setActiveTab(null)}
+                    className="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-full text-slate-400 hover:text-slate-900 transition-colors"
                   >
-                    {activeTab === 'guests' ? 'Vérifier la disponibilité' : 'Suivant'}
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
-              </div>
-            </motion.div>
-          </>
-        )}
+                {/* CONTENT */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar bg-white">
+                  {activeTab !== 'guests' ? (
+                    <div className="relative">
+                      {/* QUICK YEAR SELECTOR */}
+                      <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-50 px-8 py-8 shrink-0 flex items-center justify-center gap-16">
+                        {[2026, 2027, 2028].map((y) => (
+                          <button
+                            key={y}
+                            onClick={() => {
+                              const target = new Date(y, y === 2026 ? 4 : 0, 1);
+                              setViewDate(target);
+                              const container = document.querySelector('.custom-scrollbar');
+                              if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className={`text-sm font-black uppercase tracking-[0.4em] transition-all ${viewDate.getFullYear() === y ? 'text-[#233D8C] scale-110' : 'text-slate-300 hover:text-slate-500'}`}
+                          >
+                            {y}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="p-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+                          {[0, 1, 2, 3, 4, 5].map((offset) => {
+                            const monthDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1);
+                            const monthName = monthDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                            const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate();
+                            const startDay = (new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).getDay() + 6) % 7;
+
+                            return (
+                              <div key={offset} className="space-y-8">
+                                <h4 className="text-xl font-serif text-slate-900 capitalize text-center mb-6">{monthName}</h4>
+                                <div className="grid grid-cols-7 gap-2 text-center text-[10px] font-black text-slate-300 mb-4">
+                                  {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, idx) => <div key={idx}>{d}</div>)}
+                                </div>
+                                <div className="grid grid-cols-7 gap-y-1">
+                                  {[...Array(startDay)].map((_, i) => <div key={`empty-${i}`} />)}
+                                  {[...Array(daysInMonth)].map((_, i) => {
+                                    const day = i + 1;
+                                    const date = new Date(monthDate.getFullYear(), monthDate.getMonth(), day);
+                                    const isArrival = arrivalDate?.toDateString() === date.toDateString();
+                                    const isDeparture = departureDate?.toDateString() === date.toDateString();
+                                    const isSelected = isArrival || isDeparture;
+                                    const effectiveDeparture = departureDate || (activeTab === "departure" ? hoveredDate : null);
+                                    const isInRange = arrivalDate && effectiveDeparture && (
+                                      (date > arrivalDate && date < effectiveDeparture) ||
+                                      (date < arrivalDate && date > effectiveDeparture)
+                                    );
+
+                                    return (
+                                      <button
+                                        key={i}
+                                        onMouseEnter={() => setHoveredDate(date)}
+                                        onClick={() => {
+                                          if (!arrivalDate || (arrivalDate && departureDate)) {
+                                            setArrivalDate(date);
+                                            setArrivalInput(date.toLocaleDateString('fr-FR'));
+                                            setDepartureDate(null);
+                                            setDepartureInput("");
+                                            setActiveTab("departure");
+                                          } else if (date.getTime() === arrivalDate.getTime()) {
+                                            setArrivalDate(null);
+                                            setArrivalInput("");
+                                          } else if (date < arrivalDate) {
+                                            setArrivalDate(date);
+                                            setArrivalInput(date.toLocaleDateString('fr-FR'));
+                                          } else {
+                                            setDepartureDate(date);
+                                            setDepartureInput(date.toLocaleDateString('fr-FR'));
+                                            setActiveTab("guests");
+                                          }
+                                        }}
+                                        className={`relative h-12 w-full text-sm transition-all flex items-center justify-center group ${isSelected ? 'text-white z-20' : 'text-slate-700 hover:bg-slate-50 rounded-full'} ${isInRange ? 'text-[#233D8C]' : ''}`}
+                                      >
+                                        {isInRange && <div className="absolute inset-y-1 left-0 right-0 bg-[#233D8C]/5 z-0" />}
+                                        {isSelected && <motion.div layoutId="selection-zen" className="absolute inset-1 bg-[#233D8C] rounded-full z-10 shadow-lg shadow-blue-900/20" />}
+                                        {isArrival && effectiveDeparture && date < effectiveDeparture && <div className="absolute inset-y-1 left-1/2 right-0 bg-[#233D8C]/5 -z-10" />}
+                                        {isDeparture && arrivalDate && date > arrivalDate && <div className="absolute inset-y-1 left-0 right-1/2 bg-[#233D8C]/5 -z-10" />}
+                                        <span className="relative z-30 font-medium">{day}</span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-12 max-w-lg mx-auto w-full space-y-12">
+                      {[
+                        { id: 'adults', label: 'Adultes', sub: '13 ans et plus', count: adults, setter: setAdults, min: 1 },
+                        { id: 'children', label: 'Enfants', sub: 'De 2 à 12 ans', count: children, setter: setChildren, min: 0 },
+                        { id: 'infants', label: 'Bébés', sub: 'Moins de 2 ans', count: infants, setter: setInfants, min: 0 }
+                      ].map((cat) => (
+                        <div key={cat.id} className="flex items-center justify-between">
+                          <div>
+                            <span className="block text-base font-serif text-slate-900">{cat.label}</span>
+                            <span className="text-[10px] text-slate-400 uppercase tracking-widest">{cat.sub}</span>
+                          </div>
+                          <div className="flex items-center gap-8">
+                            <button
+                              onClick={() => cat.setter(Math.max(cat.min, cat.count - 1))}
+                              className="w-12 h-12 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-[#233D8C] hover:text-white hover:border-[#233D8C] transition-all"
+                            >
+                              <span className="text-xl font-light">-</span>
+                            </button>
+                            <span className="text-xl font-serif w-6 text-center">{cat.count}</span>
+                            <button
+                              onClick={() => cat.setter(cat.count + 1)}
+                              className="w-12 h-12 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 hover:bg-[#233D8C] hover:text-white hover:border-[#233D8C] transition-all"
+                            >
+                              <span className="text-xl font-light">+</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* FOOTER ACTION BAR */}
+                <div className="p-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center gap-6 shrink-0">
+                  <div className="flex-1 hidden sm:block">
+                    <div className="flex items-center gap-4 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span className="text-slate-900">{arrivalDate ? arrivalDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : 'Arrivée'}</span>
+                      </div>
+                      <div className="w-4 h-[1px] bg-slate-200" />
+                      <div className="flex items-center gap-2">
+                        <span className="text-slate-900">{departureDate ? departureDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : 'Départ'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 w-full sm:w-auto">
+                    {activeTab === 'guests' && (
+                      <button
+                        onClick={() => setActiveTab('arrival')}
+                        className="px-6 py-4 rounded-full border border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-white transition-colors"
+                      >
+                        Retour
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        if (activeTab !== 'guests' && arrivalDate && departureDate) {
+                          setActiveTab('guests');
+                        } else if (activeTab === 'guests') {
+                          setActiveTab(null);
+                        }
+                      }}
+                      disabled={!arrivalDate || (!departureDate && activeTab !== 'guests')}
+                      className={`flex-1 sm:flex-none px-12 py-4 rounded-full font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl
+                      ${(!arrivalDate || !departureDate) ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none' : 'bg-[#233D8C] text-white hover:bg-black hover:scale-[1.02] active:scale-[0.98]'}
+                    `}
+                    >
+                      {activeTab === 'guests' ? 'Vérifier la disponibilité' : 'Suivant'}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
         </AnimatePresence>
       </div>
       {/* 10. STICKY MOBILE BOOKING BAR */}

@@ -2,145 +2,278 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, Users, MapPin, Search, ArrowRight, CheckCircle2, Star } from "lucide-react";
+import { Calendar, Users, MapPin, Search, ArrowRight, CheckCircle2, Star, X, Info } from "lucide-react";
+import { APARTMENTS, Apartment } from "@/data/apartments";
 
-// Mock Data pour les appartements (Vitrine des 14)
-const APARTMENTS = [
-  { id: "suite-royale", name: "Suite Royale", capacity: 2, size: 45, price: 150, available: true, img: "/living.png", type: "Suite Signature" },
-  { id: "loft-saphir", name: "Loft Saphir", capacity: 4, size: 85, price: 250, available: true, img: "/room.png", type: "Loft 2 Chambres" },
-  { id: "penthouse-diamant", name: "Penthouse Diamant", capacity: 6, size: 150, price: 450, available: false, img: "/hero.png", type: "Penthouse" },
-  { id: "suite-emeraude", name: "Suite Émeraude", capacity: 2, size: 50, price: 135, available: true, img: "/exterior.png", type: "Suite Deluxe" },
-  { id: "villa-rubis", name: "Villa Rubis", capacity: 8, size: 200, price: 600, available: true, img: "/living.png", type: "Villa Privée" },
-  { id: "studio-nacre", name: "Studio Nacre", capacity: 2, size: 35, price: 90, available: true, img: "/room.png", type: "Studio Premium" },
-];
+// Simple mock availability logic without a database
+// This function returns true if the apartment is considered "available" for the given dates
+// For the demo, we'll make it deterministic based on the ID and the month
+const checkMockAvailability = (id: string, arrival: Date | null, departure: Date | null) => {
+  if (!arrival || !departure) return true;
 
-export default function ApartmentsPage() {
-  const [priceRange, setPriceRange] = useState(500);
+  // We want to show some "booked" apartments to make it realistic
+  // Rules for mock:
+  // 1. Suite Royale is always available (premium experience)
+  if (id === "suite-royale") return true;
+
+  // 2. Others are booked if they have '3' in their ID and it's a weekend (Sat/Sun)
+  const isWeekend = arrival.getDay() === 0 || arrival.getDay() === 6 || departure.getDay() === 0 || departure.getDay() === 6;
+  if (id.includes("3") && isWeekend) return false;
+
+  // 3. Some specific IDs are booked in May 2026 (the view date in the app)
+  if (arrival.getMonth() === 4 && arrival.getFullYear() === 2026) {
+    const bookedIds = ["suite-ivoire", "suite-ebene", "suite-topaze"];
+    if (bookedIds.includes(id)) return false;
+  }
+
+  return true;
+};
+
+function ApartmentsContent() {
+  const searchParams = useSearchParams();
+
+  // State from URL or defaults
+  const [arrival, setArrival] = useState<Date | null>(null);
+  const [departure, setDeparture] = useState<Date | null>(null);
+  const [adults, setAdults] = useState(2);
+  const [children, setChildren] = useState(0);
+
+  const [priceRange, setPriceRange] = useState(300000); // FCFA
   const [capacity, setCapacity] = useState("Tous");
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
-  const filteredApartments = APARTMENTS.filter(a => a.price <= priceRange);
+  useEffect(() => {
+    const arr = searchParams.get("arrival");
+    const dep = searchParams.get("departure");
+    const ad = searchParams.get("adults");
+    const ch = searchParams.get("children");
+    const type = searchParams.get("type");
+
+    if (arr) setArrival(new Date(arr));
+    if (dep) setDeparture(new Date(dep));
+    if (ad) setAdults(parseInt(ad));
+    if (ch) setChildren(parseInt(ch));
+    if (type) setTypeFilter(type);
+  }, [searchParams]);
+
+  const totalGuests = adults + children;
+
+  const filteredApartments = APARTMENTS.filter(apt => {
+    // 1. Price check
+    if (apt.price > priceRange) return false;
+
+    // 2. Capacity check
+    if (totalGuests > 0 && apt.capacity < totalGuests) return false;
+
+    // 3. Type Filter
+    if (typeFilter && apt.type !== typeFilter) return false;
+
+    // 4. User Filter Capacity (Dropdown)
+    if (capacity !== "Tous") {
+      if (capacity === "1-2" && apt.capacity > 2) return false;
+      if (capacity === "3-4" && (apt.capacity < 3 || apt.capacity > 4)) return false;
+      if (capacity === "5+" && apt.capacity < 5) return false;
+    }
+
+    return true;
+  });
+
+  // Sort by availability first
+  const sortedApartments = [...filteredApartments].sort((a, b) => {
+    const aAvail = checkMockAvailability(a.id, arrival, departure);
+    const bAvail = checkMockAvailability(b.id, arrival, departure);
+    if (aAvail && !bAvail) return -1;
+    if (!aAvail && bAvail) return 1;
+    return 0;
+  });
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-32 pb-24">
+    <div className="min-h-screen bg-white pt-32 pb-24">
       {/* HEADER SECTION */}
-      <div className="max-w-7xl mx-auto px-6 md:px-16 mb-16 text-center">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto">
+      <div className="max-w-7xl mx-auto px-6 md:px-16 mb-16">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">Notre Collection</span>
-          <h1 className="text-5xl md:text-6xl font-serif font-light text-slate-900 mb-6">Trouvez l'appartement parfait pour votre séjour.</h1>
-          <p className="text-slate-500 font-light text-lg">14 espaces d'exception conçus pour votre confort absolu à Cotonou.</p>
+          <h1 className="text-5xl md:text-7xl font-serif font-light text-slate-900 mb-6 leading-tight">
+            Vivez l'exceptionnel <br /><span className="italic">à Cotonou.</span>
+          </h1>
+          <p className="text-slate-500 font-light text-lg max-w-xl">
+            {arrival && departure
+              ? `Disponibilités pour votre séjour du ${arrival.toLocaleDateString('fr-FR')} au ${departure.toLocaleDateString('fr-FR')}.`
+              : "Parcourez nos 14 résidences de prestige et trouvez votre prochain pied-à-terre."}
+          </p>
         </motion.div>
       </div>
 
-      {/* FILTER BAR (LUXURY) */}
-      <div className="max-w-7xl mx-auto px-6 md:px-16 mb-16 relative z-20">
-        <motion.div 
+      {/* SEARCH & FILTER BAR */}
+      <div className="max-w-7xl mx-auto px-6 md:px-16 mb-20 sticky top-24 z-40">
+        <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="bg-white p-6 md:p-8 rounded-sm shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col md:flex-row items-center gap-8"
+          className="bg-white/80 backdrop-blur-xl p-4 md:p-6 rounded-2xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col lg:flex-row items-center gap-6"
         >
-          
-          {/* Dates */}
-          <div className="flex-1 w-full">
-            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Dates du séjour</label>
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-2">
-              <Calendar className="w-4 h-4 text-[#233D8C]" />
-              <input type="text" placeholder="Arrivée - Départ" className="w-full text-sm font-serif italic outline-none bg-transparent placeholder:text-slate-300 text-slate-900" readOnly />
+          {/* Summary Info */}
+          <div className="flex flex-wrap items-center gap-8 flex-1 w-full px-4">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Période</span>
+              <div className="flex items-center gap-2 text-slate-900 font-serif italic">
+                <Calendar className="w-3.5 h-3.5 text-[#233D8C]" />
+                <span>{arrival ? arrival.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : 'Choisir'} — {departure ? departure.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : 'Choisir'}</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Voyageurs</span>
+              <div className="flex items-center gap-2 text-slate-900 font-serif italic">
+                <Users className="w-3.5 h-3.5 text-[#233D8C]" />
+                <span>{totalGuests} Personne{totalGuests > 1 ? 's' : ''}</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col flex-1 min-w-[200px]">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Prix max / nuit</span>
+                <span className="text-[10px] font-black text-[#233D8C]">{priceRange.toLocaleString()} FCFA</span>
+              </div>
+              <input
+                type="range" min="50000" max="500000" step="10000"
+                value={priceRange}
+                onChange={(e) => setPriceRange(Number(e.target.value))}
+                className="w-full h-1 bg-slate-100 rounded-full appearance-none cursor-pointer accent-[#233D8C]"
+              />
             </div>
           </div>
 
-          {/* Capacité */}
-          <div className="flex-1 w-full">
-            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 block">Capacité</label>
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-2">
-              <Users className="w-4 h-4 text-[#233D8C]" />
-              <select className="w-full text-sm font-serif italic outline-none bg-transparent cursor-pointer text-slate-900" value={capacity} onChange={(e) => setCapacity(e.target.value)}>
-                <option value="Tous">Tous les voyageurs</option>
-                <option value="1-2">1 à 2 personnes</option>
-                <option value="3-4">3 à 4 personnes</option>
-                <option value="5+">5 personnes et +</option>
-              </select>
-            </div>
-          </div>
+          <div className="h-12 w-px bg-slate-100 hidden lg:block" />
 
-          {/* Prix Max */}
-          <div className="flex-1 w-full">
-            <div className="flex justify-between items-end mb-2">
-              <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 block">Prix max</label>
-              <span className="text-xs font-bold text-[#233D8C]">{priceRange}€</span>
-            </div>
-            <input 
-              type="range" min="50" max="1000" step="50" 
-              value={priceRange} 
-              onChange={(e) => setPriceRange(Number(e.target.value))} 
-              className="w-full accent-[#233D8C] h-1 bg-slate-200 rounded-full appearance-none cursor-pointer" 
-            />
-          </div>
-
-          {/* Bouton */}
-          <button className="w-full md:w-auto bg-[#233D8C] text-white px-10 py-5 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] hover:bg-black transition-colors shrink-0 flex items-center justify-center gap-3">
-            <Search className="w-4 h-4" /> Rechercher
-          </button>
+          <Link href="/" className="px-8 py-4 bg-slate-50 hover:bg-slate-100 text-[#233D8C] rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">
+            Modifier la recherche
+          </Link>
         </motion.div>
       </div>
 
-      {/* APARTMENTS GRID (AIRBNB LUXE STYLE) */}
+      {/* APARTMENTS GRID */}
       <div className="max-w-7xl mx-auto px-6 md:px-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-            {filteredApartments.map((apt, i) => (
-              <motion.div 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
+          {sortedApartments.map((apt, i) => {
+            const isAvailable = checkMockAvailability(apt.id, arrival, departure);
+            return (
+              <motion.div
                 key={apt.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: i * 0.05 }}
-                className="group flex flex-col cursor-pointer"
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.05 }}
+                className={`group flex flex-col ${!isAvailable ? 'opacity-80' : ''}`}
               >
                 {/* IMAGE BLOCK */}
-                <Link href={`/apartments/${apt.id}`} className="block relative w-full aspect-[4/5] overflow-hidden rounded-xl mb-5">
-                  <Image src={apt.img} alt={apt.name} fill className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
-                  
-                  {/* BADGE DISPO */}
-                  <div className="absolute top-4 left-4 z-10">
-                    {apt.available ? (
-                      <span className="bg-white/90 backdrop-blur-sm text-slate-900 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm">
-                        Disponible
-                      </span>
-                    ) : (
-                      <span className="bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm">
-                        Indisponible
-                      </span>
-                    )}
-                  </div>
-                </Link>
+                <Link href={`/apartments/${apt.id}`} className="block relative aspect-[4/5] overflow-hidden rounded-2xl mb-6 shadow-sm">
+                  <Image src={apt.image} alt={apt.name} fill className={`object-cover transition-transform duration-1000 ease-out ${isAvailable ? 'group-hover:scale-110' : 'grayscale-[0.5]'}`} />
 
-                {/* CONTENT BLOCK (MINIMALIST) */}
-                <Link href={`/apartments/${apt.id}`} className="flex flex-col">
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className="text-lg font-serif font-medium text-slate-900">{apt.name}</h3>
-                    <div className="flex items-center gap-1 text-sm text-slate-700">
-                      <Star className="w-3.5 h-3.5 fill-current" />
-                      <span>4.9</span>
+                  {/* OVERLAYS */}
+                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
+
+                  <div className="absolute top-5 left-5 z-10 flex flex-col gap-2">
+                    {isAvailable ? (
+                      <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-white/20">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Disponible</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg">
+                        <X className="w-3 h-3 text-white/60" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white">Réservé</span>
+                      </div>
+                    )}
+
+                    <div className="bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[10px] font-bold text-white uppercase tracking-widest">{apt.type}</span>
                     </div>
                   </div>
-                  
-                  <p className="text-slate-500 text-sm font-light mb-1">{apt.size} m² • {apt.capacity} voyageurs</p>
-                  
-                  <div className="mt-2">
-                    <span className="text-base font-medium text-slate-900">{apt.price}€</span>
-                    <span className="text-slate-500 text-sm font-light"> / nuit</span>
-                  </div>
+
+                  {!isAvailable && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/10 backdrop-blur-[2px]">
+                      <div className="px-6 py-3 bg-white/95 rounded-sm shadow-2xl border border-slate-100">
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Complet sur vos dates</span>
+                      </div>
+                    </div>
+                  )}
                 </Link>
+
+                {/* CONTENT */}
+                <div className="flex flex-col flex-1">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="text-2xl font-serif text-slate-900 mb-1 group-hover:text-[#233D8C] transition-colors">{apt.name}</h3>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{apt.collection}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 rounded-lg">
+                      <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                      <span className="text-xs font-black text-slate-900 leading-none">4.9</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 text-slate-500 text-sm font-light mb-6">
+                    <span className="flex items-center gap-1.5"><Layout className="w-4 h-4 text-slate-300" /> 28/{apt.sqm} m²</span>
+                    <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-slate-300" /> {apt.capacity} Voyageurs</span>
+                  </div>
+
+                  <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">À partir de</span>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xl font-medium text-slate-900">{apt.price.toLocaleString()}</span>
+                        <span className="text-xs text-slate-500 font-light italic">FCFA / nuit</span>
+                      </div>
+                    </div>
+
+                    <Link
+                      href={`/apartments/${apt.id}`}
+                      className={`h-12 px-6 flex items-center gap-3 rounded-xl transition-all font-black text-[9px] uppercase tracking-widest
+                        ${isAvailable
+                          ? 'bg-slate-900 text-white hover:bg-[#233D8C] shadow-lg shadow-slate-200'
+                          : 'bg-slate-50 text-slate-300 cursor-not-allowed'}
+                      `}
+                    >
+                      {isAvailable ? (
+                        <>Voir l'Offre <ArrowRight className="w-3.5 h-3.5" /></>
+                      ) : (
+                        <>Indisponible</>
+                      )}
+                    </Link>
+                  </div>
+                </div>
               </motion.div>
-            ))}
+            );
+          })}
         </div>
-        
-        {filteredApartments.length === 0 && (
-          <div className="text-center py-20 text-slate-500 font-light">
-            Aucun appartement ne correspond à vos critères de prix.
+
+        {sortedApartments.length === 0 && (
+          <div className="text-center py-40 border-2 border-dashed border-slate-100 rounded-3xl">
+            <Info className="w-12 h-12 text-slate-200 mx-auto mb-6" />
+            <h3 className="text-2xl font-serif text-slate-900 mb-2">Aucun résultat trouvé</h3>
+            <p className="text-slate-500 font-light max-w-sm mx-auto">Essayez d'ajuster vos critères de prix ou de capacité pour découvrir d'autres options.</p>
+            <button onClick={() => setPriceRange(500000)} className="mt-8 text-[#233D8C] text-[10px] font-black uppercase tracking-widest hover:underline">Réinitialiser les filtres</button>
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+const Layout = ({ className, children }: { className?: string; children?: any }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="18" height="18" x="3" y="3" rx="2" />
+    <path d="M3 9h18" />
+    <path d="M9 21V9" />
+  </svg>
+);
+
+export default function ApartmentsPage() {
+  return (
+    <Suspense fallback={<div className="h-screen flex items-center justify-center text-slate-400 font-serif italic text-xl">Charmantes résidences en cours de chargement...</div>}>
+      <ApartmentsContent />
+    </Suspense>
   );
 }

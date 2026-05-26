@@ -2,129 +2,257 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, use } from "react";
+import { useState, use, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Calendar, Users, MapPin, Wifi, Wind, Tv, Coffee, Bath, Star, ChevronLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Calendar, Users, MapPin, Wifi, Wind, Tv, Coffee, Bath, Star, ChevronLeft, ArrowRight, CheckCircle2, X, Shield, Info, Smartphone } from "lucide-react";
+import { APARTMENTS, Apartment } from "@/data/apartments";
 
-export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params);
-  const name = resolvedParams.id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+function ApartmentDetailContent({ id }: { id: string }) {
+  const searchParams = useSearchParams();
+  const apartment = APARTMENTS.find(a => a.id === id);
+
+  const [arrival, setArrival] = useState<Date | null>(null);
+  const [departure, setDeparture] = useState<Date | null>(null);
+  const [adults, setAdults] = useState(2);
+
+  useEffect(() => {
+    const arr = searchParams.get("arrival");
+    const dep = searchParams.get("departure");
+    const ad = searchParams.get("adults");
+
+    if (arr) setArrival(new Date(arr));
+    if (dep) setDeparture(new Date(dep));
+    if (ad) setAdults(parseInt(ad));
+  }, [searchParams]);
+
+  if (!apartment) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-white px-6 text-center">
+        <h1 className="text-4xl font-serif mb-4">Appartement introuvable</h1>
+        <p className="text-slate-500 mb-8">Nous n'avons pas réussi à trouver cette résidence dans notre collection.</p>
+        <Link href="/apartments" className="text-[#233D8C] font-black text-xs uppercase tracking-widest border-b-2 border-[#233D8C] pb-1">Retour à la liste</Link>
+      </div>
+    );
+  }
+
+  // Mock availability check (must match the one in ApartmentsPage)
+  const isAvailable = (id: string, arrival: Date | null, departure: Date | null) => {
+    if (!arrival || !departure) return true;
+    if (id === "suite-royale") return true;
+    const isWeekend = arrival.getDay() === 0 || arrival.getDay() === 6 || departure.getDay() === 0 || departure.getDay() === 6;
+    if (id.includes("3") && isWeekend) return false;
+    if (arrival.getMonth() === 4 && arrival.getFullYear() === 2026) {
+      const bookedIds = ["suite-ivoire", "suite-ebene", "suite-topaze"];
+      if (bookedIds.includes(id)) return false;
+    }
+    return true;
+  };
+
+  const available = isAvailable(apartment.id, arrival, departure);
 
   return (
-    <div className="min-h-screen bg-slate-50 selection:bg-[#233D8C] selection:text-white">
-      {/* 1. HERO GALLERY (LUXURY STYLE) */}
-      <section className="relative pt-24 pb-8 md:pt-32 md:pb-12 bg-white">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <Link href="/apartments" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#233D8C] transition-colors mb-8">
+    <div className="min-h-screen bg-white selection:bg-[#233D8C] selection:text-white">
+      {/* 1. HERO GALLERY */}
+      <section className="relative pt-32 pb-12">
+        <div className="max-w-7xl mx-auto px-6 md:px-16">
+          <Link href="/apartments" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#233D8C] transition-colors mb-12">
             <ChevronLeft className="w-4 h-4" /> Retour à la collection
           </Link>
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-10">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">Suite Signature</span>
-              <h1 className="text-5xl md:text-7xl font-serif font-light text-slate-900 leading-tight">{name}</h1>
+
+          <div className="flex flex-col md:flex-row justify-between items-end gap-10 mb-12">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C]">{apartment.type}</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">{apartment.collection}</span>
+              </div>
+              <h1 className="text-5xl md:text-8xl font-serif font-light text-slate-900 leading-[0.9] tracking-tighter">{apartment.name}</h1>
             </div>
             <div className="text-right">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-1">À partir de</span>
-              <div className="text-3xl font-serif text-slate-900">250€ <span className="text-sm text-slate-400 font-sans italic">/ nuit</span></div>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">Prix par nuit</span>
+              <div className="text-4xl font-serif text-slate-900 leading-none">{apartment.price.toLocaleString()} <span className="text-xs text-slate-400 font-sans italic align-top">FCFA</span></div>
             </div>
           </div>
 
-          <div className="grid grid-cols-4 grid-rows-2 gap-4 h-[50vh] md:h-[70vh]">
-            <div className="col-span-4 md:col-span-2 row-span-2 relative rounded-sm overflow-hidden group">
-              <Image src="/living.png" alt="Main view" fill className="object-cover group-hover:scale-105 transition-transform duration-1000" />
+          <div className="grid grid-cols-12 gap-4 h-[60vh] md:h-[75vh]">
+            <div className="col-span-12 md:col-span-8 relative rounded-2xl overflow-hidden group shadow-2xl">
+              <Image src={apartment.image} alt={apartment.name} fill className="object-cover group-hover:scale-105 transition-transform duration-1000" priority />
+              <div className="absolute inset-0 bg-black/10" />
             </div>
-            <div className="col-span-2 md:col-span-1 row-span-1 relative rounded-sm overflow-hidden group hidden md:block">
-              <Image src="/room.png" alt="Bedroom view" fill className="object-cover group-hover:scale-105 transition-transform duration-1000" />
-            </div>
-            <div className="col-span-2 md:col-span-1 row-span-1 relative rounded-sm overflow-hidden group hidden md:block">
-              <Image src="/exterior.png" alt="Bathroom view" fill className="object-cover group-hover:scale-105 transition-transform duration-1000" />
-            </div>
-            <div className="col-span-4 md:col-span-2 row-span-1 relative rounded-sm overflow-hidden group hidden md:block">
-              <Image src="/hero.png" alt="Kitchen view" fill className="object-cover group-hover:scale-105 transition-transform duration-1000" />
-              <button className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-md px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-white transition-colors shadow-xl">
-                Voir les 12 photos
-              </button>
+            <div className="col-span-4 hidden md:flex flex-col gap-4">
+              <div className="flex-1 relative rounded-2xl overflow-hidden group shadow-lg">
+                <Image src="/room.png" alt="Detail 1" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+              </div>
+              <div className="flex-1 relative rounded-2xl overflow-hidden group shadow-lg">
+                <Image src="/exterior.png" alt="Detail 2" fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. CONTENT & STICKY WIDGET */}
-      <section className="max-w-[1400px] mx-auto px-6 py-16 md:py-24">
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 relative">
-          {/* MAIN CONTENT (LEFT) */}
-          <div className="flex-1">
-            <div className="flex flex-wrap gap-6 border-b border-slate-200 pb-8 mb-12">
-              <div className="flex items-center gap-2"><Users className="w-5 h-5 text-[#233D8C]" /><span className="font-serif text-lg">4 Voyageurs</span></div>
-              <div className="w-px h-6 bg-slate-200" />
-              <div className="flex items-center gap-2"><MapPin className="w-5 h-5 text-[#233D8C]" /><span className="font-serif text-lg">85 m²</span></div>
-              <div className="w-px h-6 bg-slate-200" />
-              <div className="flex items-center gap-2"><span className="font-serif text-lg">Étage 2</span></div>
+      {/* 2. MAIN CONTENT & STICKY BOOKING */}
+      <section className="max-w-7xl mx-auto px-6 md:px-16 py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
+
+          {/* DETAILED INFO (LEFT) */}
+          <div className="lg:col-span-7">
+            <div className="flex flex-wrap gap-10 border-b border-slate-50 pb-12 mb-12">
+              <div className="flex flex-col gap-1">
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Surface</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-[#233D8C]"><Smartphone className="w-5 h-5 rotate-90" /></div>
+                  <span className="font-serif text-2xl">{apartment.sqm} m²</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Capacité</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-[#233D8C]"><Users className="w-5 h-5" /></div>
+                  <span className="font-serif text-2xl">{apartment.capacity} Voyageurs</span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Note Globale</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-amber-500"><Star className="w-5 h-5 fill-current" /></div>
+                  <span className="font-serif text-2xl">4.9/5</span>
+                </div>
+              </div>
             </div>
 
-            <div className="mb-16">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-6">L'Histoire du lieu</h2>
-              <p className="text-slate-600 text-lg leading-relaxed font-light mb-6">Le {name} redéfinit le concept du luxe urbain. Conçu avec des matériaux nobles et baigné de lumière naturelle, cet espace ouvert offre une fluidité de mouvement exceptionnelle.</p>
-              <p className="text-slate-600 text-lg leading-relaxed font-light">La décoration fusionne subtilement l'artisanat local et le minimalisme contemporain.</p>
-            </div>
+            <div className="space-y-16">
+              <div>
+                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-8">L'Expérience</h2>
+                <p className="text-slate-600 text-xl leading-relaxed font-light mb-8 font-serif italic">{apartment.desc}</p>
+                <div className="h-px w-20 bg-[#233D8C]/20 mb-8" />
+                <p className="text-slate-500 text-lg leading-relaxed font-light mb-10">{apartment.story}</p>
 
-            <div className="mb-16">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-8">Équipements Premium</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-4">
-                {[
-                  { icon: <Wifi />, label: "Wi-Fi Haut Débit" },
-                  { icon: <Wind />, label: "Climatisation" },
-                  { icon: <Tv />, label: "Smart TV 4K" },
-                  { icon: <Coffee />, label: "Machine Nespresso" },
-                  { icon: <Bath />, label: "Produits d'accueil" },
-                  { icon: <CheckCircle2 />, label: "Ménage quotidien" }
-                ].map((eq, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-[#233D8C]">{eq.icon}</div>
-                    <span className="text-sm font-medium text-slate-700">{eq.label}</span>
+                <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-6 flex items-center gap-3">
+                  <Info className="w-4 h-4 text-[#233D8C]" /> Points Forts
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {apartment.advantages.map((adv, i) => (
+                    <div key={i} className="flex items-start gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <span className="text-sm font-medium text-slate-700">{adv}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-12">Détails de la Résidence</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                  <div>
+                    <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-6">Equipements Premium</h4>
+                    <div className="space-y-4">
+                      {apartment.features.map((feat, i) => (
+                        <div key={i} className="flex items-center gap-4 group">
+                          <div className="w-8 h-8 rounded-full border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-[#233D8C] group-hover:bg-[#233D8C]/5 transition-colors">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="text-sm font-light text-slate-600 capitalize">{feat}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                  <div>
+                    <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-6">L'Espace en détail</h4>
+                    <div className="space-y-6">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-900 block mb-2">Espace Nuit</span>
+                        <p className="text-xs text-slate-400 leading-loose">{apartment.composition.sleeping.join(" • ")}</p>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-900 block mb-2">Technologie</span>
+                        <p className="text-xs text-slate-400 leading-loose">{apartment.composition.tech.join(" • ")}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* STICKY WIDGET (RIGHT) */}
-          <div className="w-full lg:w-[400px] shrink-0">
-            <div className="sticky top-32 bg-white p-8 rounded-sm shadow-[0_24px_80px_rgba(0,0,0,0.08)] border border-slate-100">
-              <div className="mb-8 pb-8 border-b border-slate-100">
-                <div className="text-3xl font-serif text-slate-900 mb-2">250€ <span className="text-sm font-sans italic text-slate-400">/ nuit</span></div>
-                <div className="flex items-center gap-2 text-sm text-emerald-600 font-medium">
-                  <CheckCircle2 className="w-4 h-4" /> Disponible à vos dates
+          {/* STICKY BOOKING WIDGET (RIGHT) */}
+          <div className="lg:col-span-5 relative">
+            <div className="sticky top-32 bg-white p-10 rounded-3xl shadow-[0_48px_80px_-16px_rgba(0,0,0,0.12)] border border-slate-100 overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#233D8C]" />
+
+              <div className="mb-10 flex justify-between items-start">
+                <div>
+                  <div className="text-4xl font-serif text-slate-900 mb-1">{apartment.price.toLocaleString()} <span className="text-xs font-sans italic text-slate-400 align-top">FCFA</span></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total par nuit</span>
+                </div>
+                {available ? (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[9px] font-black uppercase tracking-widest">Disponible</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-rose-50 text-rose-600 rounded-full">
+                    <X className="w-3 h-3" />
+                    <span className="text-[9px] font-black uppercase tracking-widest">Réservé</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-4 mb-10">
+                <div className="bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-100">
+                  <div className="flex divide-x divide-slate-100">
+                    <div className="flex-1 p-5">
+                      <label className="text-[8px] font-black uppercase tracking-widest text-slate-400 block mb-1">Check-in</label>
+                      <div className="text-sm font-bold text-slate-900">{arrival ? arrival.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Non défini'}</div>
+                    </div>
+                    <div className="flex-1 p-5">
+                      <label className="text-[8px] font-black uppercase tracking-widest text-slate-400 block mb-1">Check-out</label>
+                      <div className="text-sm font-bold text-slate-900">{departure ? departure.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Non défini'}</div>
+                    </div>
+                  </div>
+                  <div className="p-5 flex justify-between items-center">
+                    <div>
+                      <label className="text-[8px] font-black uppercase tracking-widest text-slate-400 block mb-1">Voyageurs</label>
+                      <div className="text-sm font-bold text-slate-900">{adults} Adulte{adults > 1 ? 's' : ''}</div>
+                    </div>
+                    <Users className="w-4 h-4 text-slate-300" />
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4 mb-8">
-                <div className="border border-slate-200 rounded-sm flex flex-col">
-                  <div className="flex border-b border-slate-200">
-                    <div className="flex-1 p-4 border-r border-slate-200">
-                      <label className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-1">Arrivée</label>
-                      <div className="text-sm font-serif italic">14 Mai 2026</div>
-                    </div>
-                    <div className="flex-1 p-4">
-                      <label className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-1">Départ</label>
-                      <div className="text-sm font-serif italic">18 Mai 2026</div>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <label className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-1">Voyageurs</label>
-                    <div className="text-sm font-serif italic">2 Personnes</div>
-                  </div>
+              {available ? (
+                <button className="w-full bg-[#233D8C] text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-black transition-all shadow-xl shadow-blue-900/20 active:scale-[0.98]">
+                  Réserver cet appartement
+                </button>
+              ) : (
+                <div className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-4">
+                  <Info className="w-5 h-5 text-rose-500 shrink-0" />
+                  <p className="text-xs text-rose-800 leading-relaxed font-medium">Cet appartement est déjà réservé pour la période sélectionnée. <Link href="/apartments" className="underline font-black">Voir d'autres dates</Link></p>
                 </div>
-              </div>
+              )}
 
-              <button className="w-full bg-[#233D8C] text-white py-5 rounded-sm text-[10px] font-black uppercase tracking-[0.3em] hover:bg-black transition-all shadow-xl hover:shadow-2xl">
-                Réserver cet appartement
-              </button>
-              <p className="text-center text-xs text-slate-400 mt-4 font-light">Aucun montant ne sera débité (paiement sur place)</p>
+              <div className="mt-8 pt-8 border-t border-slate-50 space-y-4">
+                <div className="flex items-center gap-3 text-slate-400">
+                  <Shield className="w-4 h-4" />
+                  <span className="text-[9px] font-bold uppercase tracking-widest">Paiement sécurisé sur place</span>
+                </div>
+                <p className="text-[10px] text-slate-400 font-light leading-relaxed">En cliquant sur "Réserver", vous initiez une demande de réservation sans prépaiement immédiat. Notre équipe vous contactera pour confirmer les détails.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
     </div>
+  );
+}
+
+export default function ApartmentDetail({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+
+  return (
+    <Suspense fallback={<div className="h-screen flex items-center justify-center text-slate-400 font-serif italic text-xl">L'Espace se prépare...</div>}>
+      <ApartmentDetailContent id={resolvedParams.id} />
+    </Suspense>
   );
 }
