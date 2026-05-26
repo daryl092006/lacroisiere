@@ -3,11 +3,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { 
-  Wifi, 
-  Wind, 
-  Users, 
-  Maximize2, 
+import {
+  Wifi,
+  Wind,
+  Users,
+  Maximize2,
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
@@ -69,16 +69,16 @@ export default function ApartmentTemplate({
     <main className="min-h-screen bg-white">
       {/* 1. CINEMATIC HERO */}
       <section className="relative h-[85vh] w-full overflow-hidden">
-        <motion.div 
+        <motion.div
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.5 }}
           className="absolute inset-0"
         >
-          <Image 
-            src={image || "/hero.png"} 
-            alt={name} 
-            fill 
+          <Image
+            src={image || "/hero.png"}
+            alt={name}
+            fill
             className="object-cover"
             priority
           />
@@ -95,7 +95,7 @@ export default function ApartmentTemplate({
                 <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-2" /> Retour à la collection
               </Link>
               <div className="flex justify-center gap-3 mb-6">
-                {type === "Luxury" && [1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 text-amber-400 fill-current" />)}
+                {type === "Luxury" && [1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 text-amber-400 fill-current" />)}
               </div>
               <h1 className="text-6xl md:text-9xl font-serif font-light italic leading-none">{name}</h1>
               <div className="w-20 h-px bg-white/30 mx-auto mt-12" />
@@ -107,7 +107,7 @@ export default function ApartmentTemplate({
       {/* 2. THE STORY (ASIMMETRIC) */}
       <section className="max-w-7xl mx-auto px-6 md:px-16 py-40">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
-          
+
           <div className="lg:col-span-7 space-y-32">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -170,7 +170,7 @@ export default function ApartmentTemplate({
                       {zone === 'sleeping' ? 'The Sleeping Sanctuary' : zone === 'wellness' ? 'The Wellness Experience' : zone === 'living' ? 'The Living Art' : 'Muted Connectivity'}
                     </h3>
                     <div className="space-y-4">
-                      {items.map((item, i) => (
+                      {items.map((item: string, i) => (
                         <div key={i} className="flex items-center gap-4 text-slate-500 font-light text-sm italic">
                           <div className="w-1 h-1 bg-slate-200 rounded-full" /> {item}
                         </div>
@@ -184,49 +184,49 @@ export default function ApartmentTemplate({
 
           <div className="lg:col-span-5">
             <div className="lg:sticky lg:top-32 space-y-16">
-               <div className="flex justify-between items-center bg-slate-50 p-10 rounded-sm">
-                 <div className="space-y-1">
-                   <span className="block text-[8px] font-black uppercase tracking-widest text-slate-400 text-center">Capacité</span>
-                   <div className="flex items-center gap-3">
-                     <Users className="w-5 h-5 text-[#233D8C]" />
-                     <span className="text-2xl font-serif italic">{capacity} Pers.</span>
-                   </div>
-                 </div>
-                 <div className="w-px h-12 bg-slate-200" />
-                 <div className="space-y-1 text-right">
-                   <span className="block text-[8px] font-black uppercase tracking-widest text-slate-400 text-center">Espace</span>
-                   <div className="flex items-center gap-3 justify-end">
-                     <Maximize2 className="w-5 h-5 text-[#233D8C]" />
-                     <span className="text-2xl font-serif italic">{sqm} m²</span>
-                   </div>
-                 </div>
-               </div>
+              <div className="flex justify-between items-center bg-slate-50 p-10 rounded-sm">
+                <div className="space-y-1">
+                  <span className="block text-[8px] font-black uppercase tracking-widest text-slate-400 text-center">Capacité</span>
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5 text-[#233D8C]" />
+                    <span className="text-2xl font-serif italic">{capacity} Pers.</span>
+                  </div>
+                </div>
+                <div className="w-px h-12 bg-slate-200" />
+                <div className="space-y-1 text-right">
+                  <span className="block text-[8px] font-black uppercase tracking-widest text-slate-400 text-center">Espace</span>
+                  <div className="flex items-center gap-3 justify-end">
+                    <Maximize2 className="w-5 h-5 text-[#233D8C]" />
+                    <span className="text-2xl font-serif italic">{sqm} m²</span>
+                  </div>
+                </div>
+              </div>
 
 
-               <div className="p-1 border border-slate-200 rounded-sm">
-                 <div className="bg-slate-900 text-white p-12 space-y-10">
-                   <div className="flex justify-between items-end border-b border-white/10 pb-10">
-                     <div className="space-y-2">
-                       <span className="block text-[8px] font-black uppercase tracking-widest text-white/40">Tarification Directe</span>
-                       <span className="text-4xl font-serif italic">{price.toLocaleString()} FCFA</span>
-                     </div>
-                     <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2">/ Nuit</span>
-                   </div>
-                   
-                   <button className="group w-full bg-white text-slate-900 py-6 text-[10px] font-black uppercase tracking-[0.4em] transition-all hover:bg-[#233D8C] hover:text-white flex items-center justify-center gap-4">
-                     Réserver mon séjour
-                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
-                   </button>
-                   
-                   <div className="flex items-center justify-center gap-4 text-[9px] text-white/20 uppercase tracking-widest font-black">
-                     <span>Best Price</span>
-                     <div className="w-1 h-1 bg-white/20 rounded-full" />
-                     <span>Free Wi-Fi</span>
-                     <div className="w-1 h-1 bg-white/20 rounded-full" />
-                     <span>No Fees</span>
-                   </div>
-                 </div>
-               </div>
+              <div className="p-1 border border-slate-200 rounded-sm">
+                <div className="bg-slate-900 text-white p-12 space-y-10">
+                  <div className="flex justify-between items-end border-b border-white/10 pb-10">
+                    <div className="space-y-2">
+                      <span className="block text-[8px] font-black uppercase tracking-widest text-white/40">Tarification Directe</span>
+                      <span className="text-4xl font-serif italic">{price.toLocaleString()} FCFA</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2">/ Nuit</span>
+                  </div>
+
+                  <button className="group w-full bg-white text-slate-900 py-6 text-[10px] font-black uppercase tracking-[0.4em] transition-all hover:bg-[#233D8C] hover:text-white flex items-center justify-center gap-4">
+                    Réserver mon séjour
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
+                  </button>
+
+                  <div className="flex items-center justify-center gap-4 text-[9px] text-white/20 uppercase tracking-widest font-black">
+                    <span>Best Price</span>
+                    <div className="w-1 h-1 bg-white/20 rounded-full" />
+                    <span>Free Wi-Fi</span>
+                    <div className="w-1 h-1 bg-white/20 rounded-full" />
+                    <span>No Fees</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
