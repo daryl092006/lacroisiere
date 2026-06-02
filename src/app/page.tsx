@@ -11,8 +11,26 @@ import {
   Quote, CheckCircle2, User, Menu, X, ChevronRight
 } from "lucide-react";
 
+const HERO_IMAGES = [
+  "/media__1780420130272.jpg",
+  "/media__1780420130290.jpg",
+  "/media__1780420130306.jpg",
+  "/media__1780420130420.jpg",
+  "/media__1780420130445.jpg"
+];
+
 export default function Home() {
   const { t, i18n } = useTranslation();
+
+  // Hero Slideshow State
+  const [heroImageIndex, setHeroImageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroImageIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Booking State
   const [arrivalDate, setArrivalDate] = useState<Date | null>(null);
@@ -71,10 +89,29 @@ export default function Home() {
       {/* ⚠️ NE SOUS AUCUN PRÉTEXTE MODIFIER CE BLOC HERO : Les dimensions (h-screen), l'overlay (bg-black/40) et les animations d'introduction sont validés définitivement. */}
       <section className="relative h-screen w-full flex flex-col items-center">
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <motion.div initial={{ scale: 1.15 }} animate={{ scale: 1 }} transition={{ duration: 12 }} className="relative w-full h-full">
-            <Image src="/hero.png" alt="Hero" fill className="object-cover" sizes="100vw" priority />
-            <div className="absolute inset-0 bg-black/40" />
-          </motion.div>
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={heroImageIndex}
+              initial={{ opacity: 0, scale: 1.15 }}
+              animate={{ opacity: 1, scale: 1.05 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                opacity: { duration: 2, ease: "easeInOut" },
+                scale: { duration: 6, ease: "linear" }
+              }}
+              className="absolute inset-0 w-full h-full"
+            >
+              <Image
+                src={HERO_IMAGES[heroImageIndex]}
+                alt={`Hero ${heroImageIndex}`}
+                fill
+                className="object-cover"
+                sizes="100vw"
+                priority
+              />
+            </motion.div>
+          </AnimatePresence>
+          <div className="absolute inset-0 bg-black/40 z-10" />
         </div>
         <div className="relative z-20 text-center text-white px-6 pt-48 md:pt-56">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }}>
