@@ -29,6 +29,12 @@ export interface Apartment {
     living: string[];
     tech: string[];
   };
+  description_short_fr?: string;
+  description_short_en?: string;
+  description_long_fr?: string;
+  description_long_en?: string;
+  story_fr?: string;
+  story_en?: string;
 }
 
 // ---------------------------------------------------------------------------

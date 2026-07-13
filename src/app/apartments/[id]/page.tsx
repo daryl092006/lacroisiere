@@ -11,7 +11,7 @@ import { fetchApartmentBySlug } from "@/lib/apartments";
 import { useTranslation } from "@/i18n/client";
 
 function ApartmentDetailContent({ id }: { id: string }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const searchParams = useSearchParams();
   const [apartment, setApartment] = useState<Apartment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -159,9 +159,17 @@ function ApartmentDetailContent({ id }: { id: string }) {
             <div className="space-y-16">
               <div>
                 <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-8">{t('ApartmentDetail.experience')}</h2>
-                <p className="text-slate-600 text-xl leading-relaxed font-light mb-8 font-serif italic">{apartment.desc}</p>
+                <p className="text-slate-600 text-xl leading-relaxed font-light mb-8 font-serif italic">
+                  {i18n.language === 'en' 
+                    ? (apartment.description_short_en || apartment.description_short_fr || apartment.desc) 
+                    : (apartment.description_short_fr || apartment.desc)}
+                </p>
                 <div className="h-px w-20 bg-[#233D8C]/20 mb-8" />
-                <p className="text-slate-500 text-lg leading-relaxed font-light mb-10">{apartment.story}</p>
+                <p className="text-slate-500 text-lg leading-relaxed font-light mb-10">
+                  {i18n.language === 'en' 
+                    ? (apartment.story_en || apartment.story_fr || apartment.story) 
+                    : (apartment.story_fr || apartment.story)}
+                </p>
 
                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-6 flex items-center gap-3">
                   <Info className="w-4 h-4 text-[#233D8C]" /> {t('ApartmentDetail.highlights')}

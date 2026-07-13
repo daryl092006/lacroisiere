@@ -35,7 +35,7 @@ const checkMockAvailability = (id: string, arrival: Date | null, departure: Date
 };
 
 function ApartmentsContent() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const searchParams = useSearchParams();
 
   // State from URL or defaults
@@ -255,9 +255,15 @@ function ApartmentsContent() {
                       </div>
                     </div>
 
+                    <p className="text-slate-500 font-light text-sm line-clamp-2 mb-4">
+                      {i18n.language === 'en' 
+                        ? (apt.description_short_en || apt.description_short_fr || apt.desc) 
+                        : (apt.description_short_fr || apt.desc)}
+                    </p>
+
                     <div className="flex items-center gap-4 text-slate-500 text-sm font-light mb-6">
                       <span className="flex items-center gap-1.5"><Layout className="w-4 h-4 text-slate-300" /> 28/{apt.sqm} m²</span>
-                      <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-slate-300" /> {apt.capacity} Voyageurs</span>
+                      <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-slate-300" /> {apt.capacity} {t('Apartments.guests')}</span>
                     </div>
 
                     <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">

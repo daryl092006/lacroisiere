@@ -35,7 +35,8 @@ function mapApartmentRow(row: any): Apartment {
     row.apartment_composition.forEach((comp: any) => {
       const zone = comp.zone as 'sleeping' | 'wellness' | 'living' | 'tech';
       if (composition[zone]) {
-        composition[zone].push(comp.item_fr);
+        // Fallback translation if item_en is empty
+        composition[zone].push(comp.item_fr || '');
       }
     });
   }
@@ -64,6 +65,13 @@ function mapApartmentRow(row: any): Apartment {
     story: row.story_fr || '',
     advantages,
     composition,
+    // Add raw DB translatable fields for language selector helper in page component
+    description_short_fr: row.description_short_fr || '',
+    description_short_en: row.description_short_en || '',
+    description_long_fr: row.description_long_fr || '',
+    description_long_en: row.description_long_en || '',
+    story_fr: row.story_fr || '',
+    story_en: row.story_en || '',
   };
 }
 
