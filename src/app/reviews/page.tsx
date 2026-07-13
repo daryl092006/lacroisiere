@@ -3,7 +3,11 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Star, Quote, ArrowRight, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { useTranslation } from "@/i18n/client";
 
+// Fallback data (stays in French — real guest reviews from Supabase)
 const REVIEWS = [
   {
     id: 1,
@@ -67,10 +71,8 @@ const REVIEWS = [
   }
 ];
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
-
 export default function ReviewsPage() {
+  const { t } = useTranslation();
   const [reviewsList, setReviewsList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -124,51 +126,51 @@ export default function ReviewsPage() {
     <main className="min-h-screen bg-[#F9F9F8] selection:bg-[#233D8C] selection:text-white pb-24">
       {/* CINEMATIC HERO */}
       <section className="relative h-[60vh] md:h-[70vh] w-full flex items-center justify-center overflow-hidden">
-        <Image 
-          src="/hero.png" 
-          alt="Livre d'or La Croisière" 
-          fill 
-          className="object-cover" 
+        <Image
+          src="/hero.png"
+          alt={t('Reviews.badge')}
+          fill
+          className="object-cover"
           priority
         />
         <div className="absolute inset-0 bg-black/40" />
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
           className="relative z-10 text-center text-white px-6 mt-16"
         >
           <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.5em] text-white/80 mb-6 block drop-shadow-md">
-            Livre d'Or
+            {t('Reviews.badge')}
           </span>
           <h1 className="text-5xl md:text-7xl font-serif font-light mb-6 drop-shadow-lg">
-            La parole est à nos invités
+            {t('Reviews.title')}
           </h1>
           <div className="flex items-center justify-center gap-2 bg-white/10 backdrop-blur-md w-fit mx-auto px-6 py-3 rounded-full border border-white/20">
             <div className="flex text-yellow-400">
               {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
             </div>
-            <span className="ml-2 text-sm font-bold">4.9/5</span>
-            <span className="text-sm font-light text-white/80 ml-1">Basé sur 200+ avis</span>
+            <span className="ml-2 text-sm font-bold">{t('Reviews.rating')}</span>
+            <span className="text-sm font-light text-white/80 ml-1">{t('Reviews.ratingCount')}</span>
           </div>
         </motion.div>
       </section>
 
-      {/* STATS SECTION TO ADD RICHNESS */}
+      {/* STATS SECTION */}
       <section className="max-w-5xl mx-auto px-6 -mt-12 relative z-20 mb-20">
         <div className="bg-white p-8 md:p-12 rounded-xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 border border-slate-100">
           <div className="text-center flex-1 border-b md:border-b-0 md:border-r border-slate-100 pb-8 md:pb-0">
-            <div className="text-4xl font-serif text-[#233D8C] mb-2">98%</div>
-            <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">De satisfaction</div>
+            <div className="text-4xl font-serif text-[#233D8C] mb-2">{t('Reviews.stat1Value')}</div>
+            <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('Reviews.stat1Label')}</div>
           </div>
           <div className="text-center flex-1 border-b md:border-b-0 md:border-r border-slate-100 pb-8 md:pb-0">
-            <div className="text-4xl font-serif text-[#233D8C] mb-2">#1</div>
-            <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">Choix d'excellence à Cotonou</div>
+            <div className="text-4xl font-serif text-[#233D8C] mb-2">{t('Reviews.stat2Value')}</div>
+            <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('Reviews.stat2Label')}</div>
           </div>
           <div className="text-center flex-1">
-            <div className="text-4xl font-serif text-[#233D8C] mb-2">24/7</div>
-            <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">Service Conciergerie</div>
+            <div className="text-4xl font-serif text-[#233D8C] mb-2">{t('Reviews.stat3Value')}</div>
+            <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t('Reviews.stat3Label')}</div>
           </div>
         </div>
       </section>
@@ -190,35 +192,35 @@ export default function ReviewsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {reviewsList.map((review, i) => (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: i * 0.1 }}
-                key={review.id} 
+                key={review.id}
                 className={`p-10 rounded-xl flex flex-col h-full ${review.featured ? 'bg-[#233D8C] text-white' : 'bg-white text-slate-900'} shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 hover:-translate-y-2 transition-transform duration-500`}
               >
                 <div className="flex justify-between items-start mb-6">
                   <Quote className={`w-8 h-8 ${review.featured ? 'text-white/20' : 'text-[#233D8C]/10'}`} />
                   {review.rating === 5 && (
                     <span className={`text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1 ${review.featured ? 'bg-white/10 text-white' : 'bg-green-50 text-green-700'}`}>
-                      <CheckCircle2 className="w-3 h-3" /> Vérifié
+                      <CheckCircle2 className="w-3 h-3" /> {t('Reviews.verified')}
                     </span>
                   )}
                 </div>
-                
+
                 <div className="flex items-center gap-1 mb-6">
                   {[...Array(5)].map((_, index) => (
-                    <Star 
-                      key={index} 
-                      className={`w-4 h-4 ${index < review.rating ? 'fill-current' : ''} ${review.featured ? (index < review.rating ? 'text-yellow-400' : 'text-white/20') : (index < review.rating ? 'text-[#233D8C]' : 'text-slate-200')}`} 
+                    <Star
+                      key={index}
+                      className={`w-4 h-4 ${index < review.rating ? 'fill-current' : ''} ${review.featured ? (index < review.rating ? 'text-yellow-400' : 'text-white/20') : (index < review.rating ? 'text-[#233D8C]' : 'text-slate-200')}`}
                     />
                   ))}
                 </div>
 
                 <h3 className="text-xl font-serif mb-4 line-clamp-1">{review.title}</h3>
                 <p className={`font-light leading-relaxed mb-8 flex-grow ${review.featured ? 'text-white/80' : 'text-slate-600'}`}>
-                  "{review.text}"
+                  &ldquo;{review.text}&rdquo;
                 </p>
 
                 <div className={`pt-6 border-t mt-auto ${review.featured ? 'border-white/10' : 'border-slate-100'}`}>
@@ -238,12 +240,12 @@ export default function ReviewsPage() {
         <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-xl">
           <div className="absolute inset-0 bg-[#233D8C]/5 pattern-grid-lg opacity-50" />
           <div className="relative p-12 md:p-20 z-10">
-            <h2 className="text-3xl md:text-4xl font-serif text-slate-900 mb-4">Avez-vous séjourné parmi nous ?</h2>
+            <h2 className="text-3xl md:text-4xl font-serif text-slate-900 mb-4">{t('Reviews.ctaTitle')}</h2>
             <p className="text-slate-500 font-light mb-10 max-w-lg mx-auto text-lg">
-              Vos retours sont le cœur battant de notre excellence. Prenez un instant pour partager l'histoire de votre séjour à La Croisière.
+              {t('Reviews.ctaDesc')}
             </p>
             <button className="bg-[#233D8C] text-white px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-black transition-colors flex items-center gap-4 mx-auto shadow-lg hover:shadow-2xl">
-              Laisser un témoignage <ArrowRight className="w-4 h-4" />
+              {t('Reviews.ctaBtn')} <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

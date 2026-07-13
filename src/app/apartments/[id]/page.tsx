@@ -8,8 +8,10 @@ import { motion } from "framer-motion";
 import { Calendar, Users, MapPin, Wifi, Wind, Tv, Coffee, Bath, Star, ChevronLeft, ArrowRight, CheckCircle2, X, Shield, Info, Smartphone } from "lucide-react";
 import { APARTMENTS, Apartment } from "@/data/apartments";
 import { fetchApartmentBySlug } from "@/lib/apartments";
+import { useTranslation } from "@/i18n/client";
 
 function ApartmentDetailContent({ id }: { id: string }) {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const [apartment, setApartment] = useState<Apartment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,7 +54,7 @@ function ApartmentDetailContent({ id }: { id: string }) {
       <div className="h-screen flex items-center justify-center bg-white">
         <div className="flex flex-col items-center">
           <div className="w-10 h-10 rounded-full border-2 border-slate-200 border-t-[#233D8C] animate-spin mb-4" />
-          <p className="text-slate-400 font-serif italic text-sm">Chargement de votre suite d'exception...</p>
+          <p className="text-slate-400 font-serif italic text-sm">{t('ApartmentDetail.loading')}</p>
         </div>
       </div>
     );
@@ -61,9 +63,9 @@ function ApartmentDetailContent({ id }: { id: string }) {
   if (!apartment) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-white px-6 text-center">
-        <h1 className="text-4xl font-serif mb-4">Appartement introuvable</h1>
-        <p className="text-slate-500 mb-8">Nous n'avons pas réussi à trouver cette résidence dans notre collection.</p>
-        <Link href="/apartments" className="text-[#233D8C] font-black text-xs uppercase tracking-widest border-b-2 border-[#233D8C] pb-1">Retour à la liste</Link>
+        <h1 className="text-4xl font-serif mb-4">{t('ApartmentDetail.notFound')}</h1>
+        <p className="text-slate-500 mb-8">{t('ApartmentDetail.notFoundDesc')}</p>
+        <Link href="/apartments" className="text-[#233D8C] font-black text-xs uppercase tracking-widest border-b-2 border-[#233D8C] pb-1">{t('ApartmentDetail.backToListShort')}</Link>
       </div>
     );
   }
@@ -89,7 +91,7 @@ function ApartmentDetailContent({ id }: { id: string }) {
       <section className="relative pt-32 pb-12">
         <div className="max-w-7xl mx-auto px-6 md:px-16">
           <Link href="/apartments" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[#233D8C] transition-colors mb-12">
-            <ChevronLeft className="w-4 h-4" /> Retour à la collection
+            <ChevronLeft className="w-4 h-4" /> {t('ApartmentDetail.backToList')}
           </Link>
 
           <div className="flex flex-col md:flex-row justify-between items-end gap-10 mb-12">
@@ -102,7 +104,7 @@ function ApartmentDetailContent({ id }: { id: string }) {
               <h1 className="text-5xl md:text-8xl font-serif font-light text-slate-900 leading-[0.9] tracking-tighter">{apartment.name}</h1>
             </div>
             <div className="text-right">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">Prix par nuit</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">{t('ApartmentDetail.perNight')}</span>
               <div className="text-4xl font-serif text-slate-900 leading-none">{apartment.price.toLocaleString()} <span className="text-xs text-slate-400 font-sans italic align-top">FCFA</span></div>
             </div>
           </div>
@@ -132,21 +134,21 @@ function ApartmentDetailContent({ id }: { id: string }) {
           <div className="lg:col-span-7">
             <div className="flex flex-wrap gap-10 border-b border-slate-50 pb-12 mb-12">
               <div className="flex flex-col gap-1">
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Surface</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('ApartmentDetail.surface')}</span>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-[#233D8C]"><Smartphone className="w-5 h-5 rotate-90" /></div>
                   <span className="font-serif text-2xl">{apartment.sqm} m²</span>
                 </div>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Capacité</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('ApartmentDetail.capacity')}</span>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-[#233D8C]"><Users className="w-5 h-5" /></div>
-                  <span className="font-serif text-2xl">{apartment.capacity} Voyageurs</span>
+                  <span className="font-serif text-2xl">{apartment.capacity} {t('ApartmentDetail.travelers')}</span>
                 </div>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Note Globale</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('ApartmentDetail.rating')}</span>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-amber-500"><Star className="w-5 h-5 fill-current" /></div>
                   <span className="font-serif text-2xl">4.9/5</span>
@@ -156,13 +158,13 @@ function ApartmentDetailContent({ id }: { id: string }) {
 
             <div className="space-y-16">
               <div>
-                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-8">L'Expérience</h2>
+                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-8">{t('ApartmentDetail.experience')}</h2>
                 <p className="text-slate-600 text-xl leading-relaxed font-light mb-8 font-serif italic">{apartment.desc}</p>
                 <div className="h-px w-20 bg-[#233D8C]/20 mb-8" />
                 <p className="text-slate-500 text-lg leading-relaxed font-light mb-10">{apartment.story}</p>
 
                 <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-6 flex items-center gap-3">
-                  <Info className="w-4 h-4 text-[#233D8C]" /> Points Forts
+                  <Info className="w-4 h-4 text-[#233D8C]" /> {t('ApartmentDetail.highlights')}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {apartment.advantages.map((adv, i) => (
@@ -175,10 +177,10 @@ function ApartmentDetailContent({ id }: { id: string }) {
               </div>
 
               <div>
-                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-12">Détails de la Résidence</h2>
+                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-12">{t('ApartmentDetail.residenceDetails')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                   <div>
-                    <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-6">Equipements Premium</h4>
+                    <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-6">{t('ApartmentDetail.premiumEquip')}</h4>
                     <div className="space-y-4">
                       {apartment.features.map((feat, i) => (
                         <div key={i} className="flex items-center gap-4 group">
@@ -191,14 +193,14 @@ function ApartmentDetailContent({ id }: { id: string }) {
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-6">L'Espace en détail</h4>
+                    <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-6">{t('ApartmentDetail.spaceDetail')}</h4>
                     <div className="space-y-6">
                       <div>
-                        <span className="text-[10px] font-bold text-slate-900 block mb-2">Espace Nuit</span>
+                        <span className="text-[10px] font-bold text-slate-900 block mb-2">{t('ApartmentDetail.sleepingArea')}</span>
                         <p className="text-xs text-slate-400 leading-loose">{apartment.composition.sleeping.join(" • ")}</p>
                       </div>
                       <div>
-                        <span className="text-[10px] font-bold text-slate-900 block mb-2">Technologie</span>
+                        <span className="text-[10px] font-bold text-slate-900 block mb-2">{t('ApartmentDetail.technology')}</span>
                         <p className="text-xs text-slate-400 leading-loose">{apartment.composition.tech.join(" • ")}</p>
                       </div>
                     </div>
@@ -216,17 +218,17 @@ function ApartmentDetailContent({ id }: { id: string }) {
               <div className="mb-10 flex justify-between items-start">
                 <div>
                   <div className="text-4xl font-serif text-slate-900 mb-1">{apartment.price.toLocaleString()} <span className="text-xs font-sans italic text-slate-400 align-top">FCFA</span></div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total par nuit</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('ApartmentDetail.totalPerNight')}</span>
                 </div>
                 {available ? (
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[9px] font-black uppercase tracking-widest">Disponible</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest">{t('ApartmentDetail.available')}</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-rose-50 text-rose-600 rounded-full">
                     <X className="w-3 h-3" />
-                    <span className="text-[9px] font-black uppercase tracking-widest">Réservé</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest">{t('ApartmentDetail.booked')}</span>
                   </div>
                 )}
               </div>
@@ -235,18 +237,18 @@ function ApartmentDetailContent({ id }: { id: string }) {
                 <div className="bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-100">
                   <div className="flex divide-x divide-slate-100">
                     <div className="flex-1 p-5">
-                      <label className="text-[8px] font-black uppercase tracking-widest text-slate-400 block mb-1">Check-in</label>
-                      <div className="text-sm font-bold text-slate-900">{arrival ? arrival.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Non défini'}</div>
+                      <label className="text-[8px] font-black uppercase tracking-widest text-slate-400 block mb-1">{t('ApartmentDetail.checkin')}</label>
+                      <div className="text-sm font-bold text-slate-900">{arrival ? arrival.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : t('ApartmentDetail.notDefined')}</div>
                     </div>
                     <div className="flex-1 p-5">
-                      <label className="text-[8px] font-black uppercase tracking-widest text-slate-400 block mb-1">Check-out</label>
-                      <div className="text-sm font-bold text-slate-900">{departure ? departure.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Non défini'}</div>
+                      <label className="text-[8px] font-black uppercase tracking-widest text-slate-400 block mb-1">{t('ApartmentDetail.checkout')}</label>
+                      <div className="text-sm font-bold text-slate-900">{departure ? departure.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : t('ApartmentDetail.notDefined')}</div>
                     </div>
                   </div>
                   <div className="p-5 flex justify-between items-center">
                     <div>
-                      <label className="text-[8px] font-black uppercase tracking-widest text-slate-400 block mb-1">Voyageurs</label>
-                      <div className="text-sm font-bold text-slate-900">{adults} Adulte{adults > 1 ? 's' : ''}</div>
+                      <label className="text-[8px] font-black uppercase tracking-widest text-slate-400 block mb-1">{t('ApartmentDetail.guestsLabel')}</label>
+                      <div className="text-sm font-bold text-slate-900">{adults} {adults > 1 ? t('ApartmentDetail.adultsPlural') : t('ApartmentDetail.adults')}</div>
                     </div>
                     <Users className="w-4 h-4 text-slate-300" />
                   </div>
@@ -255,21 +257,21 @@ function ApartmentDetailContent({ id }: { id: string }) {
 
               {available ? (
                 <button className="w-full bg-[#233D8C] text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-black transition-all shadow-xl shadow-blue-900/20 active:scale-[0.98]">
-                  Réserver cet appartement
+                  {t('ApartmentDetail.bookBtn')}
                 </button>
               ) : (
                 <div className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-4">
                   <Info className="w-5 h-5 text-rose-500 shrink-0" />
-                  <p className="text-xs text-rose-800 leading-relaxed font-medium">Cet appartement est déjà réservé pour la période sélectionnée. <Link href="/apartments" className="underline font-black">Voir d'autres dates</Link></p>
+                  <p className="text-xs text-rose-800 leading-relaxed font-medium">{t('ApartmentDetail.bookedMessage')} <Link href="/apartments" className="underline font-black">{t('ApartmentDetail.otherDates')}</Link></p>
                 </div>
               )}
 
               <div className="mt-8 pt-8 border-t border-slate-50 space-y-4">
                 <div className="flex items-center gap-3 text-slate-400">
                   <Shield className="w-4 h-4" />
-                  <span className="text-[9px] font-bold uppercase tracking-widest">Paiement sécurisé sur place</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest">{t('ApartmentDetail.securePayment')}</span>
                 </div>
-                <p className="text-[10px] text-slate-400 font-light leading-relaxed">En cliquant sur "Réserver", vous initiez une demande de réservation sans prépaiement immédiat. Notre équipe vous contactera pour confirmer les détails.</p>
+                <p className="text-[10px] text-slate-400 font-light leading-relaxed">{t('ApartmentDetail.bookingNote')}</p>
               </div>
             </div>
           </div>

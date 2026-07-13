@@ -103,5 +103,263 @@
     "text": "Nous préparons une expérience digitale à la hauteur du prestige de notre résidence. Cette section sera bientôt disponible pour vous offrir le meilleur de La Croisière.",
     "backHome": "Retour à l'accueil",
     "nextOpening": "Ouverture prochaine"
+  },
+  "Difference": {
+    "badge": "Notre Philosophie",
+    "h1line1": "Ni un hôtel impersonnel.",
+    "h1line2": "Ni un simple Airbnb.",
+    "subtitle": "Nous avons simplement pris le meilleur des deux mondes. L'intimité d'un vrai chez-soi, couplée à l'exigence et la sécurité d'un service premium.",
+    "originBadge": "L'Origine",
+    "originTitle1": "L'indépendance de l'appartement.",
+    "originTitle2": "L'excellence de l'hôtel.",
+    "originP1": "La Résidence La Croisière est née d'un constat simple : lors de longs séjours, une chambre d'hôtel devient vite contraignante, tandis qu'un appartement classique manque cruellement de services et de garanties.",
+    "originP2": "Nous avons créé 14 unités uniques où chaque détail a été pensé pour vous offrir un espace de vie généreux, équipé d'une vraie cuisine, tout en vous garantissant un service de ménage, une conciergerie dédiée et une sécurité absolue.",
+    "originSign": "La Direction",
+    "args": [
+      { "title": "Comme chez vous", "desc": "Des appartements spacieux et équipés où l'on se sent vivre, pas juste dormir." },
+      { "title": "Autonomie Totale", "desc": "Groupe électrogène de pointe et réserves d'eau : ici, la notion de coupure n'existe pas." },
+      { "title": "Conciergerie VIP", "desc": "Une assistance discrète et un service de conciergerie haut de gamme pour répondre à toutes vos demandes." },
+      { "title": "Service de Nettoyage", "desc": "Un entretien rigoureux et professionnel, exactement comme dans les plus grands établissements." }
+    ],
+    "zeroCutBadge": "Tranquillité d'esprit",
+    "zeroCutTitle": "La Garantie \"Zéro Coupure\"",
+    "zeroCutText": "Au Bénin, la continuité de service est un luxe que nous avons rendu standard. La Résidence La Croisière dispose de ses propres infrastructures industrielles en arrière-plan.",
+    "generatorTitle": "Groupe Électrogène Relais",
+    "generatorDesc": "Basculement automatique instantané en cas de défaillance du réseau électrique public.",
+    "waterTitle": "Réserves d'Eau Haute Capacité",
+    "waterDesc": "Système de surpression garantissant un débit constant 24h/24.",
+    "compBadge": "En toute transparence",
+    "compTitle": "Le Comparatif",
+    "compRows": [
+      "Intimité d'un vrai chez-soi",
+      "Cuisine entièrement équipée",
+      "Garantie 0 coupure (Groupe électrogène)",
+      "Service de Conciergerie VIP",
+      "Service de nettoyage rigoureux",
+      "Espaces généreux et liberté"
+    ],
+    "compColHotel": "Hôtel Standard",
+    "compColAirbnb": "Airbnb Classique",
+    "compColUs": "Résidence La Croisière",
+    "ctaBtn": "Voir nos appartements"
+  },
+  "Offers": {
+    "badge": "Privilèges",
+    "title": "Offres & Expériences",
+    "subtitle": "Découvrez nos collections d'offres pensées pour sublimer votre séjour. Des attentions sur-mesure pour répondre à vos exigences les plus élevées.",
+    "bookBtn": "Réserver cette offre",
+    "corporateTitle": "Contrats Entreprises & B2B",
+    "corporateDesc": "Vous souhaitez loger vos collaborateurs en mission à Cotonou ? Contactez notre service commercial pour découvrir nos tarifs Corporate exclusifs et nos facilités de facturation.",
+    "corporateCta": "Contactez le service commercial",
+    "items": [
+      {
+        "id": "long-sejour",
+        "title": "Résidence Prolongée",
+        "subtitle": "Séjours de 14 nuits et plus",
+        "description": "Faites de La Croisière votre résidence secondaire. Conçue pour les expatriés et les cadres en mission, cette offre vous garantit les meilleurs tarifs et des services de conciergerie dédiés pour vous sentir instantanément chez vous, loin de chez vous.",
+        "price": "-20%",
+        "priceLabel": "sur le Tarif Flexible",
+        "perks": [
+          "Surclassement garanti selon disponibilité",
+          "Transferts aéroport aller-retour offerts",
+          "Service de pressing inclus (2 pièces/jour)",
+          "Accès prioritaire au centre d'affaires"
+        ]
+      },
+      {
+        "id": "escapade",
+        "title": "Escapade Romantique",
+        "subtitle": "Le temps d'un week-end",
+        "description": "Célébrez l'amour dans une atmosphère d'élégance absolue. Nous préparons votre suite avec des attentions délicates pour transformer votre séjour à Cotonou en un souvenir inoubliable.",
+        "price": "À partir de 350€",
+        "priceLabel": "par nuit, pour deux",
+        "perks": [
+          "Bouteille de Champagne à l'arrivée",
+          "Décoration florale de la chambre",
+          "Petit-déjeuner royal servi en suite",
+          "Départ tardif garanti jusqu'à 15h"
+        ]
+      },
+      {
+        "id": "early-bird",
+        "title": "Réservation Anticipée",
+        "subtitle": "Réservez 30 jours à l'avance",
+        "description": "L'anticipation a ses privilèges. En planifiant votre séjour à la Résidence La Croisière plus d'un mois à l'avance, vous bénéficiez de conditions tarifaires exceptionnelles pour profiter pleinement de l'expérience.",
+        "price": "-15%",
+        "priceLabel": "sur votre séjour",
+        "perks": [
+          "Tarif préférentiel exclusif",
+          "Accès illimité à la piscine sur le toit",
+          "Un soin relaxant offert (30 min)",
+          "Wi-Fi très haut débit inclus"
+        ]
+      }
+    ]
+  },
+  "Reviews": {
+    "badge": "Livre d'Or",
+    "title": "La parole est à nos invités",
+    "rating": "4.9/5",
+    "ratingCount": "Basé sur 200+ avis",
+    "stat1Value": "98%",
+    "stat1Label": "De satisfaction",
+    "stat2Value": "#1",
+    "stat2Label": "Choix d'excellence à Cotonou",
+    "stat3Value": "24/7",
+    "stat3Label": "Service Conciergerie",
+    "verified": "Vérifié",
+    "ctaTitle": "Avez-vous séjourné parmi nous ?",
+    "ctaDesc": "Vos retours sont le cœur battant de notre excellence. Prenez un instant pour partager l'histoire de votre séjour à La Croisière.",
+    "ctaBtn": "Laisser un témoignage"
+  },
+  "Apartments": {
+    "badge": "Notre Collection",
+    "title1": "Visez l'exceptionnel",
+    "title2": "à Cotonou.",
+    "subtitleDates": "Disponibilités pour votre séjour du {{arrival}} au {{departure}}.",
+    "subtitleDefault": "Parcourez nos 14 résidences de prestige et trouvez votre prochain pied-à-terre.",
+    "period": "Période",
+    "guests": "Voyageurs",
+    "person": "Personne",
+    "persons": "Personnes",
+    "maxPrice": "Prix max / nuit",
+    "editSearch": "Modifier la recherche",
+    "available": "Disponible",
+    "booked": "Réservé",
+    "fullyBooked": "Complet sur vos dates",
+    "from": "À partir de",
+    "perNight": "FCFA / nuit",
+    "seeOffer": "Voir l'Offre",
+    "unavailable": "Indisponible",
+    "noResults": "Aucun résultat trouvé",
+    "noResultsDesc": "Essayez d'ajuster vos critères de prix ou de capacité pour découvrir d'autres options.",
+    "resetFilters": "Réinitialiser les filtres",
+    "loading": "Charmantes résidences en cours de chargement..."
+  },
+  "ApartmentDetail": {
+    "backToList": "Retour à la collection",
+    "perNight": "Prix par nuit",
+    "surface": "Surface",
+    "capacity": "Capacité",
+    "travelers": "Voyageurs",
+    "rating": "Note Globale",
+    "experience": "L'Expérience",
+    "highlights": "Points Forts",
+    "residenceDetails": "Détails de la Résidence",
+    "premiumEquip": "Equipements Premium",
+    "spaceDetail": "L'Espace en détail",
+    "sleepingArea": "Espace Nuit",
+    "technology": "Technologie",
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "guestsLabel": "Voyageurs",
+    "adults": "Adulte",
+    "adultsPlural": "Adultes",
+    "notDefined": "Non défini",
+    "totalPerNight": "Total par nuit",
+    "available": "Disponible",
+    "booked": "Réservé",
+    "bookBtn": "Réserver cet appartement",
+    "bookedMessage": "Cet appartement est déjà réservé pour la période sélectionnée.",
+    "otherDates": "Voir d'autres dates",
+    "securePayment": "Paiement sécurisé sur place",
+    "bookingNote": "En cliquant sur \"Réserver\", vous initiez une demande de réservation sans prépaiement immédiat. Notre équipe vous contactera pour confirmer les détails.",
+    "notFound": "Appartement introuvable",
+    "notFoundDesc": "Nous n'avons pas réussi à trouver cette résidence dans notre collection.",
+    "backToListShort": "Retour à la liste",
+    "loading": "Chargement de votre suite d'exception...",
+    "loadingShort": "L'Espace se prépare..."
+  },
+  "MonEspace": {
+    "loyalMember": "Membre fidèle",
+    "pointsBalance": "Solde de points",
+    "pointsAvailable": "points disponibles",
+    "value": "Valeur",
+    "inAdvantages": "en avantages",
+    "tabs": {
+      "dashboard": "Vue d'ensemble",
+      "fidelite": "Fidélité & Points",
+      "conciergerie": "Conciergerie",
+      "reservations": "Mes Séjours"
+    },
+    "dashboard": {
+      "status": "Statut",
+      "nextPerk": "Prochain avantage",
+      "nextStay": "Prochain séjour",
+      "addServices": "Ajouter des services",
+      "seePerks": "Voir les avantages",
+      "quickServices": "Services rapides",
+      "allServices": "Tous les services",
+      "recentActivity": "Activité récente"
+    },
+    "fidelite": {
+      "currentStatus": "Votre statut actuel",
+      "memberSince": "Membre depuis Novembre 2025",
+      "totalBalance": "Solde total",
+      "pointsCumulated": "points cumulés",
+      "levels": "Niveaux du programme",
+      "fromStart": "Dès l'inscription",
+      "fromPoints": "Dès {{min}} pts",
+      "currentTier": "Statut actuel",
+      "howToEarn": "Comment gagner des points ?",
+      "history": "Historique des points",
+      "maxLevel": "✦ Niveau maximum atteint — Félicitations !",
+      "toNext": "% vers"
+    },
+    "concierge": {
+      "exclusiveServices": "Services exclusifs",
+      "title": "Votre Conciergerie",
+      "available247": "Disponible 24h/24 · 7j/7",
+      "directLine": "Ligne directe conciergerie",
+      "directLineDesc": "Pour toute demande urgente ou personnalisée",
+      "callNow": "Appeler maintenant",
+      "request": "Demander",
+      "services": {
+        "chauffeur": { "label": "Chauffeur privé", "description": "Transfert aéroport, déplacements VIP, excursions" },
+        "guide": { "label": "Guide touristique", "description": "Visites guidées personnalisées de l'île et de ses trésors" },
+        "restaurant": { "label": "Réservation restaurant", "description": "Sélection des meilleures tables, menus gastronomiques" },
+        "spa": { "label": "Spa & Bien-être", "description": "Massages, soins, accès spa, yoga sur la plage" },
+        "wine": { "label": "Cave à vins & Champagne", "description": "Sélection de grands crus, dégustation privée en chambre" },
+        "music": { "label": "Entertainment & Musique", "description": "Musique live, DJ privé, soirées thématiques" },
+        "transfer": { "label": "Livraison & Shopping", "description": "Courses, shopping de luxe, livraison de produits locaux" },
+        "butler": { "label": "Service majordome", "description": "Un majordome dédié pour toutes vos demandes exclusives" }
+      }
+    },
+    "reservations": {
+      "fullHistory": "Historique complet",
+      "title": "Mes Séjours",
+      "newBooking": "Nouvelle réservation",
+      "upcoming": "À venir",
+      "done": "Terminé",
+      "details": "Détails",
+      "reference": "Référence",
+      "arrival": "Arrivée",
+      "departure": "Départ",
+      "duration": "Durée",
+      "nights": "nuits",
+      "pointsEarned": "Points gagnés",
+      "actions": "Actions",
+      "addServices": "Ajouter des services",
+      "editStay": "Modifier le séjour"
+    },
+    "modal": {
+      "requestSent": "Demande envoyée !",
+      "requestSentDesc": "Notre équipe vous contactera sous 30 minutes.",
+      "submit": "Envoyer la demande"
+    },
+    "tiers": {
+      "Bronze": { "perks": ["5% de remise sur les séjours", "Accès prioritaire aux offres", "Petit-déjeuner offert 1×/an"] },
+      "Silver": { "perks": ["10% de remise", "Late check-out gratuit", "Bouteille de bienvenue", "2 nuits offertes/an"] },
+      "Gold": { "perks": ["15% de remise", "Surclassement garanti", "Transfert aéroport offert", "Conciergerie dédiée"] },
+      "Diamond": { "perks": ["20% de remise", "Suite premium garantie", "Chauffeur privé illimité", "Accès VIP exclusif", "Chef privé sur demande"] }
+    },
+    "earnPoints": [
+      { "label": "Séjour", "desc": "50 points par nuit passée à la résidence" },
+      { "label": "Parrainage", "desc": "100 points pour chaque ami parrainé" },
+      { "label": "Avis client", "desc": "25 points pour un avis Google ou TripAdvisor" },
+      { "label": "Réservation directe", "desc": "+20% de points vs réservation via agence" },
+      { "label": "Bonus anniversaire", "desc": "200 points offerts chaque année" },
+      { "label": "Séjour prolongé", "desc": "Bonus x2 pour 7 nuits ou plus" }
+    ]
   }
 }

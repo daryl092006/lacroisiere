@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Users, MapPin, Search, ArrowRight, CheckCircle2, Star, X, Info } from "lucide-react";
 import { APARTMENTS, Apartment } from "@/data/apartments";
 import { fetchApartments } from "@/lib/apartments";
+import { useTranslation } from "@/i18n/client";
 
 // Simple mock availability logic without a database
 // This function returns true if the apartment is considered "available" for the given dates
@@ -34,6 +35,7 @@ const checkMockAvailability = (id: string, arrival: Date | null, departure: Date
 };
 
 function ApartmentsContent() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
 
   // State from URL or defaults
@@ -43,7 +45,7 @@ function ApartmentsContent() {
   const [children, setChildren] = useState(0);
 
   const [priceRange, setPriceRange] = useState(300000); // FCFA
-  const [capacity, setCapacity] = useState("Tous");
+  const [capacity, setCapacity] = useState("all");
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
   const [apartmentsList, setApartmentsList] = useState<Apartment[]>([]);
@@ -99,7 +101,7 @@ function ApartmentsContent() {
     if (typeFilter && apt.type !== typeFilter) return false;
 
     // 4. User Filter Capacity (Dropdown)
-    if (capacity !== "Tous") {
+    if (capacity !== "all") {
       if (capacity === "1-2" && apt.capacity > 2) return false;
       if (capacity === "3-4" && (apt.capacity < 3 || apt.capacity > 4)) return false;
       if (capacity === "5+" && apt.capacity < 5) return false;
@@ -122,14 +124,14 @@ function ApartmentsContent() {
       {/* HEADER SECTION */}
       <div className="max-w-7xl mx-auto px-6 md:px-16 mb-16">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl">
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">Notre Collection</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">{t('Apartments.badge')}</span>
           <h1 className="text-5xl md:text-7xl font-serif font-light text-slate-900 mb-6 leading-tight">
-            Visez l'exceptionnel <br /><span className="italic">à Cotonou.</span>
+            {t('Apartments.title1')} <br /><span className="italic">{t('Apartments.title2')}</span>
           </h1>
           <p className="text-slate-500 font-light text-lg max-w-xl">
             {arrival && departure
-              ? `Disponibilités pour votre séjour du ${arrival.toLocaleDateString('fr-FR')} au ${departure.toLocaleDateString('fr-FR')}.`
-              : "Parcourez nos 14 résidences de prestige et trouvez votre prochain pied-à-terre."}
+              ? t('Apartments.subtitleDates', { arrival: arrival.toLocaleDateString('fr-FR'), departure: departure.toLocaleDateString('fr-FR') })
+              : t('Apartments.subtitleDefault')}
           </p>
         </motion.div>
       </div>
@@ -143,24 +145,24 @@ function ApartmentsContent() {
           {/* Summary Info */}
           <div className="flex flex-wrap items-center gap-8 flex-1 w-full px-4">
             <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Période</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('Apartments.period')}</span>
               <div className="flex items-center gap-2 text-slate-900 font-serif italic">
                 <Calendar className="w-3.5 h-3.5 text-[#233D8C]" />
-                <span>{arrival ? arrival.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : 'Choisir'} — {departure ? departure.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : 'Choisir'}</span>
+                <span>{arrival ? arrival.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : '—'} — {departure ? departure.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : '—'}</span>
               </div>
             </div>
 
             <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Voyageurs</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('Apartments.guests')}</span>
               <div className="flex items-center gap-2 text-slate-900 font-serif italic">
                 <Users className="w-3.5 h-3.5 text-[#233D8C]" />
-                <span>{totalGuests} Personne{totalGuests > 1 ? 's' : ''}</span>
+                <span>{totalGuests} {totalGuests > 1 ? t('Apartments.persons') : t('Apartments.person')}</span>
               </div>
             </div>
 
             <div className="flex flex-col flex-1 min-w-[200px]">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Prix max / nuit</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('Apartments.maxPrice')}</span>
                 <span className="text-[10px] font-black text-[#233D8C]">{priceRange.toLocaleString()} FCFA</span>
               </div>
               <input
@@ -175,7 +177,7 @@ function ApartmentsContent() {
           <div className="h-12 w-px bg-slate-100 hidden lg:block" />
 
           <Link href="/" className="px-8 py-4 bg-[#233D8C] hover:bg-black text-white rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all shadow-md cursor-pointer">
-            Modifier la recherche
+            {t('Apartments.editSearch')}
           </Link>
         </motion.div>
       </div>
@@ -217,12 +219,12 @@ function ApartmentsContent() {
                       {isAvailable ? (
                         <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-white/20">
                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Disponible</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">{t('Apartments.available')}</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg">
                           <X className="w-3 h-3 text-white/60" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-white">Réservé</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-white">{t('Apartments.booked')}</span>
                         </div>
                       )}
 
@@ -234,7 +236,7 @@ function ApartmentsContent() {
                     {!isAvailable && (
                       <div className="absolute inset-0 flex items-center justify-center bg-white/10 backdrop-blur-[2px]">
                         <div className="px-6 py-3 bg-white/95 rounded-sm shadow-2xl border border-slate-100">
-                          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Complet sur vos dates</span>
+                          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">{t('Apartments.fullyBooked')}</span>
                         </div>
                       </div>
                     )}
@@ -260,10 +262,10 @@ function ApartmentsContent() {
 
                     <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
                       <div className="flex flex-col">
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">À partir de</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{t('Apartments.from')}</span>
                         <div className="flex items-baseline gap-1">
                           <span className="text-xl font-medium text-slate-900">{apt.price.toLocaleString()}</span>
-                          <span className="text-xs text-slate-500 font-light italic">FCFA / nuit</span>
+                          <span className="text-xs text-slate-500 font-light italic">{t('Apartments.perNight')}</span>
                         </div>
                       </div>
 
@@ -276,9 +278,9 @@ function ApartmentsContent() {
                       `}
                       >
                         {isAvailable ? (
-                          <>Voir l'Offre <ArrowRight className="w-3.5 h-3.5" /></>
+                          <>{t('Apartments.seeOffer')} <ArrowRight className="w-3.5 h-3.5" /></>
                         ) : (
-                          <>Indisponible</>
+                          <>{t('Apartments.unavailable')}</>
                         )}
                       </Link>
                     </div>
@@ -292,9 +294,9 @@ function ApartmentsContent() {
         {!loading && sortedApartments.length === 0 && (
           <div className="text-center py-40 border-2 border-dashed border-slate-100 rounded-3xl">
             <Info className="w-12 h-12 text-slate-200 mx-auto mb-6" />
-            <h3 className="text-2xl font-serif text-slate-900 mb-2">Aucun résultat trouvé</h3>
-            <p className="text-slate-500 font-light max-w-sm mx-auto">Essayez d'ajuster vos critères de prix ou de capacité pour découvrir d'autres options.</p>
-            <button onClick={() => setPriceRange(500000)} className="mt-8 text-[#233D8C] text-[10px] font-black uppercase tracking-widest hover:underline">Réinitialiser les filtres</button>
+            <h3 className="text-2xl font-serif text-slate-900 mb-2">{t('Apartments.noResults')}</h3>
+            <p className="text-slate-500 font-light max-w-sm mx-auto">{t('Apartments.noResultsDesc')}</p>
+            <button onClick={() => setPriceRange(500000)} className="mt-8 text-[#233D8C] text-[10px] font-black uppercase tracking-widest hover:underline">{t('Apartments.resetFilters')}</button>
           </div>
         )}
       </div>
@@ -312,7 +314,7 @@ const Layout = ({ className, children }: { className?: string; children?: any })
 
 export default function ApartmentsPage() {
   return (
-    <Suspense fallback={<div className="h-screen flex items-center justify-center text-slate-400 font-serif italic text-xl">Charmantes résidences en cours de chargement...</div>}>
+    <Suspense fallback={<div className="h-screen flex items-center justify-center text-slate-400 font-serif italic text-xl">...</div>}>
       <ApartmentsContent />
     </Suspense>
   );

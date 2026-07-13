@@ -103,5 +103,263 @@
     "text": "We are preparing a digital experience that matches the prestige of our residence. This section will soon be available to offer you the best of La Croisière.",
     "backHome": "Back to Home",
     "nextOpening": "Opening soon"
+  },
+  "Difference": {
+    "badge": "Our Philosophy",
+    "h1line1": "Not an impersonal hotel.",
+    "h1line2": "Not a simple Airbnb.",
+    "subtitle": "We simply took the best of both worlds. The intimacy of a true home, combined with the standards and security of a premium service.",
+    "originBadge": "The Origin",
+    "originTitle1": "The freedom of an apartment.",
+    "originTitle2": "The excellence of a hotel.",
+    "originP1": "La Croisière Residence was born from a simple observation: during long stays, a hotel room quickly becomes constraining, while a standard apartment sorely lacks services and guarantees.",
+    "originP2": "We created 14 unique units where every detail was designed to offer you a generous living space with a real kitchen, while guaranteeing housekeeping, a dedicated concierge service, and absolute security.",
+    "originSign": "The Management",
+    "args": [
+      { "title": "Home Sweet Home", "desc": "Spacious and fully equipped apartments where you truly live, not just sleep." },
+      { "title": "Full Autonomy", "desc": "State-of-the-art generator and water reserves: here, the concept of outages doesn't exist." },
+      { "title": "VIP Concierge", "desc": "Discreet assistance and a high-end concierge service to meet your every need." },
+      { "title": "Cleaning Service", "desc": "Rigorous and professional upkeep, just like the world's finest establishments." }
+    ],
+    "zeroCutBadge": "Peace of mind",
+    "zeroCutTitle": "The \"Zero Outage\" Guarantee",
+    "zeroCutText": "In Benin, service continuity is a luxury we've made standard. La Croisière Residence has its own industrial infrastructure running in the background.",
+    "generatorTitle": "Relay Generator",
+    "generatorDesc": "Instant automatic switchover in case of public electrical grid failure.",
+    "waterTitle": "High-Capacity Water Reserves",
+    "waterDesc": "Pressure system guaranteeing constant flow 24/7.",
+    "compBadge": "Full transparency",
+    "compTitle": "The Comparison",
+    "compRows": [
+      "Privacy of a real home",
+      "Fully equipped kitchen",
+      "Zero-outage guarantee (Generator)",
+      "VIP Concierge Service",
+      "Rigorous cleaning service",
+      "Generous spaces and freedom"
+    ],
+    "compColHotel": "Standard Hotel",
+    "compColAirbnb": "Classic Airbnb",
+    "compColUs": "La Croisière Residence",
+    "ctaBtn": "View our apartments"
+  },
+  "Offers": {
+    "badge": "Privileges",
+    "title": "Offers & Experiences",
+    "subtitle": "Discover our curated collection of offers designed to elevate your stay. Bespoke attentions crafted to meet your highest expectations.",
+    "bookBtn": "Book this offer",
+    "corporateTitle": "Corporate & B2B Contracts",
+    "corporateDesc": "Looking to accommodate your team on assignment in Cotonou? Contact our sales team to discover our exclusive Corporate rates and billing options.",
+    "corporateCta": "Contact our sales team",
+    "items": [
+      {
+        "id": "long-sejour",
+        "title": "Extended Residence",
+        "subtitle": "Stays of 14 nights or more",
+        "description": "Make La Croisière your home away from home. Designed for expats and executives on assignment, this offer guarantees the best rates and dedicated concierge services so you feel instantly at home, far from home.",
+        "price": "-20%",
+        "priceLabel": "on the Flexible Rate",
+        "perks": [
+          "Guaranteed upgrade based on availability",
+          "Round-trip airport transfers included",
+          "Pressing service included (2 items/day)",
+          "Priority access to the business center"
+        ]
+      },
+      {
+        "id": "escapade",
+        "title": "Romantic Getaway",
+        "subtitle": "A weekend escape",
+        "description": "Celebrate love in an atmosphere of absolute elegance. We prepare your suite with delicate touches to transform your stay in Cotonou into an unforgettable memory.",
+        "price": "From €350",
+        "priceLabel": "per night, for two",
+        "perks": [
+          "Champagne bottle upon arrival",
+          "Floral room decoration",
+          "Royal breakfast served in-suite",
+          "Guaranteed late checkout until 3 PM"
+        ]
+      },
+      {
+        "id": "early-bird",
+        "title": "Early Bird Booking",
+        "subtitle": "Book 30 days in advance",
+        "description": "Anticipation has its privileges. By planning your stay at La Croisière Residence more than a month in advance, you benefit from exceptional pricing conditions to fully enjoy the experience.",
+        "price": "-15%",
+        "priceLabel": "on your stay",
+        "perks": [
+          "Exclusive preferential rate",
+          "Unlimited rooftop pool access",
+          "One complimentary relaxation treatment (30 min)",
+          "Very high-speed Wi-Fi included"
+        ]
+      }
+    ]
+  },
+  "Reviews": {
+    "badge": "Guest Book",
+    "title": "Our guests have the floor",
+    "rating": "4.9/5",
+    "ratingCount": "Based on 200+ reviews",
+    "stat1Value": "98%",
+    "stat1Label": "Satisfaction rate",
+    "stat2Value": "#1",
+    "stat2Label": "Top choice in Cotonou",
+    "stat3Value": "24/7",
+    "stat3Label": "Concierge Service",
+    "verified": "Verified",
+    "ctaTitle": "Have you stayed with us?",
+    "ctaDesc": "Your feedback is the heartbeat of our excellence. Take a moment to share the story of your stay at La Croisière.",
+    "ctaBtn": "Leave a review"
+  },
+  "Apartments": {
+    "badge": "Our Collection",
+    "title1": "Aim for the exceptional",
+    "title2": "in Cotonou.",
+    "subtitleDates": "Availability for your stay from {{arrival}} to {{departure}}.",
+    "subtitleDefault": "Browse our 14 prestigious residences and find your next home base.",
+    "period": "Period",
+    "guests": "Guests",
+    "person": "Person",
+    "persons": "Persons",
+    "maxPrice": "Max price / night",
+    "editSearch": "Edit search",
+    "available": "Available",
+    "booked": "Booked",
+    "fullyBooked": "Fully booked for your dates",
+    "from": "From",
+    "perNight": "FCFA / night",
+    "seeOffer": "See Offer",
+    "unavailable": "Unavailable",
+    "noResults": "No results found",
+    "noResultsDesc": "Try adjusting your price or capacity filters to discover other options.",
+    "resetFilters": "Reset filters",
+    "loading": "Charming residences loading..."
+  },
+  "ApartmentDetail": {
+    "backToList": "Back to collection",
+    "perNight": "Price per night",
+    "surface": "Surface",
+    "capacity": "Capacity",
+    "travelers": "Travelers",
+    "rating": "Overall Rating",
+    "experience": "The Experience",
+    "highlights": "Highlights",
+    "residenceDetails": "Residence Details",
+    "premiumEquip": "Premium Amenities",
+    "spaceDetail": "Space in Detail",
+    "sleepingArea": "Sleeping Area",
+    "technology": "Technology",
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "guestsLabel": "Guests",
+    "adults": "Adult",
+    "adultsPlural": "Adults",
+    "notDefined": "Not defined",
+    "totalPerNight": "Total per night",
+    "available": "Available",
+    "booked": "Booked",
+    "bookBtn": "Book this apartment",
+    "bookedMessage": "This apartment is already booked for the selected period.",
+    "otherDates": "See other dates",
+    "securePayment": "Secure payment on-site",
+    "bookingNote": "By clicking \"Book\", you initiate a reservation request with no immediate prepayment. Our team will contact you to confirm the details.",
+    "notFound": "Apartment not found",
+    "notFoundDesc": "We couldn't find this residence in our collection.",
+    "backToListShort": "Back to list",
+    "loading": "Loading your exceptional suite...",
+    "loadingShort": "The Space is being prepared..."
+  },
+  "MonEspace": {
+    "loyalMember": "Loyal member",
+    "pointsBalance": "Points balance",
+    "pointsAvailable": "available points",
+    "value": "Value",
+    "inAdvantages": "in advantages",
+    "tabs": {
+      "dashboard": "Overview",
+      "fidelite": "Loyalty & Points",
+      "conciergerie": "Concierge",
+      "reservations": "My Stays"
+    },
+    "dashboard": {
+      "status": "Status",
+      "nextPerk": "Next advantage",
+      "nextStay": "Next stay",
+      "addServices": "Add services",
+      "seePerks": "See advantages",
+      "quickServices": "Quick services",
+      "allServices": "All services",
+      "recentActivity": "Recent activity"
+    },
+    "fidelite": {
+      "currentStatus": "Your current status",
+      "memberSince": "Member since November 2025",
+      "totalBalance": "Total balance",
+      "pointsCumulated": "cumulated points",
+      "levels": "Program levels",
+      "fromStart": "From registration",
+      "fromPoints": "From {{min}} pts",
+      "currentTier": "Current status",
+      "howToEarn": "How to earn points?",
+      "history": "Points history",
+      "maxLevel": "✦ Maximum level reached — Congratulations!",
+      "toNext": "% to"
+    },
+    "concierge": {
+      "exclusiveServices": "Exclusive services",
+      "title": "Your Concierge",
+      "available247": "Available 24/7",
+      "directLine": "Direct concierge line",
+      "directLineDesc": "For any urgent or personalized request",
+      "callNow": "Call now",
+      "request": "Request",
+      "services": {
+        "chauffeur": { "label": "Private chauffeur", "description": "Airport transfer, VIP travel, excursions" },
+        "guide": { "label": "Tour guide", "description": "Personalized guided tours of the island and its treasures" },
+        "restaurant": { "label": "Restaurant reservation", "description": "Selection of the best tables, gastronomic menus" },
+        "spa": { "label": "Spa & Wellness", "description": "Massages, treatments, spa access, beach yoga" },
+        "wine": { "label": "Wine & Champagne Cellar", "description": "Selection of grand crus, private in-room tasting" },
+        "music": { "label": "Entertainment & Music", "description": "Live music, private DJ, themed evenings" },
+        "transfer": { "label": "Delivery & Shopping", "description": "Groceries, luxury shopping, local product delivery" },
+        "butler": { "label": "Butler service", "description": "A dedicated butler for all your exclusive requests" }
+      }
+    },
+    "reservations": {
+      "fullHistory": "Full history",
+      "title": "My Stays",
+      "newBooking": "New booking",
+      "upcoming": "Upcoming",
+      "done": "Completed",
+      "details": "Details",
+      "reference": "Reference",
+      "arrival": "Arrival",
+      "departure": "Departure",
+      "duration": "Duration",
+      "nights": "nights",
+      "pointsEarned": "Points earned",
+      "actions": "Actions",
+      "addServices": "Add services",
+      "editStay": "Edit stay"
+    },
+    "modal": {
+      "requestSent": "Request sent!",
+      "requestSentDesc": "Our team will contact you within 30 minutes.",
+      "submit": "Send request"
+    },
+    "tiers": {
+      "Bronze": { "perks": ["5% discount on stays", "Priority access to offers", "Complimentary breakfast 1×/year"] },
+      "Silver": { "perks": ["10% discount", "Free late check-out", "Welcome bottle", "2 complimentary nights/year"] },
+      "Gold": { "perks": ["15% discount", "Guaranteed upgrade", "Free airport transfer", "Dedicated concierge"] },
+      "Diamond": { "perks": ["20% discount", "Guaranteed premium suite", "Unlimited private driver", "Exclusive VIP access", "Private chef on request"] }
+    },
+    "earnPoints": [
+      { "label": "Stay", "desc": "50 points per night at the residence" },
+      { "label": "Referral", "desc": "100 points for each referred friend" },
+      { "label": "Guest review", "desc": "25 points for a Google or TripAdvisor review" },
+      { "label": "Direct booking", "desc": "+20% points vs. agency booking" },
+      { "label": "Birthday bonus", "desc": "200 points gifted every year" },
+      { "label": "Extended stay", "desc": "x2 bonus for 7 nights or more" }
+    ]
   }
 }
