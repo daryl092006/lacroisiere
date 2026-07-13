@@ -62,6 +62,17 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-slate-600 font-light">
               <li><Link href="/mentions" className="hover:text-[#233D8C] transition-colors">Mentions Légales</Link></li>
               <li><Link href="/cookies" className="hover:text-[#233D8C] transition-colors">Politique de Cookies</Link></li>
+              <li>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.dispatchEvent(new Event("open-cookie-banner"));
+                  }}
+                  className="hover:text-[#233D8C] transition-colors cursor-pointer text-left font-light bg-transparent border-none p-0 block w-full"
+                >
+                  Gestion des Cookies
+                </button>
+              </li>
               <li><Link href="/cgv" className="hover:text-[#233D8C] transition-colors">CGV</Link></li>
             </ul>
           </div>

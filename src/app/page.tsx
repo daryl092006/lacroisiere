@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/client";
 import { fetchApprovedReviews, type Review } from "@/lib/contentService";
+import { useCurrency } from "@/context/CurrencyContext";
 import {
   Calendar, Users, ArrowRight, MapPin, Phone, Mail, Globe,
   ChevronDown, Star, ShieldCheck, Zap, Waves, Layout,
@@ -184,10 +185,13 @@ const HERO_IMAGES = [
 
 export default function Home() {
   const { t, i18n } = useTranslation();
+  const { formatPrice } = useCurrency();
 
   // Reviews from Supabase
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    setMounted(true);
     fetchApprovedReviews(2).then(setReviews).catch(() => {});
   }, []);
 
@@ -315,7 +319,7 @@ export default function Home() {
                   <Calendar className="w-3.5 h-3.5" />
                   <span className="text-[9px] font-black uppercase tracking-[0.2em]">{t('Index.booking.arrival')}</span>
                 </div>
-                <div className={`font-serif italic text-xl transition-colors ${!arrivalDate ? 'text-slate-400' : 'text-slate-900 group-hover:text-[#233D8C]'}`}>
+                <div className={`font-normal text-sm transition-colors ${!arrivalDate ? 'text-slate-400' : 'text-slate-900 group-hover:text-[#233D8C]'}`}>
                   {arrivalInput || t('Index.booking.choose')}
                 </div>
                 <motion.div
@@ -455,8 +459,9 @@ export default function Home() {
                           : activeTab === 'arrival' ? 'Sélectionnez votre date d\'arrivée' : 'Sélectionnez votre date de départ'}
                       </span>
                       <button
+                        type="button"
                         onClick={(e) => { e.stopPropagation(); setArrivalDate(null); setDepartureDate(null); setArrivalInput(''); setDepartureInput(''); }}
-                        className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                        className="text-sm font-normal text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
                       >
                         Effacer
                       </button>
@@ -476,7 +481,7 @@ export default function Home() {
                   <Calendar className="w-3.5 h-3.5" />
                   <span className="text-[9px] font-black uppercase tracking-[0.2em]">{t('Index.booking.departure')}</span>
                 </div>
-                <div className={`font-serif italic text-xl transition-colors ${!departureDate ? 'text-slate-400' : 'text-slate-900 group-hover:text-[#233D8C]'}`}>
+                <div className={`font-normal text-sm transition-colors ${!departureDate ? 'text-slate-400' : 'text-slate-900 group-hover:text-[#233D8C]'}`}>
                   {departureInput || t('Index.booking.choose')}
                 </div>
                 <motion.div
@@ -496,7 +501,7 @@ export default function Home() {
                   <Users className="w-3.5 h-3.5" />
                   <span className="text-[9px] font-black uppercase tracking-[0.2em]">{t('Index.booking.guests')}</span>
                 </div>
-                <div className="font-serif italic text-xl text-slate-900 group-hover:text-[#233D8C] transition-colors">
+                <div className="font-normal text-sm text-slate-900 group-hover:text-[#233D8C] transition-colors">
                   {adults + children} {t('Index.booking.persons')}{infants > 0 ? `, ${infants} bébés` : ""}
                 </div>
                 <motion.div
@@ -543,7 +548,7 @@ export default function Home() {
                           </div>
                         </div>
                       ))}
-                      <button onClick={(e) => { e.stopPropagation(); setActiveTab(null); }} className="w-full bg-[#233D8C] text-white py-3.5 text-[9px] font-black uppercase tracking-[0.3em] hover:bg-black transition-all cursor-pointer">Confirmer</button>
+                      <button onClick={(e) => { e.stopPropagation(); setActiveTab(null); }} className="w-full bg-[#233D8C] text-white py-3.5 text-xs font-semibold capitalize tracking-[0.15em] hover:bg-black transition-all cursor-pointer">Confirmer</button>
                     </div>
                   </motion.div>
                 )}
@@ -555,7 +560,7 @@ export default function Home() {
               href={`/apartments?arrival=${arrivalDate?.toISOString() || ''}&departure=${departureDate?.toISOString() || ''}&adults=${adults}&children=${children}&infants=${infants}`}
               className="group relative overflow-hidden bg-[#233D8C] text-white px-12 transition-all duration-300 hover:bg-black flex items-center justify-center gap-3 shrink-0"
             >
-              <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.3em]">{t('Index.booking.check')}</span>
+              <span className="relative z-10 text-xs font-semibold capitalize tracking-[0.15em]">{t('Index.booking.check')}</span>
               <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -687,9 +692,9 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {[
-            { img: "/living.png", title: t('Index.apartments.items.royal.title'), price: t('Index.apartments.items.royal.price') },
-            { img: "/room.png", title: t('Index.apartments.items.executive.title'), price: t('Index.apartments.items.executive.price') },
-            { img: "/hero.png", title: t('Index.apartments.items.premium.title'), price: t('Index.apartments.items.premium.price') }
+            { img: "/living.png", title: t('Index.apartments.items.royal.title'), basePrice: 150000 },
+            { img: "/room.png", title: t('Index.apartments.items.executive.title'), basePrice: 95000 },
+            { img: "/hero.png", title: t('Index.apartments.items.premium.title'), basePrice: 65000 }
           ].map((apt, i) => (
             <div key={i} className="group cursor-pointer">
               <div className="aspect-[3/4] relative overflow-hidden rounded-sm mb-6">
@@ -697,7 +702,15 @@ export default function Home() {
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all" />
               </div>
               <h3 className="text-lg font-serif text-slate-900 mb-1">{apt.title}</h3>
-              <p className="text-xs text-slate-500 font-black uppercase tracking-widest">{apt.price}</p>
+              <p className="text-xs text-slate-500 font-black uppercase tracking-widest" suppressHydrationWarning>
+                {mounted ? (
+                  <>
+                    {i18n.language === 'en' ? 'From' : 'À partir de'} {formatPrice(apt.basePrice)}
+                  </>
+                ) : (
+                  `À partir de ${apt.basePrice.toLocaleString("fr-FR")} FCFA`
+                )}
+              </p>
             </div>
           ))}
         </div>
@@ -1142,7 +1155,7 @@ export default function Home() {
                     {activeTab === 'guests' && (
                       <button
                         onClick={() => setActiveTab('arrival')}
-                        className="px-6 py-4 rounded-full border border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-white transition-colors"
+                        className="px-6 py-4 rounded-full border border-slate-200 text-xs font-semibold capitalize tracking-[0.15em] hover:bg-white transition-colors"
                       >
                         Retour
                       </button>
@@ -1157,7 +1170,7 @@ export default function Home() {
                         }
                       }}
                       disabled={!arrivalDate || (!departureDate && activeTab !== 'guests')}
-                      className={`flex-1 sm:flex-none px-12 py-4 rounded-full font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl
+                      className={`flex-1 sm:flex-none px-12 py-4 rounded-full font-semibold text-xs capitalize tracking-[0.15em] transition-all shadow-xl
                       ${(!arrivalDate || !departureDate) ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none' : 'bg-[#233D8C] text-white hover:bg-black hover:scale-[1.02] active:scale-[0.98]'}
                     `}
                     >

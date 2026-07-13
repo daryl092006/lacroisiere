@@ -13,22 +13,23 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-accent: var(--accent);
-  --font-sans: var(--font-raleway);
+  --font-sans: 'Nimbus Sans Thai', sans-serif;
+  --font-serif: 'Nimbus Sans Thai', sans-serif;
 }
 
-/* ── Raleway partout — style Sofitel ── */
+/* ── Nimbus Sans Thai partout ── */
 html {
   font-size: 16px;
 }
 
 * {
-  font-family: var(--font-raleway), 'Raleway', sans-serif;
+  font-family: 'Nimbus Sans Thai', sans-serif !important;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-raleway), 'Raleway', sans-serif;
+  font-family: 'Nimbus Sans Thai', sans-serif !important;
   font-size: 1rem;
   line-height: 1.7;
   font-weight: 400;
@@ -38,15 +39,23 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-raleway), 'Raleway', sans-serif;
+  font-family: 'Nimbus Sans Thai', sans-serif !important;
   font-weight: 300;
   letter-spacing: 0.04em;
   line-height: 1.15;
 }
 
-input, textarea, select, button {
-  font-family: var(--font-raleway), 'Raleway', sans-serif;
+input, textarea, select {
+  font-family: 'Nimbus Sans Thai', sans-serif !important;
   font-size: 1rem;
+}
+
+button, [type="button"], [type="submit"] {
+  font-family: 'Nimbus Sans Thai', sans-serif !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.15em;
 }
 
 /* Luxury Scrollbar */

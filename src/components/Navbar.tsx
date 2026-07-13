@@ -15,13 +15,16 @@ import {
   Calendar,
   Phone,
   Mail,
-  Sun
+  Sun,
+  Briefcase
 } from 'lucide-react';
 import { useTranslation } from "@/i18n/client";
 import { usePathname } from 'next/navigation';
+import { useCurrency, CurrencyType } from "@/context/CurrencyContext";
 
 export default function Navbar() {
   const { t, i18n } = useTranslation();
+  const { currency, setCurrency } = useCurrency();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -101,7 +104,7 @@ export default function Navbar() {
           </Link>
 
           {/* DESKTOP MENU */}
-          <div className={`hidden lg:flex items-center justify-center flex-1 gap-5 xl:gap-8 text-[11px] xl:text-[12px] font-bold uppercase tracking-wider ${navTextTheme}`}>
+          <div className={`hidden lg:flex items-center justify-center flex-1 gap-8 xl:gap-12 text-xs font-semibold capitalize tracking-[0.15em] ${navTextTheme}`}>
             {menuItems.map((item) => (
               <div
                 key={item.id}
@@ -120,23 +123,26 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-0 mt-2 bg-white shadow-2xl rounded-sm p-6 min-w-[240px] border border-slate-100"
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 mt-2 bg-white shadow-xl rounded-sm p-4 min-w-[220px] border border-slate-100 flex flex-col gap-3 text-slate-900"
                     >
-                      <div className="flex flex-col gap-4 text-slate-900 lowercase first-letter:uppercase tracking-widest text-[11px] font-semibold">
-                        {item.links.map((link) => (
-                          <Link key={link.label} href={link.href} className="hover:text-[#233D8C] transition-all flex items-center justify-between group/link">
-                            {link.label}
-                            <ChevronRight className="w-3 h-3 opacity-0 group-hover/link:opacity-100 -translate-x-2 group-hover/link:translate-x-0 transition-all" />
-                          </Link>
-                        ))}
-                      </div>
+                      {item.links.map((link, subIdx) => (
+                        <Link
+                          key={subIdx}
+                          href={link.href}
+                          onClick={() => setActiveMenu(null)}
+                          className="hover:text-[#233D8C] transition-colors text-[11px] font-semibold tracking-wider capitalize"
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             ))}
 
-            <Link href="/business" className="hover:text-[#233D8C] transition-colors" suppressHydrationWarning>
+            <Link href="/corporate" className="hover:text-[#233D8C] transition-colors" suppressHydrationWarning>
               {mounted ? (t('Navigation.business') || 'Espace Entreprises') : 'Espace Entreprises'}
             </Link>
 
@@ -148,13 +154,35 @@ export default function Navbar() {
 
           {/* ACTION BUTTONS */}
           <div className="flex items-center gap-6">
-            <Link href="/apartments" className="hidden sm:block bg-[#233D8C] text-white px-8 py-3 rounded-sm text-[11px] font-bold tracking-[0.2em] uppercase transition-all hover:bg-black shadow-lg" suppressHydrationWarning>
+            <Link href="/apartments" className="hidden sm:block bg-[#233D8C] text-white px-6 py-2.5 rounded-sm text-xs font-semibold tracking-[0.15em] capitalize transition-all hover:bg-black shadow-lg" suppressHydrationWarning>
               {mounted ? (t('Navigation.book') || 'Réserver') : 'Réserver'}
             </Link>
 
+            {/* Currency Selector */}
+            <div className={`hidden lg:block relative py-4 cursor-pointer group ${navTextTheme}`}>
+              <div className="flex items-center gap-2 hover:text-[#233D8C] transition-colors capitalize text-xs font-semibold tracking-[0.15em]">
+                <span className="text-[10px] opacity-60">DEV:</span>
+                <span suppressHydrationWarning>{currency === "XOF" ? "CFA" : currency}</span>
+              </div>
+              <div className="absolute top-full right-0 mt-2 bg-white shadow-xl rounded-sm p-4 min-w-[130px] border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                <div className="flex flex-col gap-3 text-slate-900 tracking-wider text-[11px] font-semibold">
+                  {(["XOF", "EUR", "USD", "GBP", "CAD", "NGN", "GHS", "MAD", "TND", "DZD", "ZAR", "AED", "CHF"] as CurrencyType[]).map((c) => (
+                    <button
+                      key={c}
+                      suppressHydrationWarning
+                      onClick={() => setCurrency(c)}
+                      className={`hover:text-[#233D8C] text-left transition-colors cursor-pointer ${currency === c ? "text-[#233D8C] font-black" : ""}`}
+                    >
+                      {c === "XOF" ? "XOF (FCFA)" : `${c} (${c === "EUR" ? "€" : c === "USD" ? "$" : c === "GBP" ? "£" : c === "CAD" ? "CA$" : c === "NGN" ? "₦" : c === "GHS" ? "₵" : c === "MAD" ? "DH" : c === "TND" ? "DT" : c === "DZD" ? "DA" : c === "ZAR" ? "R" : c === "AED" ? "AED" : "CHF"})`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Language Selector */}
             <div className={`hidden lg:block relative py-4 cursor-pointer group ${navTextTheme}`}>
-              <div className="flex items-center gap-2 hover:text-[#233D8C] transition-colors uppercase">
+              <div className="flex items-center gap-2 hover:text-[#233D8C] transition-colors capitalize text-xs font-semibold tracking-[0.15em]">
                 <Globe className="w-3.5 h-3.5" />
                 <span suppressHydrationWarning>{mounted ? currentLang : 'fr'}</span>
               </div>
@@ -214,7 +242,7 @@ export default function Navbar() {
                     className="group py-4 flex items-center justify-between border-b border-slate-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <span className="text-2xl font-serif italic text-slate-900 group-hover:text-[#233D8C] transition-colors">Accueil</span>
+                    <span className="text-sm font-semibold tracking-[0.15em] capitalize text-slate-900 group-hover:text-[#233D8C] transition-colors">Accueil</span>
                     <ChevronRight className="w-4 h-4 text-slate-200 group-hover:text-slate-400 transition-all" />
                   </Link>
 
@@ -227,14 +255,13 @@ export default function Navbar() {
                           className="w-full py-6 flex items-center justify-between text-left group cursor-pointer"
                         >
                           <div className="flex flex-col">
-                            <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400 mb-1">{`0${idx + 1}`}</span>
-                            <span className="text-xl font-medium tracking-widest uppercase text-slate-900 hover:text-[#233D8C] transition-colors">{item.label}</span>
+                            <span className="text-sm font-semibold tracking-[0.15em] capitalize text-slate-900 hover:text-[#233D8C] transition-colors">{item.label}</span>
                           </div>
                           <motion.div
                             animate={{ rotate: isExpanded ? 180 : 0 }}
                             className="text-slate-200"
                           >
-                            <ChevronDown className="w-5 h-5" />
+                            <ChevronDown className="w-4 h-4 group-hover:text-slate-400 transition-colors" />
                           </motion.div>
                         </button>
 
@@ -246,16 +273,15 @@ export default function Navbar() {
                               exit={{ height: 0, opacity: 0 }}
                               className="overflow-hidden"
                             >
-                              <div className="flex flex-col gap-5 pb-8 pl-4 border-l border-slate-100">
-                                {item.links.map((link) => (
+                              <div className="pl-4 pb-6 flex flex-col gap-4 text-slate-500 border-l-2 border-[#233D8C]/20 ml-1 mt-2">
+                                {item.links.map((link, subIdx) => (
                                   <Link
-                                    key={link.label}
+                                    key={subIdx}
                                     href={link.href}
-                                    className="text-sm font-light text-slate-500 hover:text-[#233D8C] transition-colors flex items-center justify-between group/link"
                                     onClick={() => setMobileMenuOpen(false)}
+                                    className="hover:text-[#233D8C] text-xs font-semibold tracking-wider capitalize transition-colors"
                                   >
                                     {link.label}
-                                    <ArrowRight className="w-4 h-4 opacity-0 group-hover/link:opacity-100 -translate-x-2 group-hover/link:translate-x-0 transition-all" />
                                   </Link>
                                 ))}
                               </div>
@@ -267,13 +293,24 @@ export default function Navbar() {
                   })}
 
                   <Link
+                    href="/corporate"
+                    className="group py-6 flex items-center justify-between border-b border-slate-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <div className="flex items-center gap-4">
+                      <Briefcase className="w-5 h-5 text-slate-300" />
+                      <span className="text-sm font-semibold tracking-[0.15em] capitalize text-slate-900">{t('Navigation.business') || 'Espace Entreprises'}</span>
+                    </div>
+                  </Link>
+
+                  <Link
                     href="/mon-espace"
-                    className="group py-8 flex items-center justify-between border-b border-slate-100"
+                    className="group py-6 flex items-center justify-between border-b border-slate-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <div className="flex items-center gap-4">
                       <User className="w-5 h-5 text-slate-300" />
-                      <span className="text-lg font-medium tracking-widest uppercase text-slate-900">{t('Navigation.clientSpace')}</span>
+                      <span className="text-sm font-semibold tracking-[0.15em] capitalize text-slate-900">{t('Navigation.clientSpace')}</span>
                     </div>
                   </Link>
                 </div>
@@ -281,6 +318,24 @@ export default function Navbar() {
 
               {/* Footer */}
               <div className="p-8 bg-slate-50 mt-auto border-t border-slate-100">
+                {/* Currency selector on mobile */}
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200/60 text-slate-400">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Devise :</span>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1.5 justify-end text-xs font-bold">
+                    {(["XOF", "EUR", "USD", "GBP", "CAD", "NGN", "GHS", "MAD", "TND", "DZD", "ZAR", "AED", "CHF"] as CurrencyType[]).map((c, i) => (
+                      <React.Fragment key={c}>
+                        {i > 0 && <span className="text-slate-200">|</span>}
+                        <button
+                          onClick={() => setCurrency(c)}
+                          className={`hover:text-[#233D8C] cursor-pointer transition-colors ${currency === c ? "text-[#233D8C] font-black" : "text-slate-400 font-medium"}`}
+                        >
+                          {c === "XOF" ? "CFA" : c}
+                        </button>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-between mb-8 text-slate-400">
                   <div className="flex items-center gap-8">
                     <Phone className="w-5 h-5 hover:text-[#233D8C] transition-colors cursor-pointer" />
@@ -293,10 +348,11 @@ export default function Navbar() {
                     <button onClick={() => switchLanguage("en")} className={`hover:text-[#233D8C] cursor-pointer ${currentLang === "en" ? "text-[#233D8C] font-black" : "text-slate-400"}`}>EN</button>
                   </div>
                 </div>
+
                 <Link
                   href="/apartments"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full bg-[#233D8C] text-white py-5 rounded-sm font-bold text-[11px] uppercase tracking-[0.4em] flex items-center justify-center gap-3 hover:bg-[#1a2d6a] transition-all"
+                  className="w-full bg-[#233D8C] text-white py-5 rounded-sm font-semibold text-xs capitalize tracking-[0.15em] flex items-center justify-center gap-3 hover:bg-[#1a2d6a] transition-all"
                 >
                   <Calendar className="w-4 h-4 text-white/60" />
                   {t('Navigation.book')}

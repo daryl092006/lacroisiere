@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
-import { Raleway } from "next/font/google";
 import "./globals.css";
 import LayoutWrapper from "@/components/LayoutWrapper";
-
-const raleway = Raleway({
-  subsets: ["latin"],
-  variable: "--font-raleway",
-  weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
+import { CurrencyProvider } from "@/context/CurrencyContext";
+import CookieBanner from "@/components/CookieBanner";
 
 export const metadata: Metadata = {
   title: "Résidence La Croisière | Appartements Meublés Premium au Bénin",
@@ -28,14 +21,17 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${raleway.variable} h-full antialiased scroll-smooth`}
+      className="h-full antialiased scroll-smooth"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <LayoutWrapper>
-          {children}
-        </LayoutWrapper>
+        <CurrencyProvider>
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
+          <CookieBanner />
+        </CurrencyProvider>
       </body>
     </html>
   );

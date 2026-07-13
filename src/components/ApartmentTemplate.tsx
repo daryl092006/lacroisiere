@@ -18,6 +18,7 @@ import {
   Car
 } from 'lucide-react';
 import Link from 'next/link';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface ApartmentComposition {
   sleeping: string[];
@@ -65,6 +66,7 @@ export default function ApartmentTemplate({
   price,
   image
 }: ApartmentTemplateProps) {
+  const { formatPrice } = useCurrency();
   return (
     <main className="min-h-screen bg-white">
       {/* 1. CINEMATIC HERO */}
@@ -208,7 +210,7 @@ export default function ApartmentTemplate({
                   <div className="flex justify-between items-end border-b border-white/10 pb-10">
                     <div className="space-y-2">
                       <span className="block text-[8px] font-black uppercase tracking-widest text-white/40">Tarification Directe</span>
-                      <span className="text-4xl font-serif italic">{price.toLocaleString()} FCFA</span>
+                      <span className="text-4xl font-serif italic">{formatPrice(price)}</span>
                     </div>
                     <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2">/ Nuit</span>
                   </div>

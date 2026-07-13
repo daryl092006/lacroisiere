@@ -9,6 +9,7 @@ import { Calendar, Users, MapPin, Search, ArrowRight, CheckCircle2, Star, X, Inf
 import { APARTMENTS, Apartment } from "@/data/apartments";
 import { fetchApartments } from "@/lib/apartments";
 import { useTranslation } from "@/i18n/client";
+import { useCurrency } from "@/context/CurrencyContext";
 
 // Simple mock availability logic without a database
 // This function returns true if the apartment is considered "available" for the given dates
@@ -36,6 +37,7 @@ const checkMockAvailability = (id: string, arrival: Date | null, departure: Date
 
 function ApartmentsContent() {
   const { t, i18n } = useTranslation();
+  const { formatPrice } = useCurrency();
   const searchParams = useSearchParams();
 
   // State from URL or defaults
@@ -130,7 +132,10 @@ function ApartmentsContent() {
           </h1>
           <p className="text-slate-500 font-light text-lg max-w-xl">
             {arrival && departure
-              ? t('Apartments.subtitleDates', { arrival: arrival.toLocaleDateString('fr-FR'), departure: departure.toLocaleDateString('fr-FR') })
+              ? t('Apartments.subtitleDates', {
+                  arrival: arrival.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
+                  departure: departure.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+                })
               : t('Apartments.subtitleDefault')}
           </p>
         </motion.div>
@@ -163,7 +168,7 @@ function ApartmentsContent() {
             <div className="flex flex-col flex-1 min-w-[200px]">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('Apartments.maxPrice')}</span>
-                <span className="text-[10px] font-black text-[#233D8C]">{priceRange.toLocaleString()} FCFA</span>
+                <span className="text-[10px] font-black text-[#233D8C]">{formatPrice(priceRange)}</span>
               </div>
               <input
                 type="range" min="50000" max="500000" step="10000"
@@ -270,8 +275,8 @@ function ApartmentsContent() {
                       <div className="flex flex-col">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{t('Apartments.from')}</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-xl font-medium text-slate-900">{apt.price.toLocaleString()}</span>
-                          <span className="text-xs text-slate-500 font-light italic">{t('Apartments.perNight')}</span>
+                          <span className="text-xl font-medium text-slate-900">{formatPrice(apt.price)}</span>
+                          <span className="text-xs text-slate-500 font-light italic">{i18n.language === 'en' ? ' / night' : ' / nuit'}</span>
                         </div>
                       </div>
 

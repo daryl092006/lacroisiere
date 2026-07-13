@@ -9,9 +9,11 @@ import { Calendar, Users, MapPin, Wifi, Wind, Tv, Coffee, Bath, Star, ChevronLef
 import { APARTMENTS, Apartment } from "@/data/apartments";
 import { fetchApartmentBySlug } from "@/lib/apartments";
 import { useTranslation } from "@/i18n/client";
+import { useCurrency } from "@/context/CurrencyContext";
 
 function ApartmentDetailContent({ id }: { id: string }) {
   const { t, i18n } = useTranslation();
+  const { formatPrice } = useCurrency();
   const searchParams = useSearchParams();
   const [apartment, setApartment] = useState<Apartment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -105,7 +107,7 @@ function ApartmentDetailContent({ id }: { id: string }) {
             </div>
             <div className="text-right">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">{t('ApartmentDetail.perNight')}</span>
-              <div className="text-4xl font-serif text-slate-900 leading-none">{apartment.price.toLocaleString()} <span className="text-xs text-slate-400 font-sans italic align-top">FCFA</span></div>
+              <div className="text-4xl font-serif text-slate-900 leading-none">{formatPrice(apartment.price)}</div>
             </div>
           </div>
 
@@ -225,7 +227,7 @@ function ApartmentDetailContent({ id }: { id: string }) {
 
               <div className="mb-10 flex justify-between items-start">
                 <div>
-                  <div className="text-4xl font-serif text-slate-900 mb-1">{apartment.price.toLocaleString()} <span className="text-xs font-sans italic text-slate-400 align-top">FCFA</span></div>
+                  <div className="text-4xl font-serif text-slate-900 mb-1">{formatPrice(apartment.price)}</div>
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('ApartmentDetail.totalPerNight')}</span>
                 </div>
                 {available ? (
