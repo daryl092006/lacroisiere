@@ -67,7 +67,59 @@ const REVIEWS = [
   }
 ];
 
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+
 export default function ReviewsPage() {
+  const [reviewsList, setReviewsList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const { data, error } = await supabase
+          .from("reviews")
+          .select(`
+            id,
+            reviewer_name,
+            reviewer_country,
+            rating,
+            title_fr,
+            content_fr,
+            is_featured,
+            published_at,
+            apartments(name)
+          `)
+          .eq("status", "approved")
+          .order("published_at", { ascending: false });
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const mapped = data.map((rev: any) => ({
+            id: rev.id,
+            name: rev.reviewer_name || "Invité anonyme",
+            location: rev.reviewer_country || (rev.apartments?.name ? `Séjour à ${rev.apartments.name}` : "Cotonou"),
+            date: rev.published_at ? new Date(rev.published_at).toLocaleDateString("fr-FR", { month: "long", year: "numeric" }) : "Récemment",
+            rating: Math.round(Number(rev.rating)),
+            title: rev.title_fr || "Séjour d'exception",
+            text: rev.content_fr || "",
+            featured: rev.is_featured,
+          }));
+          setReviewsList(mapped);
+        } else {
+          setReviewsList(REVIEWS);
+        }
+      } catch (err) {
+        console.error("Failed to load reviews from Supabase", err);
+        setReviewsList(REVIEWS);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
   return (
     <main className="min-h-screen bg-[#F9F9F8] selection:bg-[#233D8C] selection:text-white pb-24">
       {/* CINEMATIC HERO */}
@@ -123,48 +175,62 @@ export default function ReviewsPage() {
 
       {/* MASONRY GRID OF REVIEWS */}
       <section className="max-w-7xl mx-auto px-6 md:px-16 mb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {REVIEWS.map((review, i) => (
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              key={review.id} 
-              className={`p-10 rounded-xl flex flex-col h-full ${review.featured ? 'bg-[#233D8C] text-white' : 'bg-white text-slate-900'} shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 hover:-translate-y-2 transition-transform duration-500`}
-            >
-              <div className="flex justify-between items-start mb-6">
-                <Quote className={`w-8 h-8 ${review.featured ? 'text-white/20' : 'text-[#233D8C]/10'}`} />
-                {review.rating === 5 && (
-                  <span className={`text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1 ${review.featured ? 'bg-white/10 text-white' : 'bg-green-50 text-green-700'}`}>
-                    <CheckCircle2 className="w-3 h-3" /> Vérifié
-                  </span>
-                )}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse bg-white p-10 rounded-xl h-64 flex flex-col border border-slate-100">
+                <div className="h-6 bg-slate-100 rounded w-1/4 mb-4" />
+                <div className="h-4 bg-slate-100 rounded w-1/3 mb-6" />
+                <div className="h-4 bg-slate-100 rounded w-full mb-2" />
+                <div className="h-4 bg-slate-100 rounded w-5/6 mb-auto" />
+                <div className="h-8 bg-slate-100 rounded w-1/2" />
               </div>
-              
-              <div className="flex items-center gap-1 mb-6">
-                {[...Array(5)].map((_, index) => (
-                  <Star 
-                    key={index} 
-                    className={`w-4 h-4 ${index < review.rating ? 'fill-current' : ''} ${review.featured ? (index < review.rating ? 'text-yellow-400' : 'text-white/20') : (index < review.rating ? 'text-[#233D8C]' : 'text-slate-200')}`} 
-                  />
-                ))}
-              </div>
-
-              <h3 className="text-xl font-serif mb-4 line-clamp-1">{review.title}</h3>
-              <p className={`font-light leading-relaxed mb-8 flex-grow ${review.featured ? 'text-white/80' : 'text-slate-600'}`}>
-                "{review.text}"
-              </p>
-
-              <div className={`pt-6 border-t mt-auto ${review.featured ? 'border-white/10' : 'border-slate-100'}`}>
-                <div className="font-bold text-sm uppercase tracking-widest mb-1">{review.name}</div>
-                <div className={`text-[10px] uppercase tracking-widest ${review.featured ? 'text-white/50' : 'text-slate-400'}`}>
-                  {review.location} • {review.date}
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {reviewsList.map((review, i) => (
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                key={review.id} 
+                className={`p-10 rounded-xl flex flex-col h-full ${review.featured ? 'bg-[#233D8C] text-white' : 'bg-white text-slate-900'} shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 hover:-translate-y-2 transition-transform duration-500`}
+              >
+                <div className="flex justify-between items-start mb-6">
+                  <Quote className={`w-8 h-8 ${review.featured ? 'text-white/20' : 'text-[#233D8C]/10'}`} />
+                  {review.rating === 5 && (
+                    <span className={`text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full flex items-center gap-1 ${review.featured ? 'bg-white/10 text-white' : 'bg-green-50 text-green-700'}`}>
+                      <CheckCircle2 className="w-3 h-3" /> Vérifié
+                    </span>
+                  )}
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                
+                <div className="flex items-center gap-1 mb-6">
+                  {[...Array(5)].map((_, index) => (
+                    <Star 
+                      key={index} 
+                      className={`w-4 h-4 ${index < review.rating ? 'fill-current' : ''} ${review.featured ? (index < review.rating ? 'text-yellow-400' : 'text-white/20') : (index < review.rating ? 'text-[#233D8C]' : 'text-slate-200')}`} 
+                    />
+                  ))}
+                </div>
+
+                <h3 className="text-xl font-serif mb-4 line-clamp-1">{review.title}</h3>
+                <p className={`font-light leading-relaxed mb-8 flex-grow ${review.featured ? 'text-white/80' : 'text-slate-600'}`}>
+                  "{review.text}"
+                </p>
+
+                <div className={`pt-6 border-t mt-auto ${review.featured ? 'border-white/10' : 'border-slate-100'}`}>
+                  <div className="font-bold text-sm uppercase tracking-widest mb-1">{review.name}</div>
+                  <div className={`text-[10px] uppercase tracking-widest ${review.featured ? 'text-white/50' : 'text-slate-400'}`}>
+                    {review.location} • {review.date}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* CALL TO ACTION */}

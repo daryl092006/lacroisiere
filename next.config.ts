@@ -8,6 +8,12 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'upload.wikimedia.org' },
     ],
   },
+  // Optimisation filesystem Windows (slow drive warning)
+  experimental: {
+    turbo: {
+      // Réduire la charge de compilation
+    },
+  },
 };
 
 export default nextConfig;

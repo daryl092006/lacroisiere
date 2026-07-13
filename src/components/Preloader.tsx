@@ -3,12 +3,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useTranslation } from "@/i18n/client";
 
 export default function Preloader() {
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const { t } = useTranslation();
 
   useEffect(() => {
     setMounted(true);
@@ -19,6 +17,8 @@ export default function Preloader() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  if (!mounted) return null;
 
   return (
     <AnimatePresence>
@@ -46,11 +46,11 @@ export default function Preloader() {
               className="relative z-10"
             >
               <Image
-                src="/favicon.png"
+                src="/la_croisiere_logo.png"
                 alt="La Croisière Logo"
-                width={300}
-                height={100}
-                className="h-14 md:h-16 w-auto"
+                width={320}
+                height={90}
+                className="h-16 md:h-20 w-auto"
                 style={{ height: "auto" }}
                 priority
               />
@@ -83,7 +83,7 @@ export default function Preloader() {
             transition={{ delay: 1, duration: 0.8 }}
             className="absolute bottom-16 text-slate-400 text-[10px] font-black uppercase tracking-[0.5em]"
           >
-            {mounted && t('Preloader.tagline')}
+            {mounted && "L'exceptionnel se prépare..."}
           </motion.div>
         </motion.div>
       )}

@@ -3,9 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #0f172a;
-  --primary: #233d8c; /* Official Brand Blue */
-  --secondary: #334155; /* Slate-700 for text */
-  --accent: #f1f5f9; /* Soft Gray for backgrounds */
+  --primary: #233d8c;
+  --secondary: #334155;
+  --accent: #f1f5f9;
 }
 
 @theme inline {
@@ -13,51 +13,54 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-accent: var(--accent);
-  --font-serif: var(--font-cormorant);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-raleway);
+}
+
+/* ── Raleway partout — style Sofitel ── */
+html {
+  font-size: 16px;
+}
+
+* {
+  font-family: var(--font-raleway), 'Raleway', sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-raleway), 'Raleway', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  font-weight: 400;
+  letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-raleway), 'Raleway', sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+}
+
+input, textarea, select, button {
+  font-family: var(--font-raleway), 'Raleway', sans-serif;
+  font-size: 1rem;
+}
+
 /* Luxury Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f8fafc;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 /* Custom Text Selection */
-::selection {
-  background: #233d8c;
-  color: white;
-}
+::selection { background: #233d8c; color: white; }
 
 /* Global Transition Defaults */
 a, button {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
-}
-
-/* Elegant Headings */
-h1, h2, h3, h4, .font-serif {
-  font-family: var(--font-cormorant), serif;
-  font-display: swap;
 }

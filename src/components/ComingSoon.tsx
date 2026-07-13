@@ -18,16 +18,16 @@ export default function ComingSoon({ title }: { title: string }) {
         className="max-w-2xl w-full"
       >
         <div className="mb-12 flex justify-center">
-          <Link href="/">
-            <Image
-              src="/favicon.png"
-              alt="Logo Résidence La Croisière"
-              width={220}
-              height={60}
-              className="h-10 w-auto"
-              style={{ height: "auto" }}
-            />
-          </Link>
+            <Link href="/">
+              <Image
+                src="/la_croisiere_logo.png"
+                alt="Logo Résidence La Croisière"
+                width={280}
+                height={80}
+                className="h-12 w-auto"
+                style={{ height: "auto" }}
+              />
+            </Link>
         </div>
 
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full text-[#233D8C] text-[10px] font-black uppercase tracking-widest mb-8">

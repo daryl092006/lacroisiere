@@ -39,17 +39,17 @@ const LANDMARKS = [
 
 export default function LocationPage() {
   return (
-    <main className="min-h-screen bg-white text-slate-900 selection:bg-[#233D8C] selection:text-white pb-32">
+    <main className="min-h-screen bg-white text-slate-900 selection:bg-[#233D8C] selection:text-white pb-32 transition-colors duration-300">
       {/* CINEMATIC HERO */}
-      <section className="relative h-[65vh] w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[65vh] w-full flex items-center justify-center overflow-hidden bg-slate-950">
         <Image
           src="/exterior.png"
           alt="Localisation La Croisière"
           fill
-          className="object-cover"
+          className="object-cover opacity-60"
           priority
         />
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-slate-900/90" />
 
         <div className="max-w-7xl mx-auto px-6 md:px-16 relative z-10 w-full text-center">
           <motion.div
@@ -98,7 +98,7 @@ export default function LocationPage() {
             </div>
           </div>
 
-          {/* LIST */}
+               {/* LIST */}
           <div className="bg-slate-50/50 p-8 md:p-12 rounded-3xl border border-slate-100 shadow-sm">
             <h3 className="text-3xl font-serif text-slate-900 border-l-4 border-[#233D8C] pl-6 mb-12 uppercase tracking-tighter">Points d'intérêt</h3>
 
@@ -130,7 +130,7 @@ export default function LocationPage() {
       </section>
 
       {/* SERVICES PRESTIGE (LIGHT CONTRAST) */}
-      <section className="bg-slate-50 py-32 border-y border-slate-100">
+      <section className="bg-slate-50 py-32 border-y border-slate-100 transition-colors">
         <div className="max-w-7xl mx-auto px-6 md:px-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
             <div className="flex flex-col items-start text-left max-w-lg">
@@ -141,7 +141,7 @@ export default function LocationPage() {
               <p className="text-slate-500 font-light text-lg mb-10 leading-relaxed">
                 Prise en charge personnalisée dès votre atterrissage. Un chauffeur privé vous attend pour vous conduire à la résidence dans le plus grand confort.
               </p>
-              <button className="bg-[#233D8C] text-white px-10 py-5 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-black transition-all shadow-xl hover:-translate-y-1">
+              <button className="bg-[#233D8C] text-white px-10 py-5 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-black transition-all shadow-xl hover:-translate-y-1 cursor-pointer">
                 Réserver un accueil
               </button>
             </div>
@@ -154,7 +154,7 @@ export default function LocationPage() {
               <p className="text-slate-500 font-light text-lg mb-10 leading-relaxed">
                 Besoin d'un chauffeur pour la journée ou pour une réunion spécifique ? Notre conciergerie met à votre disposition des véhicules de prestige.
               </p>
-              <button className="border-2 border-[#233D8C] text-[#233D8C] px-10 py-5 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-[#233D8C] hover:text-white transition-all">
+              <button className="border-2 border-[#233D8C] text-[#233D8C] px-10 py-5 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-[#233D8C] hover:text-white transition-all cursor-pointer">
                 Tous nos services
               </button>
             </div>

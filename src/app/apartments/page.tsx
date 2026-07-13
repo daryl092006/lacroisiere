@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Users, MapPin, Search, ArrowRight, CheckCircle2, Star, X, Info } from "lucide-react";
 import { APARTMENTS, Apartment } from "@/data/apartments";
+import { fetchApartments } from "@/lib/apartments";
 
 // Simple mock availability logic without a database
 // This function returns true if the apartment is considered "available" for the given dates
@@ -45,6 +46,32 @@ function ApartmentsContent() {
   const [capacity, setCapacity] = useState("Tous");
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
+  const [apartmentsList, setApartmentsList] = useState<Apartment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await fetchApartments();
+        if (data && data.length > 0) {
+          setApartmentsList(data);
+        } else {
+          setApartmentsList(APARTMENTS);
+        }
+      } catch (err: any) {
+        if (err?.message?.includes('Failed to fetch') || (typeof window !== 'undefined' && !window.navigator.onLine)) {
+          console.warn("Network offline: Using local mock fallback for apartments listing.");
+        } else {
+          console.error("Failed to load apartments from Supabase:", err);
+        }
+        setApartmentsList(APARTMENTS);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
   useEffect(() => {
     const arr = searchParams.get("arrival");
     const dep = searchParams.get("departure");
@@ -61,7 +88,7 @@ function ApartmentsContent() {
 
   const totalGuests = adults + children;
 
-  const filteredApartments = APARTMENTS.filter(apt => {
+  const filteredApartments = apartmentsList.filter(apt => {
     // 1. Price check
     if (apt.price > priceRange) return false;
 
@@ -91,13 +118,13 @@ function ApartmentsContent() {
   });
 
   return (
-    <div className="min-h-screen bg-white pt-32 pb-24">
+    <div className="min-h-screen bg-white text-slate-900 pt-32 pb-24 transition-colors duration-300">
       {/* HEADER SECTION */}
       <div className="max-w-7xl mx-auto px-6 md:px-16 mb-16">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">Notre Collection</span>
           <h1 className="text-5xl md:text-7xl font-serif font-light text-slate-900 mb-6 leading-tight">
-            Vivez l'exceptionnel <br /><span className="italic">à Cotonou.</span>
+            Visez l'exceptionnel <br /><span className="italic">à Cotonou.</span>
           </h1>
           <p className="text-slate-500 font-light text-lg max-w-xl">
             {arrival && departure
@@ -147,7 +174,7 @@ function ApartmentsContent() {
 
           <div className="h-12 w-px bg-slate-100 hidden lg:block" />
 
-          <Link href="/" className="px-8 py-4 bg-slate-50 hover:bg-slate-100 text-[#233D8C] rounded-xl text-[9px] font-black uppercase tracking-widest transition-all">
+          <Link href="/" className="px-8 py-4 bg-[#233D8C] hover:bg-black text-white rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all shadow-md cursor-pointer">
             Modifier la recherche
           </Link>
         </motion.div>
@@ -155,101 +182,114 @@ function ApartmentsContent() {
 
       {/* APARTMENTS GRID */}
       <div className="max-w-7xl mx-auto px-6 md:px-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
-          {sortedApartments.map((apt, i) => {
-            const isAvailable = checkMockAvailability(apt.id, arrival, departure);
-            return (
-              <motion.div
-                key={apt.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.05 }}
-                className={`group flex flex-col ${!isAvailable ? 'opacity-80' : ''}`}
-              >
-                {/* IMAGE BLOCK */}
-                <Link href={`/apartments/${apt.id}`} className="block relative aspect-[4/5] overflow-hidden rounded-2xl mb-6 shadow-sm">
-                  <Image src={apt.image} alt={apt.name} fill className={`object-cover transition-transform duration-1000 ease-out ${isAvailable ? 'group-hover:scale-110' : 'grayscale-[0.5]'}`} />
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="animate-pulse flex flex-col">
+                <div className="aspect-[4/5] bg-slate-100 rounded-2xl mb-6 w-full" />
+                <div className="h-6 bg-slate-100 rounded w-2/3 mb-2" />
+                <div className="h-4 bg-slate-100 rounded w-1/3 mb-6" />
+                <div className="h-10 bg-slate-100 rounded w-full mt-auto" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
+            {sortedApartments.map((apt, i) => {
+              const isAvailable = checkMockAvailability(apt.id, arrival, departure);
+              return (
+                <motion.div
+                  key={apt.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.05 }}
+                  className={`group flex flex-col ${!isAvailable ? 'opacity-80' : ''}`}
+                >
+                  {/* IMAGE BLOCK */}
+                  <Link href={`/apartments/${apt.id}`} className="block relative aspect-[4/5] overflow-hidden rounded-2xl mb-6 shadow-sm">
+                    <Image src={apt.image} alt={apt.name} fill className={`object-cover transition-transform duration-1000 ease-out ${isAvailable ? 'group-hover:scale-110' : 'grayscale-[0.5]'}`} />
 
-                  {/* OVERLAYS */}
-                  <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
+                    {/* OVERLAYS */}
+                    <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
 
-                  <div className="absolute top-5 left-5 z-10 flex flex-col gap-2">
-                    {isAvailable ? (
-                      <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-white/20">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Disponible</span>
+                    <div className="absolute top-5 left-5 z-10 flex flex-col gap-2">
+                      {isAvailable ? (
+                        <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-white/20">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Disponible</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg">
+                          <X className="w-3 h-3 text-white/60" />
+                          <span className="text-[10px] font-black uppercase tracking-widest text-white">Réservé</span>
+                        </div>
+                      )}
+
+                      <div className="bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-[10px] font-bold text-white uppercase tracking-widest">{apt.type}</span>
                       </div>
-                    ) : (
-                      <div className="flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg">
-                        <X className="w-3 h-3 text-white/60" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white">Réservé</span>
+                    </div>
+
+                    {!isAvailable && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/10 backdrop-blur-[2px]">
+                        <div className="px-6 py-3 bg-white/95 rounded-sm shadow-2xl border border-slate-100">
+                          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Complet sur vos dates</span>
+                        </div>
                       </div>
                     )}
+                  </Link>
 
-                    <div className="bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="text-[10px] font-bold text-white uppercase tracking-widest">{apt.type}</span>
-                    </div>
-                  </div>
-
-                  {!isAvailable && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/10 backdrop-blur-[2px]">
-                      <div className="px-6 py-3 bg-white/95 rounded-sm shadow-2xl border border-slate-100">
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Complet sur vos dates</span>
+                  {/* CONTENT */}
+                  <div className="flex flex-col flex-1">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="text-2xl font-serif text-slate-900 mb-1 group-hover:text-[#233D8C] transition-colors">{apt.name}</h3>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{apt.collection}</p>
                       </div>
-                    </div>
-                  )}
-                </Link>
-
-                {/* CONTENT */}
-                <div className="flex flex-col flex-1">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="text-2xl font-serif text-slate-900 mb-1 group-hover:text-[#233D8C] transition-colors">{apt.name}</h3>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{apt.collection}</p>
-                    </div>
-                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 rounded-lg">
-                      <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                      <span className="text-xs font-black text-slate-900 leading-none">4.9</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-slate-500 text-sm font-light mb-6">
-                    <span className="flex items-center gap-1.5"><Layout className="w-4 h-4 text-slate-300" /> 28/{apt.sqm} m²</span>
-                    <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-slate-300" /> {apt.capacity} Voyageurs</span>
-                  </div>
-
-                  <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">À partir de</span>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-xl font-medium text-slate-900">{apt.price.toLocaleString()}</span>
-                        <span className="text-xs text-slate-500 font-light italic">FCFA / nuit</span>
+                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 rounded-lg">
+                        <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                        <span className="text-xs font-black text-slate-900 leading-none">4.9</span>
                       </div>
                     </div>
 
-                    <Link
-                      href={`/apartments/${apt.id}`}
-                      className={`h-12 px-6 flex items-center gap-3 rounded-xl transition-all font-black text-[9px] uppercase tracking-widest
+                    <div className="flex items-center gap-4 text-slate-500 text-sm font-light mb-6">
+                      <span className="flex items-center gap-1.5"><Layout className="w-4 h-4 text-slate-300" /> 28/{apt.sqm} m²</span>
+                      <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-slate-300" /> {apt.capacity} Voyageurs</span>
+                    </div>
+
+                    <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">À partir de</span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-xl font-medium text-slate-900">{apt.price.toLocaleString()}</span>
+                          <span className="text-xs text-slate-500 font-light italic">FCFA / nuit</span>
+                        </div>
+                      </div>
+
+                      <Link
+                        href={`/apartments/${apt.id}`}
+                        className={`h-12 px-6 flex items-center gap-3 rounded-xl transition-all font-black text-[9px] uppercase tracking-widest
                         ${isAvailable
-                          ? 'bg-slate-900 text-white hover:bg-[#233D8C] shadow-lg shadow-slate-200'
-                          : 'bg-slate-50 text-slate-300 cursor-not-allowed'}
+                            ? 'bg-slate-900 text-white hover:bg-[#233D8C] shadow-lg shadow-slate-200'
+                            : 'bg-slate-50 text-slate-300 cursor-not-allowed'}
                       `}
-                    >
-                      {isAvailable ? (
-                        <>Voir l'Offre <ArrowRight className="w-3.5 h-3.5" /></>
-                      ) : (
-                        <>Indisponible</>
-                      )}
-                    </Link>
+                      >
+                        {isAvailable ? (
+                          <>Voir l'Offre <ArrowRight className="w-3.5 h-3.5" /></>
+                        ) : (
+                          <>Indisponible</>
+                        )}
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
 
-        {sortedApartments.length === 0 && (
+        {!loading && sortedApartments.length === 0 && (
           <div className="text-center py-40 border-2 border-dashed border-slate-100 rounded-3xl">
             <Info className="w-12 h-12 text-slate-200 mx-auto mb-6" />
             <h3 className="text-2xl font-serif text-slate-900 mb-2">Aucun résultat trouvé</h3>

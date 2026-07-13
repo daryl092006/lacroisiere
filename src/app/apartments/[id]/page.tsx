@@ -7,14 +7,35 @@ import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Calendar, Users, MapPin, Wifi, Wind, Tv, Coffee, Bath, Star, ChevronLeft, ArrowRight, CheckCircle2, X, Shield, Info, Smartphone } from "lucide-react";
 import { APARTMENTS, Apartment } from "@/data/apartments";
+import { fetchApartmentBySlug } from "@/lib/apartments";
 
 function ApartmentDetailContent({ id }: { id: string }) {
   const searchParams = useSearchParams();
-  const apartment = APARTMENTS.find(a => a.id === id);
+  const [apartment, setApartment] = useState<Apartment | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [arrival, setArrival] = useState<Date | null>(null);
   const [departure, setDeparture] = useState<Date | null>(null);
   const [adults, setAdults] = useState(2);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await fetchApartmentBySlug(id);
+        if (data) {
+          setApartment(data);
+        } else {
+          setApartment(APARTMENTS.find(a => a.id === id) || null);
+        }
+      } catch (err) {
+        console.error("Failed to load apartment details from Supabase", err);
+        setApartment(APARTMENTS.find(a => a.id === id) || null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [id]);
 
   useEffect(() => {
     const arr = searchParams.get("arrival");
@@ -25,6 +46,17 @@ function ApartmentDetailContent({ id }: { id: string }) {
     if (dep) setDeparture(new Date(dep));
     if (ad) setAdults(parseInt(ad));
   }, [searchParams]);
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-full border-2 border-slate-200 border-t-[#233D8C] animate-spin mb-4" />
+          <p className="text-slate-400 font-serif italic text-sm">Chargement de votre suite d'exception...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!apartment) {
     return (

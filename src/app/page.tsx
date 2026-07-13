@@ -5,11 +5,174 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/i18n/client";
+import { fetchApprovedReviews, type Review } from "@/lib/contentService";
 import {
   Calendar, Users, ArrowRight, MapPin, Phone, Mail, Globe,
   ChevronDown, Star, ShieldCheck, Zap, Waves, Layout,
-  Quote, CheckCircle2, User, Menu, X, ChevronRight
+  Quote, CheckCircle2, User, Menu, X, ChevronRight, ChevronLeft,
+  Sun, Wind, Utensils, Sparkles
 } from "lucide-react";
+
+const ROOFTOP_IMAGES = [
+  "/Rooftop Jour.pdf_9.jpg",
+  "/Rooftop Jour.pdf_9 (1).jpg",
+  "/Rooftop Jour.pdf_9 (2).jpg",
+  "/Rooftop Jour.pdf_9 (3).jpg",
+  "/Rooftop Jour.pdf_9 (4).jpg",
+  "/Rooftop Jour.pdf_9 (5).jpg",
+  "/Rooftop Jour.pdf_9 (6).jpg",
+  "/Rooftop Jour.pdf_9 (8).jpg",
+];
+
+function RooftopSection() {
+  const [idx, setIdx] = useState(0);
+  const prev = () => setIdx((i) => (i - 1 + ROOFTOP_IMAGES.length) % ROOFTOP_IMAGES.length);
+  const next = () => setIdx((i) => (i + 1) % ROOFTOP_IMAGES.length);
+
+  useEffect(() => {
+    const t = setInterval(next, 5000);
+    return () => clearInterval(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const FEATURES = [
+    { icon: Sun,       label: "Vue panoramique 360°",     desc: "Depuis le sommet, embrassez toute la ville et l'horizon de l'Atlantique." },
+    { icon: Utensils,  label: "Bar & Cuisine en plein air", desc: "Cocktails signature, snacking gastronomique et soirées thématiques." },
+    { icon: Wind,      label: "Terrasse lounge",            desc: "Transats, bain à remous et espace détente sous les étoiles." },
+    { icon: Sparkles,  label: "Privatisation disponible",   desc: "Événements privés, mariages, séminaires en altitude." },
+  ];
+
+  return (
+    <section className="relative overflow-hidden">
+      {/* ── Full-bleed photo ── */}
+      <div className="relative h-[80vh] min-h-[560px] w-full">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={ROOFTOP_IMAGES[idx]}
+              alt={`Rooftop La Croisière ${idx + 1}`}
+              fill
+              className="object-cover"
+              priority
+              sizes="100vw"
+            />
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        {/* ── Text overlay ── */}
+        <div className="absolute inset-0 flex items-center px-8 md:px-20">
+          <div className="max-w-xl">
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-[10px] font-black uppercase tracking-[0.5em] text-white/50 block mb-4"
+            >
+              Expérience unique · Au sommet
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-5xl md:text-7xl font-serif italic text-white leading-tight mb-6"
+            >
+              Le Rooftop
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-white/70 text-lg font-light leading-relaxed mb-10 max-w-sm"
+            >
+              Au dernier étage de la résidence, un espace suspendu entre ciel et ville — panorama époustouflant, bar lounge et terrasse privatisable.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center gap-4"
+            >
+              <Link
+                href="/experience"
+                className="bg-white text-slate-900 px-8 py-4 rounded-sm text-[10px] font-black uppercase tracking-[0.25em] hover:bg-[#233D8C] hover:text-white transition-all shadow-2xl"
+              >
+                Découvrir l'expérience
+              </Link>
+              <Link
+                href="/gallery"
+                className="border border-white/40 text-white px-8 py-4 rounded-sm text-[10px] font-black uppercase tracking-[0.25em] hover:border-white hover:bg-white/10 transition-all"
+              >
+                Voir la galerie
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* ── Slider controls ── */}
+        <div className="absolute bottom-6 right-8 flex items-center gap-3">
+          <button
+            onClick={prev}
+            className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/25 transition-all backdrop-blur-sm"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <div className="flex gap-1.5">
+            {ROOFTOP_IMAGES.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setIdx(i)}
+                className={`rounded-full transition-all ${
+                  i === idx ? "w-6 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/40"
+                }`}
+              />
+            ))}
+          </div>
+          <button
+            onClick={next}
+            className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/25 transition-all backdrop-blur-sm"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* ── Photo counter ── */}
+        <div className="absolute top-6 right-8 text-white/40 text-[11px] font-black tracking-[0.3em]">
+          {String(idx + 1).padStart(2, "0")} / {String(ROOFTOP_IMAGES.length).padStart(2, "0")}
+        </div>
+      </div>
+
+      {/* ── Features strip ── */}
+      <div className="bg-[#0F1C3F] py-14 px-8 md:px-20">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          {FEATURES.map((f) => {
+            const Icon = f.icon;
+            return (
+              <div key={f.label} className="flex gap-5 items-start">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5 text-white/70" />
+                </div>
+                <div>
+                  <div className="text-white font-black text-sm mb-1">{f.label}</div>
+                  <div className="text-white/40 text-[12px] font-light leading-relaxed">{f.desc}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 const HERO_IMAGES = [
   "/media__1780420130272.jpg",
@@ -21,6 +184,12 @@ const HERO_IMAGES = [
 
 export default function Home() {
   const { t, i18n } = useTranslation();
+
+  // Reviews from Supabase
+  const [reviews, setReviews] = useState<Review[]>([]);
+  useEffect(() => {
+    fetchApprovedReviews(2).then(setReviews).catch(() => {});
+  }, []);
 
   // Hero Slideshow State
   const [heroImageIndex, setHeroImageIndex] = useState(0);
@@ -38,7 +207,7 @@ export default function Home() {
   const [arrivalInput, setArrivalInput] = useState("");
   const [departureInput, setDepartureInput] = useState("");
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
-  const [viewDate, setViewDate] = useState(new Date(2026, 4, 1));
+  const [viewDate, setViewDate] = useState(new Date());
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
@@ -83,7 +252,7 @@ export default function Home() {
   } as const;
 
   return (
-    <div className="relative min-h-screen bg-white selection:bg-[#233D8C] selection:text-white font-sans overflow-x-hidden">
+    <div className="relative min-h-screen bg-white text-slate-900 selection:bg-[#233D8C] selection:text-white font-sans overflow-x-hidden transition-colors duration-300">
 
       {/* 2. HERO */}
       {/* ⚠️ NE SOUS AUCUN PRÉTEXTE MODIFIER CE BLOC HERO : Les dimensions (h-screen), l'overlay (bg-black/40) et les animations d'introduction sont validés définitivement. */}
@@ -113,7 +282,7 @@ export default function Home() {
           </AnimatePresence>
           <div className="absolute inset-0 bg-black/40 z-10" />
         </div>
-        <div className="relative z-20 text-center text-white px-6 pt-48 md:pt-56">
+        <div className="relative z-20 text-center text-white px-6 pt-56 md:pt-72">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }}>
             <h1 className="text-4xl md:text-8xl lg:text-9xl font-serif font-light leading-[0.9] tracking-tighter mb-12">
               {t('Index.hero.title')} <br /><span className="italic">{t('Index.hero.italic')}</span>
@@ -127,13 +296,12 @@ export default function Home() {
       </section>
 
       {/* 3. WIDGET — LUXURY WHITE & CENTERED CARD */}
-      {/* ⚠️ NE SOUS AUCUN PRÉTEXTE MODIFIER LE STYLE DE CE WIDGET : Les couleurs (brand blue #233D8C), le bouton pleine hauteur et les espacements ont été validés strictement dans la charte visuelle officielle. */}
       <div className="hidden lg:block relative z-40 -mt-16 px-6" ref={widgetRef}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-5xl mx-auto bg-white/95 backdrop-blur-md shadow-[0_24px_80px_rgba(0,0,0,0.12)] border-t-[3px] border-[#233D8C] relative"
+          className="max-w-5xl mx-auto bg-white/95 backdrop-blur-md shadow-[0_32px_96px_rgba(0,0,0,0.16)] border-t-[3px] border-[#233D8C] border-x border-b border-slate-100 relative"
           data-booking-widget
         >
           <div className="flex flex-row items-stretch">
@@ -168,16 +336,49 @@ export default function Home() {
                     className={`absolute left-0 bg-white shadow-[0_24px_80px_rgba(0,0,0,0.18)] p-8 z-[100] rounded-sm w-[720px] border border-slate-100 ${popoverPosition === 'top' ? 'bottom-full mb-3' : 'top-full mt-3'
                       }`}
                   >
-                    {/* CLOSE BUTTON */}
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setActiveTab(null); }}
-                      className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-[#233D8C] transition-colors"
-                      aria-label="Fermer le calendrier"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
+                    {/* NAVIGATION & CLOSE HEADER */}
+                    <div className="flex justify-between items-center mb-6">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const now = new Date();
+                            const minDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                            const prevDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
+                            if (prevDate >= minDate) {
+                              setViewDate(prevDate);
+                            }
+                          }}
+                          disabled={new Date(viewDate.getFullYear(), viewDate.getMonth(), 1) <= new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
+                          className="p-1.5 rounded-full hover:bg-slate-50 text-slate-400 hover:text-[#233D8C] transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed border border-slate-100"
+                          aria-label="Mois précédent"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
+                          }}
+                          className="p-1.5 rounded-full hover:bg-slate-50 text-slate-400 hover:text-[#233D8C] transition-colors cursor-pointer border border-slate-100"
+                          aria-label="Mois suivant"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setActiveTab(null); }}
+                        className="p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-[#233D8C] transition-colors cursor-pointer"
+                        aria-label="Fermer le calendrier"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
 
-                    <div className="flex gap-10 mt-2">
+                    <div className="flex gap-10">
                       {[0, 1].map((offset) => {
                         const monthDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1);
                         const monthName = monthDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
@@ -255,7 +456,7 @@ export default function Home() {
                       </span>
                       <button
                         onClick={(e) => { e.stopPropagation(); setArrivalDate(null); setDepartureDate(null); setArrivalInput(''); setDepartureInput(''); }}
-                        className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-700 transition-colors"
+                        className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
                       >
                         Effacer
                       </button>
@@ -318,7 +519,7 @@ export default function Home() {
                     {/* CLOSE BUTTON */}
                     <button
                       onClick={(e) => { e.stopPropagation(); setActiveTab(null); }}
-                      className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-[#233D8C] transition-colors"
+                      className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-50 text-slate-400 hover:text-[#233D8C] transition-colors cursor-pointer"
                       aria-label="Fermer les voyageurs"
                     >
                       <X className="w-4 h-4" />
@@ -336,13 +537,13 @@ export default function Home() {
                             <span className="text-[9px] text-slate-400 uppercase tracking-widest font-black">{cat.sub}</span>
                           </div>
                           <div className="flex items-center gap-3">
-                            <button onClick={(e) => { e.stopPropagation(); cat.setter(Math.max(cat.min, cat.count - 1)); }} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-[#233D8C] hover:text-white hover:border-[#233D8C] transition-all font-light text-lg">-</button>
+                            <button onClick={(e) => { e.stopPropagation(); cat.setter(Math.max(cat.min, cat.count - 1)); }} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-[#233D8C] hover:text-white hover:border-[#233D8C] transition-all font-light text-lg cursor-pointer">-</button>
                             <span className="text-sm font-black w-4 text-center text-slate-900">{cat.count}</span>
-                            <button onClick={(e) => { e.stopPropagation(); cat.setter(cat.count + 1); }} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-[#233D8C] hover:text-white hover:border-[#233D8C] transition-all font-light text-lg">+</button>
+                            <button onClick={(e) => { e.stopPropagation(); cat.setter(cat.count + 1); }} className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-[#233D8C] hover:text-white hover:border-[#233D8C] transition-all font-light text-lg cursor-pointer">+</button>
                           </div>
                         </div>
                       ))}
-                      <button onClick={(e) => { e.stopPropagation(); setActiveTab(null); }} className="w-full bg-[#233D8C] text-white py-3.5 text-[9px] font-black uppercase tracking-[0.3em] hover:bg-black transition-all">Confirmer</button>
+                      <button onClick={(e) => { e.stopPropagation(); setActiveTab(null); }} className="w-full bg-[#233D8C] text-white py-3.5 text-[9px] font-black uppercase tracking-[0.3em] hover:bg-black transition-all cursor-pointer">Confirmer</button>
                     </div>
                   </motion.div>
                 )}
@@ -362,7 +563,7 @@ export default function Home() {
       </div>
 
       {/* 4. ABOUT */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 py-32">
+      <section className="max-w-7xl mx-auto px-6 md:px-16 py-32 bg-white">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -389,32 +590,94 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. AMENITIES */}
-      <section className="bg-slate-50 py-32 border-y border-slate-100">
+      {/* 5. ESPACES & SERVICES — Luxury Asymmetrical Layout */}
+      <section className="py-32 bg-white border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6 md:px-16">
-          <div className="text-center mb-20">
-            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-400 block mb-4">{t('Index.amenities.badge')}</span>
-            <h2 className="text-4xl font-serif font-light">{t('Index.amenities.title')}</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-            {[
-              { icon: <Layout className="w-8 h-8" />, label: t('Index.amenities.items.rooftop.label'), desc: t('Index.amenities.items.rooftop.desc') },
-              { icon: <Waves className="w-8 h-8" />, label: t('Index.amenities.items.pool.label'), desc: t('Index.amenities.items.pool.desc') },
-              { icon: <Users className="w-8 h-8" />, label: t('Index.amenities.items.concierge.label'), desc: t('Index.amenities.items.concierge.desc') },
-              { icon: <Zap className="w-8 h-8" />, label: t('Index.amenities.items.autonomy.label'), desc: t('Index.amenities.items.autonomy.desc') }
-            ].map((item, i) => (
-              <div key={i} className="flex flex-col items-center text-center group">
-                <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-[#233D8C] mb-6 shadow-sm border border-slate-100 group-hover:bg-[#233D8C] group-hover:text-white transition-all">{item.icon}</div>
-                <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-2">{item.label}</h3>
-                <p className="text-xs text-slate-500 font-normal">{item.desc}</p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
+            
+            {/* Left side: Premium typography & list of services */}
+            <div className="lg:col-span-6 space-y-12">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-[#233D8C] block mb-4">Services & Équipements</span>
+                <h2 className="text-4xl md:text-5xl font-serif font-light text-slate-900 leading-[1.15] mb-6">
+                  Le confort absolu,<br />
+                  <em className="italic text-[#233D8C]">sans aucun compromis.</em>
+                </h2>
+                <p className="text-slate-500 text-sm font-light leading-relaxed max-w-md">
+                  Chaque espace et équipement a été pensé pour vous offrir le raffinement d'un établissement 4 étoiles tout en préservant l'autonomie et l'intimité de votre propre chez-soi.
+                </p>
               </div>
-            ))}
+
+              {/* Minimalist Grid of Services */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10 border-t border-slate-100 pt-10">
+                {[
+                  { icon: Waves, label: "Piscine privée", desc: "Espace de baignade et de détente pour nos seuls résidents." },
+                  { icon: Users, label: "Espace Executive", desc: "Salle de réunion équipée de technologie 4K et fibre dédiée." },
+                  { icon: Sparkles, label: "Conciergerie", desc: "Chauffeur privé, réservations et services sur-mesure 24/7." },
+                  { icon: ShieldCheck, label: "Autonomie 24/7", desc: "Groupe électrogène puissant et réserve d'eau autonome." },
+                  { icon: Zap, label: "Fibre optique", desc: "Réseau internet ultra-rapide disponible dans toute la résidence." },
+                  { icon: Layout, label: "Parking privé", desc: "Garage intérieur sécurisé par contrôle d'accès numérique." }
+                ].map((item, idx) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={idx} className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[#233D8C]/5 flex items-center justify-center">
+                          <Icon className="w-4 h-4 text-[#233D8C]" />
+                        </div>
+                        <h3 className="font-serif italic text-base text-slate-900">{item.label}</h3>
+                      </div>
+                      <p className="text-slate-400 text-[12px] font-light leading-relaxed pl-11">{item.desc}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="pt-6 flex flex-wrap gap-6 items-center">
+                <Link
+                  href="/contact?type=meeting-room"
+                  className="bg-[#233D8C] text-white px-8 py-4 rounded-sm text-[10px] font-black uppercase tracking-[0.25em] hover:bg-black transition-all shadow-lg"
+                >
+                  Réserver la salle de réunion
+                </Link>
+                <Link
+                  href="/experience"
+                  className="group inline-flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 hover:text-[#233D8C]"
+                >
+                  <span>Explorer l'expérience complète</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Right side: Large Immersive Image collage (Luxury feel) */}
+            <div className="lg:col-span-6 relative">
+              <div className="aspect-[4/5] relative rounded-sm overflow-hidden shadow-2xl">
+                <Image
+                  src="/Rooftop Jour.pdf_9 (3).jpg"
+                  alt="Espaces Résidence La Croisière"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                
+                {/* Floating badge inside the image */}
+                <div className="absolute bottom-8 left-8 right-8 text-white">
+                  <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/70 block mb-2">Prestige & Business</span>
+                  <h4 className="text-xl font-serif italic mb-1">Salle de réunion Silicon Valley</h4>
+                  <p className="text-white/60 text-xs font-light">35m² · Écran interactif 85" · Visioconférence 4K</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* 6. APARTMENTS */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 py-32">
+      <section className="max-w-7xl mx-auto px-6 md:px-16 py-32 bg-white">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div className="max-w-xl">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">{t('Index.apartments.badge')}</span>
@@ -441,14 +704,14 @@ export default function Home() {
       </section>
 
       {/* 6.5. GALLERY PREVIEW */}
-      <section className="bg-slate-900 py-32 text-white">
+      <section className="bg-white py-32 text-slate-900 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6 md:px-16">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div className="max-w-xl">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-4 block">Immersion Visuelle</span>
-              <h2 className="text-4xl md:text-5xl font-serif font-light text-white">Découvrez nos espaces en images.</h2>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">Immersion Visuelle</span>
+              <h2 className="text-4xl md:text-5xl font-serif font-light text-slate-900">Découvrez nos espaces en images.</h2>
             </div>
-            <Link href="/gallery" className="text-[10px] font-black uppercase tracking-[0.3em] border-b border-white pb-2 hover:text-slate-300 hover:border-slate-300 transition-colors">
+            <Link href="/gallery" className="text-[10px] font-black uppercase tracking-[0.3em] border-b border-[#233D8C] pb-2 text-[#233D8C] hover:text-black hover:border-black transition-colors">
               Ouvrir la galerie
             </Link>
           </div>
@@ -461,8 +724,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ ROOFTOP SECTION ═══ */}
+      <RooftopSection />
+
       {/* 7. REVIEWS (PREMIUM STYLE) */}
-      <section className="bg-slate-900 text-white py-40 relative overflow-hidden">
+      <section className="bg-slate-50 text-slate-900 py-40 relative overflow-hidden border-t border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 md:px-16 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-32 items-center">
             <div className="lg:col-span-1">
@@ -470,34 +736,37 @@ export default function Home() {
                 <div className="flex text-amber-500">
                   {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-current" />)}
                 </div>
-                <span className="text-3xl font-serif border-l border-white/20 pl-6">4.9/5</span>
+                <span className="text-3xl font-serif border-l border-slate-200 pl-6">4.9/5</span>
               </div>
-              <h2 className="text-5xl font-serif font-light mb-12 leading-tight text-white/90">{t('Index.reviews.title')}</h2>
-              <p className="text-white/40 text-sm leading-relaxed max-w-xs font-light mb-10">
+              <h2 className="text-5xl font-serif font-light mb-12 leading-tight text-slate-900">{t('Index.reviews.title')}</h2>
+              <p className="text-slate-500 text-sm leading-relaxed max-w-xs font-light mb-10">
                 {t('Index.reviews.subtitle')}
               </p>
-              <Link href="/reviews" className="inline-flex items-center gap-4 bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-sm font-black text-[10px] uppercase tracking-[0.2em] transition-colors border border-white/20">
+              <Link href="/reviews" className="inline-flex items-center gap-4 bg-white hover:bg-slate-100 text-slate-900 px-8 py-4 rounded-sm font-black text-[10px] uppercase tracking-[0.2em] transition-colors border border-slate-200 shadow-sm">
                 Lire le Livre d'Or
               </Link>
             </div>
             <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-12">
-              {[
-                { name: t('Index.reviews.items.marc.name'), text: t('Index.reviews.items.marc.text'), role: t('Index.reviews.items.marc.role') },
-                { name: t('Index.reviews.items.sarah.name'), text: t('Index.reviews.items.sarah.text'), role: t('Index.reviews.items.sarah.role') }
-              ].map((review, i) => (
+              {(reviews && reviews.length > 0
+                ? reviews.slice(0, 2).map((r) => ({ name: r.author_name, text: r.content_fr, role: r.author_role || '' }))
+                : [
+                    { name: t('Index.reviews.items.marc.name'), text: t('Index.reviews.items.marc.text'), role: t('Index.reviews.items.marc.role') },
+                    { name: t('Index.reviews.items.sarah.name'), text: t('Index.reviews.items.sarah.text'), role: t('Index.reviews.items.sarah.role') }
+                  ]
+              ).map((review, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.3 }}
-                  className="bg-white/[0.03] p-12 border border-white/10 rounded-sm hover:bg-white/[0.05] transition-colors"
+                  className="bg-white p-12 border border-slate-100 rounded-sm hover:shadow-md transition-all duration-300"
                 >
-                  <Quote className="w-10 h-10 text-[#233D8C] mb-10 opacity-50" />
-                  <p className="text-xl font-serif font-light leading-relaxed mb-12 italic text-white/80">
-                    "{review.text}"
+                  <Quote className="w-10 h-10 text-[#233D8C]/20 mb-10" />
+                  <p className="text-xl font-serif font-light leading-relaxed mb-12 italic text-slate-700">
+                    &ldquo;{review.text}&rdquo;
                   </p>
                   <div className="flex flex-col">
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-white mb-2">{review.name}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-950 mb-2">{review.name}</span>
                     <span className="text-[9px] font-bold uppercase tracking-widest text-[#233D8C]">{review.role}</span>
                   </div>
                 </motion.div>
@@ -508,7 +777,7 @@ export default function Home() {
       </section>
 
       {/* 7.5. LOCATION PREVIEW */}
-      <section className="py-32 bg-white">
+      <section className="py-32 bg-white border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6 md:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="aspect-square md:aspect-video lg:aspect-square relative rounded-sm overflow-hidden bg-slate-100 flex items-center justify-center">

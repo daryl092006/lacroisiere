@@ -1,5 +1,3 @@
-import ComingSoon from "@/components/ComingSoon";
+import DifferencePage from "../difference/page";
 
-export default function ExperiencePage() {
-  return <ComingSoon title="L'Expérience La Croisière" />;
-}
+export default DifferencePage;

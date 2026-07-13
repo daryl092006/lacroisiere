@@ -1,5 +1,3 @@
-import ComingSoon from "@/components/ComingSoon";
+import ApartmentsContent from "../apartments/page";
 
-export default function ApartmentsPage() {
-  return <ComingSoon title="Découvrez nos Appartements" />;
-}
+export default ApartmentsContent;
