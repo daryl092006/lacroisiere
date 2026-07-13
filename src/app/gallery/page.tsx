@@ -42,11 +42,11 @@ export default function GalleryPage() {
               <button 
                 key={cat}
                 onClick={() => setActiveTab(cat)}
-                className={`text-[9px] font-black uppercase tracking-[0.3em] pb-3 transition-colors relative cursor-pointer ${activeTab === cat ? 'text-[#233D8C] : 'text-slate-400 hover:text-slate-900 }`}
+                className={`text-[9px] font-black uppercase tracking-[0.3em] pb-3 transition-colors relative cursor-pointer ${activeTab === cat ? 'text-[#233D8C]' : 'text-slate-400 hover:text-slate-900'}`}
               >
                 {cat}
                 {activeTab === cat && (
-                  <motion.div layoutId="underline" className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#233D8C] />
+                  <motion.div layoutId="underline" className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#233D8C]" />
                 )}
               </button>
             ))}
