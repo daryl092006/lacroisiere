@@ -29,37 +29,36 @@ export default function OffersPage() {
   return (
     <main className="min-h-screen bg-white selection:bg-[#233D8C] selection:text-white pb-24">
       {/* CINEMATIC HERO */}
-      <section className="relative h-[60vh] md:h-[75vh] w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[50vh] md:h-[60vh] w-full flex items-center justify-center overflow-hidden">
         <Image
           src="/hero.png"
           alt="Offres La Croisière"
           fill
-          className="object-cover scale-105"
+          className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-slate-900/60" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="relative z-10 text-center text-white px-6 mt-16"
+          className="relative z-10 text-center text-white px-6 mt-16 max-w-4xl"
         >
-          <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.5em] text-white/90 mb-6 block drop-shadow-md">
+          <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.5em] text-white/80 mb-6 block drop-shadow-md">
             {t('Offers.badge')}
           </span>
-          <h1 className="text-5xl md:text-7xl font-serif font-light mb-6 drop-shadow-lg">
+          <h1 className="text-5xl md:text-7xl font-serif font-light mb-6 drop-shadow-lg leading-tight">
             {t('Offers.title')}
           </h1>
-          <p className="max-w-xl mx-auto text-white/90 font-light text-lg drop-shadow-md">
+          <p className="text-white/80 font-light text-lg">
             {t('Offers.subtitle')}
           </p>
         </motion.div>
       </section>
 
       {/* OFFERS LIST */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 py-12 md:py-24">
+      <section className="w-full mx-auto px-6 md:px-16 py-12 md:py-24">
         <div className="flex flex-col gap-24 md:gap-32">
           {offers.map((offer, index) => {
             const isEven = index % 2 === 0;
@@ -123,20 +122,6 @@ export default function OffersPage() {
               </motion.div>
             );
           })}
-        </div>
-      </section>
-
-      {/* CORPORATE BANNER */}
-      <section className="max-w-5xl mx-auto px-6 md:px-16 mt-12 text-center">
-        <div className="bg-[#F9F9F8] p-12 md:p-20 rounded-xl border border-slate-100">
-          <Building2 className="w-10 h-10 text-[#233D8C] mx-auto mb-6" />
-          <h2 className="text-3xl font-serif text-slate-900 mb-4">{t('Offers.corporateTitle')}</h2>
-          <p className="text-slate-500 font-light mb-8 max-w-xl mx-auto text-lg">
-            {t('Offers.corporateDesc')}
-          </p>
-          <button className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 border-b border-slate-900 pb-1 hover:text-[#233D8C] hover:border-[#233D8C] transition-all flex items-center gap-2 mx-auto group">
-            {t('Offers.corporateCta')} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-          </button>
         </div>
       </section>
     </main>

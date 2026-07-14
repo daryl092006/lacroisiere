@@ -13,7 +13,7 @@ export default function Preloader() {
     // Simuler un temps de chargement pour l'élégance ou attendre le chargement réel
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2500);
+    }, 800);
 
     return () => clearTimeout(timer);
   }, []);

@@ -413,7 +413,7 @@ export default function ContactPage() {
       </section>
 
       {/* Main Section */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 -mt-16 relative z-20">
+      <section className="w-full mx-auto px-6 md:px-16 -mt-16 relative z-20">
         <Suspense fallback={<div className="bg-white p-20 rounded-2xl shadow-xl text-center font-light text-slate-500">Chargement du formulaire...</div>}>
           <ContactForm contact={contactInfo} />
         </Suspense>

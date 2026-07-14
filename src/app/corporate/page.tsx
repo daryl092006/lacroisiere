@@ -100,7 +100,7 @@ export default function CorporatePage() {
       </section>
 
       {/* INTRODUCTION & STATS */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 -mt-12 relative z-20 mb-24">
+      <section className="w-full mx-auto px-6 md:px-16 -mt-12 relative z-20 mb-24">
         <div className="bg-white p-8 md:p-12 rounded-xl shadow-2xl border border-slate-100">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-slate-100">
             <div className="pt-8 md:pt-0">
@@ -120,7 +120,7 @@ export default function CorporatePage() {
       </section>
 
       {/* BENEFITS GRID */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 mb-24">
+      <section className="w-full mx-auto px-6 md:px-16 mb-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-serif text-slate-900 mb-6">Vos Avantages Corporate</h2>
           <p className="text-slate-500 font-light max-w-2xl mx-auto">
@@ -149,7 +149,7 @@ export default function CorporatePage() {
       </section>
 
       {/* CONTACT FORM SECTION */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16" id="form-section">
+      <section className="w-full mx-auto px-6 md:px-16" id="form-section">
         <div className="bg-white rounded-2xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col lg:flex-row">
           
           {/* LEFT: INFO */}

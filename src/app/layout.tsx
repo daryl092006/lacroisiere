@@ -7,8 +7,12 @@ import CookieBanner from "@/components/CookieBanner";
 export const metadata: Metadata = {
   title: "Résidence La Croisière | Appartements Meublés Premium au Bénin",
   description: "Découvrez l'exceptionnel à la Résidence La Croisière. Appartements de luxe, rooftop, piscine et service 4 étoiles pour vos séjours au Bénin.",
+  metadataBase: new URL('https://lacroisiere.bj'),
   icons: {
-    icon: '/favicon.png',
+    icon: [
+      { url: '/la_croisiere_logo_blanc.png', type: 'image/png' },
+    ],
+    apple: '/la_croisiere_logo_blanc.png',
   },
 };
 

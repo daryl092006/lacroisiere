@@ -176,7 +176,7 @@ export default function MonEspacePage() {
         {/* Glow */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-400/10 rounded-full blur-3xl" />
 
-        <div className="max-w-7xl mx-auto relative z-10">
+        <div className="w-full mx-auto relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
@@ -239,7 +239,7 @@ export default function MonEspacePage() {
       </div>
 
       {/* ── Content ── */}
-      <div className="max-w-7xl mx-auto px-6 md:px-16 py-12">
+      <div className="w-full mx-auto px-6 md:px-16 py-12">
         <AnimatePresence mode="wait">
 
           {/* ═══════════════════════════════════════ DASHBOARD ═══════════════════ */}

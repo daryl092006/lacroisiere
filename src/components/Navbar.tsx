@@ -154,14 +154,13 @@ export default function Navbar() {
 
           {/* ACTION BUTTONS */}
           <div className="flex items-center gap-6">
-            <Link href="/apartments" className="hidden sm:block bg-[#233D8C] text-white px-6 py-2.5 rounded-sm text-xs font-semibold tracking-[0.15em] capitalize transition-all hover:bg-black shadow-lg" suppressHydrationWarning>
+            <Link href="/apartments" className="hidden lg:block bg-[#233D8C] text-white px-6 py-2.5 rounded-sm text-xs font-semibold tracking-[0.15em] capitalize transition-all hover:bg-black shadow-lg" suppressHydrationWarning>
               {mounted ? (t('Navigation.book') || 'Réserver') : 'Réserver'}
             </Link>
 
             {/* Currency Selector */}
             <div className={`hidden lg:block relative py-4 cursor-pointer group ${navTextTheme}`}>
               <div className="flex items-center gap-2 hover:text-[#233D8C] transition-colors capitalize text-xs font-semibold tracking-[0.15em]">
-                <span className="text-[10px] opacity-60">DEV:</span>
                 <span suppressHydrationWarning>{currency === "XOF" ? "CFA" : currency}</span>
               </div>
               <div className="absolute top-full right-0 mt-2 bg-white shadow-xl rounded-sm p-4 min-w-[130px] border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">

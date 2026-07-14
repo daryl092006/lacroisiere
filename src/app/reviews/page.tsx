@@ -158,7 +158,7 @@ export default function ReviewsPage() {
       </section>
 
       {/* STATS SECTION */}
-      <section className="max-w-5xl mx-auto px-6 -mt-12 relative z-20 mb-20">
+      <section className="w-full mx-auto px-6 -mt-12 relative z-20 mb-20">
         <div className="bg-white p-8 md:p-12 rounded-xl shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 border border-slate-100">
           <div className="text-center flex-1 border-b md:border-b-0 md:border-r border-slate-100 pb-8 md:pb-0">
             <div className="text-4xl font-serif text-[#233D8C] mb-2">{t('Reviews.stat1Value')}</div>
@@ -176,7 +176,7 @@ export default function ReviewsPage() {
       </section>
 
       {/* MASONRY GRID OF REVIEWS */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 mb-24">
+      <section className="w-full mx-auto px-6 md:px-16 mb-24">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((i) => (
@@ -236,7 +236,7 @@ export default function ReviewsPage() {
       </section>
 
       {/* CALL TO ACTION */}
-      <section className="max-w-5xl mx-auto px-6 md:px-16 text-center">
+      <section className="w-full mx-auto px-6 md:px-16 text-center">
         <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-xl">
           <div className="absolute inset-0 bg-[#233D8C]/5 pattern-grid-lg opacity-50" />
           <div className="relative p-12 md:p-20 z-10">

@@ -51,7 +51,7 @@ export default function LocationPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-slate-900/90" />
 
-        <div className="max-w-7xl mx-auto px-6 md:px-16 relative z-10 w-full text-center">
+        <div className="w-full mx-auto px-6 md:px-16 relative z-10 w-full text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -69,7 +69,7 @@ export default function LocationPage() {
       </section>
 
       {/* MAP & LIST (CLEAN WHITE LAYOUT) */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 py-20 relative z-20">
+      <section className="w-full mx-auto px-6 md:px-16 py-20 relative z-20">
         <div className="flex flex-col lg:grid lg:grid-cols-2 gap-16 items-stretch">
 
           {/* MAP */}
@@ -131,7 +131,7 @@ export default function LocationPage() {
 
       {/* SERVICES PRESTIGE (LIGHT CONTRAST) */}
       <section className="bg-slate-50 py-32 border-y border-slate-100 transition-colors">
-        <div className="max-w-7xl mx-auto px-6 md:px-16">
+        <div className="w-full mx-auto px-6 md:px-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
             <div className="flex flex-col items-start text-left max-w-lg">
               <div className="w-16 h-16 rounded-3xl bg-white shadow-xl flex items-center justify-center text-[#233D8C] mb-10">

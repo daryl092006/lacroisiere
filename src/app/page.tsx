@@ -154,7 +154,7 @@ function RooftopSection() {
 
       {/* ── Features strip ── */}
       <div className="bg-[#0F1C3F] py-14 px-8 md:px-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {FEATURES.map((f) => {
             const Icon = f.icon;
             return (
@@ -305,7 +305,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-5xl mx-auto bg-white/95 backdrop-blur-md shadow-[0_32px_96px_rgba(0,0,0,0.16)] border-t-[3px] border-[#233D8C] border-x border-b border-slate-100 relative"
+          className="max-w-6xl mx-auto bg-white/95 backdrop-blur-md shadow-[0_32px_96px_rgba(0,0,0,0.16)] border-t-[3px] border-[#233D8C] border-x border-b border-slate-100 relative"
           data-booking-widget
         >
           <div className="flex flex-row items-stretch">
@@ -568,7 +568,7 @@ export default function Home() {
       </div>
 
       {/* 4. ABOUT */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 py-32 bg-white">
+      <section className="w-full mx-auto px-6 md:px-16 py-32 bg-white">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -589,15 +589,33 @@ export default function Home() {
             </Link>
           </motion.div>
           <div className="grid grid-cols-2 gap-6 relative">
-            <div className="aspect-[4/5] relative rounded-sm overflow-hidden shadow-2xl"><Image src="/exterior.png" alt="Exterior" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" /></div>
-            <div className="aspect-[4/5] relative rounded-sm overflow-hidden shadow-2xl mt-12"><Image src="/room.png" alt="Room" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" /></div>
+            <motion.div
+              initial={{ y: 40, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: false, amount: 0.2 }}
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ scale: 1.03 }}
+              className="aspect-[4/5] relative rounded-sm overflow-hidden shadow-2xl"
+            >
+              <Image src="/exterior.png" alt="Exterior" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+            </motion.div>
+            <motion.div
+              initial={{ y: 80, opacity: 0 }}
+              whileInView={{ y: 30, opacity: 1 }}
+              viewport={{ once: false, amount: 0.2 }}
+              transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ scale: 1.03 }}
+              className="aspect-[4/5] relative rounded-sm overflow-hidden shadow-2xl mt-12"
+            >
+              <Image src="/room.png" alt="Room" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* 5. ESPACES & SERVICES — Luxury Asymmetrical Layout */}
       <section className="py-32 bg-white border-t border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 md:px-16">
+        <div className="w-full mx-auto px-6 md:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
             
             {/* Left side: Premium typography & list of services */}
@@ -657,7 +675,14 @@ export default function Home() {
 
             {/* Right side: Large Immersive Image collage (Luxury feel) */}
             <div className="lg:col-span-6 relative">
-              <div className="aspect-[4/5] relative rounded-sm overflow-hidden shadow-2xl">
+              <motion.div
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: false, amount: 0.15 }}
+                transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ scale: 1.02 }}
+                className="aspect-[4/5] relative rounded-sm overflow-hidden shadow-2xl"
+              >
                 <Image
                   src="/Rooftop Jour.pdf_9 (3).jpg"
                   alt="Espaces Résidence La Croisière"
@@ -674,7 +699,7 @@ export default function Home() {
                   <h4 className="text-xl font-serif italic mb-1">Salle de réunion Silicon Valley</h4>
                   <p className="text-white/60 text-xs font-light">35m² · Écran interactif 85" · Visioconférence 4K</p>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
           </div>
@@ -682,7 +707,7 @@ export default function Home() {
       </section>
 
       {/* 6. APARTMENTS */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 py-32 bg-white">
+      <section className="w-full mx-auto px-6 md:px-16 py-32 bg-white">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div className="max-w-xl">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">{t('Index.apartments.badge')}</span>
@@ -718,7 +743,7 @@ export default function Home() {
 
       {/* 6.5. GALLERY PREVIEW */}
       <section className="bg-white py-32 text-slate-900 border-t border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 md:px-16">
+        <div className="w-full mx-auto px-6 md:px-16">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div className="max-w-xl">
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">Immersion Visuelle</span>
@@ -742,7 +767,7 @@ export default function Home() {
 
       {/* 7. REVIEWS (PREMIUM STYLE) */}
       <section className="bg-slate-50 text-slate-900 py-40 relative overflow-hidden border-t border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 md:px-16 relative z-10">
+        <div className="w-full mx-auto px-6 md:px-16 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-32 items-center">
             <div className="lg:col-span-1">
               <div className="flex items-center gap-6 mb-12">
@@ -791,7 +816,7 @@ export default function Home() {
 
       {/* 7.5. LOCATION PREVIEW */}
       <section className="py-32 bg-white border-t border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 md:px-16">
+        <div className="w-full mx-auto px-6 md:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="aspect-square md:aspect-video lg:aspect-square relative rounded-sm overflow-hidden bg-slate-100 flex items-center justify-center">
               {/* Map placeholder or actual map image */}
@@ -822,7 +847,7 @@ export default function Home() {
       </section>
       {/* 8. SPECIAL OFFERS */}
       <section className="bg-slate-50 py-32 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-6 md:px-16">
+        <div className="w-full mx-auto px-6 md:px-16">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div className="max-w-xl">
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-4 block">{t('Index.offers.badge')}</span>
@@ -864,7 +889,7 @@ export default function Home() {
 
       {/* 8.2. CONCIERGERIE & SERVICES */}
       <section className="py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-6 md:px-16">
+        <div className="w-full mx-auto px-6 md:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-6 block">L'Art de Recevoir</span>
@@ -902,7 +927,7 @@ export default function Home() {
       {/* 8.5. CORPORATE & PARTNERS PREVIEW */}
       <section className="py-32 bg-[#233D8C] text-white text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/exterior.png')] opacity-10 bg-cover bg-center mix-blend-overlay" />
-        <div className="max-w-4xl mx-auto px-6 relative z-10">
+        <div className="w-full mx-auto px-6 relative z-10">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-200 mb-6 block">B2B, Entreprises & Institutions</span>
           <h2 className="text-4xl md:text-6xl font-serif font-light mb-8">Devenez partenaire privilégié.</h2>
           <p className="text-blue-100 text-lg font-light leading-relaxed mb-12 max-w-2xl mx-auto">
@@ -922,7 +947,7 @@ export default function Home() {
       {/* 9. PARTNERS */}
       {/* ⚠️ NE SOUS AUCUN PRÉTEXTE MODIFIER CETTE SECTION "PARTENAIRES" : Le carrousel infini (marquee) avec les icônes svg/png et ses animations sont verrouillés dans la charte visuelle officielle. */}
       <section className="py-24 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 md:px-16 mb-16">
+        <div className="w-full mx-auto px-6 md:px-16 mb-16">
           <div className="text-center">
             <h2 className="text-[11px] font-black uppercase tracking-[0.5em] text-[#233D8C] mb-4">{t('Index.partners.title')}</h2>
             <div className="w-12 h-px bg-slate-200 mx-auto mb-4" />
@@ -930,42 +955,47 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Marquee Container */}
-        <div className="relative flex overflow-hidden py-10">
-          <motion.div
-            animate={{ x: [0, -1000] }}
-            transition={{
-              duration: 30,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="flex items-center gap-20 whitespace-nowrap min-w-max px-10"
-          >
+        {/* Marquee Container — double track CSS pour boucle infinie parfaite */}
+        <style>{`
+          @keyframes marquee-scroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .marquee-track {
+            display: flex;
+            align-items: center;
+            width: max-content;
+            animation: marquee-scroll 35s linear infinite;
+          }
+          .marquee-track:hover { animation-play-state: paused; }
+        `}</style>
+        <div className="relative overflow-hidden py-10">
+          <div className="marquee-track">
             {[
               { name: "Airbnb", logo: "https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_B%C3%A9lo.svg", h: 50 },
               { name: "Booking.com", logo: "https://upload.wikimedia.org/wikipedia/commons/d/dd/Booking.com_Logo.svg", h: 45 },
               { name: "Expedia", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Expedia_Logo_2023.svg", h: 50 },
               { name: "Numerica", logo: "https://numericacenter.com/wp-content/themes/numericacenter/images/logo-Numerica-center.png", h: 100 },
               { name: "ESCEN", logo: "https://escen.university/wa_res/images/normal/LOGO_ESCEN_(2).png?t=b1b2f445_e288_4b56_b229_ee53aef7a2fb", h: 120 },
-              // Duplication pour le loop infini
+              // Clone identique pour la continuité parfaite
               { name: "Airbnb 2", logo: "https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_B%C3%A9lo.svg", h: 50 },
               { name: "Booking.com 2", logo: "https://upload.wikimedia.org/wikipedia/commons/d/dd/Booking.com_Logo.svg", h: 45 },
               { name: "Expedia 2", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Expedia_Logo_2023.svg", h: 50 },
               { name: "Numerica 2", logo: "https://numericacenter.com/wp-content/themes/numericacenter/images/logo-Numerica-center.png", h: 100 },
-              { name: "ESCEN 2", logo: "https://escen.university/wa_res/images/normal/LOGO_ESCEN_(2).png?t=b1b2f445_e288_4b56_b229_ee53aef7a2fb", h: 120 }
+              { name: "ESCEN 2", logo: "https://escen.university/wa_res/images/normal/LOGO_ESCEN_(2).png?t=b1b2f445_e288_4b56_b229_ee53aef7a2fb", h: 120 },
             ].map((partner, i) => (
-              <div key={i} className="flex items-center justify-center transition-transform hover:scale-110 duration-500 mx-10">
+              <div key={i} className="flex items-center justify-center mx-12 shrink-0">
                 <Image
                   src={partner.logo}
                   alt={partner.name}
                   width={300}
                   height={partner.h}
-                  className="w-auto object-contain"
+                  className="w-auto object-contain grayscale hover:grayscale-0 transition-all duration-500 hover:scale-110"
                   style={{ height: `${partner.h}px` }}
                 />
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -990,7 +1020,7 @@ export default function Home() {
                 transition={{ type: "spring", damping: 30, stiffness: 300 }}
                 className={`
                 z-[9999] bg-white shadow-2xl
-                fixed inset-0 lg:inset-auto lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 lg:rounded-2xl lg:w-full lg:max-w-4xl
+                fixed inset-0 lg:inset-auto lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 lg:rounded-2xl lg:w-full lg:w-full
                 flex flex-col overflow-hidden
               `}
               >
@@ -1152,30 +1182,30 @@ export default function Home() {
                   </div>
 
                   <div className="flex gap-4 w-full sm:w-auto">
-                    {activeTab === 'guests' && (
-                      <button
-                        onClick={() => setActiveTab('arrival')}
-                        className="px-6 py-4 rounded-full border border-slate-200 text-xs font-semibold capitalize tracking-[0.15em] hover:bg-white transition-colors"
+
+                    {activeTab === 'guests' ? (
+                      <Link
+                        href={`/apartments?arrival=${arrivalDate?.toISOString() || ''}&departure=${departureDate?.toISOString() || ''}&adults=${adults}&children=${children}&infants=${infants}`}
+                        onClick={() => setActiveTab(null)}
+                        className="flex-grow text-center bg-[#233D8C] text-white px-12 py-4 rounded-full font-semibold text-xs capitalize tracking-[0.15em] transition-all shadow-xl hover:bg-black active:scale-[0.98]"
                       >
-                        Retour
+                        Vérifier la disponibilité
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          if (arrivalDate && departureDate) {
+                            setActiveTab('guests');
+                          }
+                        }}
+                        disabled={!arrivalDate || !departureDate}
+                        className={`flex-grow px-12 py-4 rounded-full font-semibold text-xs capitalize tracking-[0.15em] transition-all shadow-xl
+                          ${(!arrivalDate || !departureDate) ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none' : 'bg-[#233D8C] text-white hover:bg-black active:scale-[0.98]'}
+                        `}
+                      >
+                        Suivant
                       </button>
                     )}
-
-                    <button
-                      onClick={() => {
-                        if (activeTab !== 'guests' && arrivalDate && departureDate) {
-                          setActiveTab('guests');
-                        } else if (activeTab === 'guests') {
-                          setActiveTab(null);
-                        }
-                      }}
-                      disabled={!arrivalDate || (!departureDate && activeTab !== 'guests')}
-                      className={`flex-1 sm:flex-none px-12 py-4 rounded-full font-semibold text-xs capitalize tracking-[0.15em] transition-all shadow-xl
-                      ${(!arrivalDate || !departureDate) ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none' : 'bg-[#233D8C] text-white hover:bg-black hover:scale-[1.02] active:scale-[0.98]'}
-                    `}
-                    >
-                      {activeTab === 'guests' ? 'Vérifier la disponibilité' : 'Suivant'}
-                    </button>
                   </div>
                 </div>
               </motion.div>

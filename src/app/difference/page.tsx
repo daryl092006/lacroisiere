@@ -31,7 +31,7 @@ export default function DifferencePage() {
       </div>
 
       {/* EDITORIAL SECTION */}
-      <div className="max-w-7xl mx-auto px-6 md:px-16 mb-32">
+      <div className="w-full mx-auto px-6 md:px-16 mb-32">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="relative aspect-[4/5] rounded-sm overflow-hidden shadow-2xl">
             <img src="/living.png" alt="L'art de vivre" className="object-cover w-full h-full" />
@@ -57,7 +57,7 @@ export default function DifferencePage() {
       </div>
 
       {/* ARGUMENTS */}
-      <div className="max-w-7xl mx-auto px-6 md:px-16 mb-32">
+      <div className="w-full mx-auto px-6 md:px-16 mb-32">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {args.map((arg, i) => (
             <motion.div
@@ -82,7 +82,7 @@ export default function DifferencePage() {
           <img src="/exterior.png" alt="Infrastructure" className="object-cover w-full h-full" />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900 to-transparent"></div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 md:px-16 relative z-10">
+        <div className="w-full mx-auto px-6 md:px-16 relative z-10">
           <div className="max-w-2xl">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#233D8C] mb-6 block">{t('Difference.zeroCutBadge')}</span>
             <h2 className="text-4xl md:text-5xl font-serif font-light mb-8">{t('Difference.zeroCutTitle')}</h2>
@@ -110,7 +110,7 @@ export default function DifferencePage() {
       </div>
 
       {/* COMPARISON TABLE */}
-      <div className="max-w-5xl mx-auto px-6 mb-32">
+      <div className="w-full mx-auto px-6 mb-32">
         <div className="text-center mb-16">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-4 block">{t('Difference.compBadge')}</span>
           <h2 className="text-4xl font-serif font-light text-slate-900">{t('Difference.compTitle')}</h2>
