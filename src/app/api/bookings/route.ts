@@ -85,6 +85,12 @@ export async function POST(request: Request) {
         }
 
         // 5. Create Booking
+        console.log('--- DEBUG BOOKING INSERT ---');
+        console.log('Generated reference:', reference);
+        console.log('Apartment ID:', aptData.id);
+        console.log('Customer ID:', customerId);
+        console.log('----------------------------');
+
         const { data: bookingData, error: bookingError } = await supabase
             .from('bookings')
             .insert({
