@@ -49,19 +49,25 @@ export default function CorporatePage() {
     const phone = fd.get("phone") as string;
     const needs = fd.get("needs") as string;
 
-    const { error } = await supabase.from("corporate_requests").insert({
-      company_name,
-      sector,
-      contact_name,
-      contact_role,
-      email,
-      phone,
-      needs,
+    const response = await fetch('/api/corporate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        company_name,
+        sector,
+        contact_name,
+        contact_role,
+        email,
+        phone,
+        needs,
+      })
     });
+    
+    const result = await response.json();
 
     setLoading(false);
-    if (error) {
-      console.error("Error sending corporate request:", error);
+    if (!response.ok) {
+      console.error("Error sending corporate request:", result.error);
       setErrorMsg("Une erreur s'est produite lors de l'envoi de votre demande. Veuillez réessayer.");
     } else {
       setSubmitted(true);

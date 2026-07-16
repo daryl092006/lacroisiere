@@ -1460,6 +1460,16 @@ CREATE POLICY "Staff voit les demandes corporate"
     )
   );
 
+CREATE POLICY "Staff modifie les demandes corporate"
+  ON corporate_requests FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM staff_profiles sp
+      WHERE sp.auth_user_id = auth.uid() AND sp.is_active = TRUE
+    )
+  );
+
 -- POLICIES — Messages de contact (écriture publique, lecture staff)
 CREATE POLICY "Tout le monde peut envoyer un message"
   ON contact_messages FOR INSERT
@@ -1467,6 +1477,16 @@ CREATE POLICY "Tout le monde peut envoyer un message"
 
 CREATE POLICY "Staff voit les messages"
   ON contact_messages FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM staff_profiles sp
+      WHERE sp.auth_user_id = auth.uid() AND sp.is_active = TRUE
+    )
+  );
+
+CREATE POLICY "Staff modifie les messages"
+  ON contact_messages FOR UPDATE
   TO authenticated
   USING (
     EXISTS (
@@ -1499,3 +1519,158 @@ CREATE POLICY "Staff voit les notifications"
 -- =============================================================================
 -- FIN DU SCHÉMA
 -- =============================================================================
+-- =============================================================================
+-- MOTEUR DE DISPONIBILITÉ (BLOC 2)
+-- =============================================================================
+
+-- 1. Fonction pour vérifier la disponibilité d'un seul appartement
+CREATE OR REPLACE FUNCTION check_apartment_availability(
+    p_apartment_id UUID,
+    p_check_in DATE,
+    p_check_out DATE
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    is_available BOOLEAN;
+BEGIN
+    -- Si l'appartement n'est pas actif, il n'est pas disponible
+    IF EXISTS (
+        SELECT 1 FROM apartments 
+        WHERE id = p_apartment_id AND status != 'active'
+    ) THEN
+        RETURN FALSE;
+    END IF;
+
+    -- Vérifier les chevauchements dans les réservations
+    -- On exclut les réservations annulées ou brouillons
+    SELECT NOT EXISTS (
+        SELECT 1
+        FROM bookings
+        WHERE apartment_id = p_apartment_id
+          AND status IN ('pending', 'confirmed', 'checked_in')
+          AND check_in_date < p_check_out
+          AND check_out_date > p_check_in
+    ) INTO is_available;
+
+    RETURN is_available;
+END;
+$$;
+
+-- 2. Fonction pour récupérer les IDs des appartements disponibles (pour la recherche publique)
+CREATE OR REPLACE FUNCTION get_available_apartment_ids(
+    p_check_in DATE,
+    p_check_out DATE,
+    p_total_guests INTEGER DEFAULT 1
+)
+RETURNS SETOF UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT a.id
+    FROM apartments a
+    WHERE a.status = 'active'
+      AND (a.capacity_adults + a.capacity_children) >= p_total_guests
+      AND NOT EXISTS (
+          SELECT 1
+          FROM bookings b
+          WHERE b.apartment_id = a.id
+            AND b.status IN ('pending', 'confirmed', 'checked_in')
+            AND b.check_in_date < p_check_out
+            AND b.check_out_date > p_check_in
+      );
+END;
+$$;
+
+-- 3. Fonction pour récupérer la disponibilité de TOUS les appartements à une date donnée
+CREATE OR REPLACE FUNCTION get_all_apartments_availability(
+    p_check_in DATE,
+    p_check_out DATE
+)
+RETURNS TABLE (
+    apartment_id UUID,
+    is_available BOOLEAN
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        a.id as apartment_id,
+        check_apartment_availability(a.id, p_check_in, p_check_out) as is_available
+    FROM apartments a;
+END;
+$$;
+-- =============================================================================
+-- POLITIQUES RLS SUPPLÉMENTAIRES (BLOC 3)
+-- =============================================================================
+
+-- Permettre l'insertion d'un nouveau client (pour les réservations publiques)
+CREATE POLICY "Public peut créer un profil client"
+  ON customers FOR INSERT
+  WITH CHECK (true);
+
+-- Permettre l'insertion d'une nouvelle réservation (tunnel public)
+CREATE POLICY "Public peut créer une réservation"
+  ON bookings FOR INSERT
+  WITH CHECK (true);
+-- =============================================================================
+-- CHANNEL MANAGER ET SYNCHRONISATION EXTERNE (BLOC 4)
+-- =============================================================================
+
+-- Création de la table des canaux de distribution (Channels)
+CREATE TABLE IF NOT EXISTS distribution_channels (
+  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name        TEXT NOT NULL UNIQUE,     -- 'Booking.com', 'Airbnb', 'Expedia'
+  is_active   BOOLEAN DEFAULT TRUE,
+  api_key     TEXT,                     -- Optionnel pour des API directes
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Table des correspondances (Listings) entre nos appartements et les plateformes externes
+CREATE TABLE IF NOT EXISTS external_listings (
+  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  apartment_id    UUID NOT NULL REFERENCES apartments(id) ON DELETE CASCADE,
+  channel_id      UUID NOT NULL REFERENCES distribution_channels(id) ON DELETE CASCADE,
+  external_id     TEXT NOT NULL,        -- L'ID de l'appartement chez Booking.com par exemple
+  ical_export_url TEXT,                 -- URL iCal que Booking.com lira
+  ical_import_url TEXT,                 -- URL iCal de Booking.com que nous lirons
+  sync_status     TEXT DEFAULT 'active',
+  last_sync_at    TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(channel_id, external_id)
+);
+
+-- Insérer les plateformes par défaut
+INSERT INTO distribution_channels (name) 
+VALUES ('Booking.com'), ('Airbnb'), ('Expedia') 
+ON CONFLICT DO NOTHING;
+
+-- Activer RLS
+ALTER TABLE distribution_channels ENABLE ROW LEVEL SECURITY;
+
+-- Politiques pour le staff
+CREATE POLICY "Staff peut voir les canaux"
+  ON distribution_channels FOR SELECT
+  TO authenticated
+  USING (EXISTS (SELECT 1 FROM staff_profiles sp WHERE sp.auth_user_id = auth.uid() AND sp.is_active = TRUE));
+
+CREATE POLICY "Staff peut modifier les canaux"
+  ON distribution_channels FOR ALL
+  TO authenticated
+  USING (EXISTS (SELECT 1 FROM staff_profiles sp WHERE sp.auth_user_id = auth.uid() AND sp.is_active = TRUE));
+
+CREATE POLICY "Staff peut voir les correspondances externes"
+  ON external_listings FOR SELECT
+  TO authenticated
+  USING (EXISTS (SELECT 1 FROM staff_profiles sp WHERE sp.auth_user_id = auth.uid() AND sp.is_active = TRUE));
+
+CREATE POLICY "Staff peut modifier les correspondances externes"
+  ON external_listings FOR ALL
+  TO authenticated
+  USING (EXISTS (SELECT 1 FROM staff_profiles sp WHERE sp.auth_user_id = auth.uid() AND sp.is_active = TRUE));

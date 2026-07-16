@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
@@ -46,20 +48,7 @@ const CONCIERGE_SERVICE_IDS = [
   { id: "butler",    icon: Coffee,      color: "#374151", bg: "bg-slate-50",   fields: ["Heure de disponibilité", "Type de service", "Durée", "Notes spéciales"] },
 ];
 
-const MOCK_RESERVATIONS = [
-  { id: "RES-2026-0081", apt: "Suite Royale Horizon", checkin: "14 Juin 2026", checkout: "21 Juin 2026", nights: 7, status: "upcoming", points: 350 },
-  { id: "RES-2026-0044", apt: "Studio Premium Lagon", checkin: "02 Avr 2026", checkout: "05 Avr 2026", nights: 3, status: "done", points: 150 },
-  { id: "RES-2025-0198", apt: "Suite Royale Horizon", checkin: "15 Déc 2025", checkout: "22 Déc 2025", nights: 7, status: "done", points: 350 },
-];
 
-const MOCK_HISTORY = [
-  { label: "Séjour Suite Royale Horizon (7 nuits)", points: +350, date: "Juin 2026" },
-  { label: "Bonus fidélité anniversaire",           points: +200, date: "Mai 2026" },
-  { label: "Réservation Studio Premium",            points: +150, date: "Avr 2026" },
-  { label: "Bon de réduction utilisé",              points: -100, date: "Avr 2026" },
-  { label: "Séjour Suite Royale (7 nuits)",         points: +350, date: "Déc 2025" },
-  { label: "Parrainage ami accepté",                points: +100, date: "Nov 2025" },
-];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -109,9 +98,11 @@ function ProgressToNext({ current, tier, toNextLabel }: { current: number; tier:
 
 export default function MonEspacePage() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const supabase = createClientComponentClient();
 
-  // Mock user data (will be replaced by Supabase auth)
-  const user = { name: "Alexandre Moreau", email: "alexandre.m@email.com", points: 850, tier: "Silver" as LoyaltyTier };
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ name: string; email: string; points: number; tier: LoyaltyTier; bookings: any[]; points_history: any[] } | null>(null);
 
   const [activeTab, setActiveTab] = useState<"dashboard" | "fidelite" | "conciergerie" | "reservations">("dashboard");
   const [activeService, setActiveService] = useState<string | null>(null);
@@ -119,7 +110,93 @@ export default function MonEspacePage() {
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [expandedRes, setExpandedRes] = useState<string | null>(null);
 
-  const currentTierMeta = TIERS_META.find(t => t.name === user.tier)!;
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          router.push('/mon-espace/connexion');
+          return;
+        }
+
+        const { data: customerData, error } = await supabase
+          .from('customers')
+          .select(`
+            id,
+            first_name, 
+            last_name, 
+            email,
+            customer_loyalty(tier, points_balance)
+          `)
+          .eq('auth_user_id', session.user.id)
+          .single();
+
+        if (error) {
+          console.error("Erreur chargement profil", error);
+          setUser({
+            name: session.user.user_metadata?.first_name || "Client",
+            email: session.user.email || "",
+            points: 0,
+            tier: "Bronze",
+            bookings: [],
+            points_history: []
+          });
+        } else if (customerData) {
+          const rawLoyalty = customerData.customer_loyalty;
+          const loyalty = (Array.isArray(rawLoyalty) ? rawLoyalty[0] : rawLoyalty) || { tier: 'bronze', points_balance: 0 };
+          const formattedTier = (loyalty.tier.charAt(0).toUpperCase() + loyalty.tier.slice(1)) as LoyaltyTier;
+          
+          // Fetch real bookings
+          const { data: bookingsData } = await supabase
+            .from('bookings')
+            .select(`
+              id, reference, check_in_date, check_out_date, total_nights, status,
+              apartments(name)
+            `)
+            .eq('customer_id', customerData.id)
+            .order('created_at', { ascending: false });
+
+          // Fetch points history
+          const { data: historyData } = await supabase
+            .from('loyalty_transactions')
+            .select('*')
+            .eq('customer_id', customerData.id)
+            .order('created_at', { ascending: false });
+
+          setUser({
+            name: `${customerData.first_name} ${customerData.last_name}`,
+            email: customerData.email,
+            points: loyalty.points_balance,
+            tier: formattedTier,
+            bookings: bookingsData || [],
+            points_history: historyData || []
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [supabase, router]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/mon-espace/connexion');
+  };
+
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[#233D8C] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  const currentTierMeta = TIERS_META.find(t => t.name === user.tier) || TIERS_META[0];
   const selectedServiceMeta = CONCIERGE_SERVICE_IDS.find(s => s.id === activeService);
 
   // Build translated services list
@@ -141,14 +218,42 @@ export default function MonEspacePage() {
   const earnPoints = t('MonEspace.earnPoints', { returnObjects: true }) as { label: string; desc: string }[];
   const earnIcons = [Calendar, Heart, MessageSquare, Zap, Gift, Star];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(activeService);
-    setTimeout(() => {
-      setActiveService(null);
-      setFormData({});
-      setSubmitted(null);
-    }, 3000);
+    if (!activeService) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      const res = await fetch('/api/concierge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          serviceId: activeService,
+          serviceName: selectedService?.label,
+          formData
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.error) {
+        alert(data.error);
+      } else {
+        setSubmitted(activeService);
+        setTimeout(() => {
+          setActiveService(null);
+          setFormData({});
+          setSubmitted(null);
+        }, 3000);
+      }
+    } catch (err) {
+      alert("Erreur lors de l'envoi de la demande.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const TABS = [
@@ -186,7 +291,15 @@ export default function MonEspacePage() {
               <h1 className="text-4xl md:text-5xl font-serif italic text-white mb-2">
                 Bonjour, {user.name.split(" ")[0]}
               </h1>
-              <p className="text-white/50 font-light text-sm">{user.email}</p>
+              <div className="flex items-center gap-4">
+                <p className="text-white/50 font-light text-sm">{user.email}</p>
+                <button 
+                  onClick={handleLogout}
+                  className="text-xs text-rose-300/80 hover:text-rose-300 transition-colors font-medium"
+                >
+                  Déconnexion
+                </button>
+              </div>
             </div>
 
             {/* Points Widget */}
@@ -265,8 +378,24 @@ export default function MonEspacePage() {
                 <div className="rounded-2xl p-6 border border-slate-100 bg-white">
                   <Gift className="w-8 h-8 text-violet-500 mb-4" />
                   <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">{t('MonEspace.dashboard.nextPerk')}</div>
-                  <div className="text-lg font-black text-slate-900 mb-1">Accès statut Gold</div>
-                  <div className="text-[12px] text-slate-400">650 points restants</div>
+                  {(() => {
+                    const currentIdx = TIERS_META.findIndex(t => t.name === user.tier);
+                    const nextTier = TIERS_META[currentIdx + 1];
+                    if (!nextTier) {
+                      return (
+                        <>
+                          <div className="text-lg font-black text-slate-900 mb-1">Niveau Maximum</div>
+                          <div className="text-[12px] text-slate-400">Vous avez tous les avantages</div>
+                        </>
+                      );
+                    }
+                    return (
+                      <>
+                        <div className="text-lg font-black text-slate-900 mb-1">Accès statut {nextTier.name}</div>
+                        <div className="text-[12px] text-slate-400">{Math.max(0, nextTier.min - user.points)} points restants</div>
+                      </>
+                    );
+                  })()}
                   <button
                     onClick={() => setActiveTab("fidelite")}
                     className="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-violet-500 flex items-center gap-1"
@@ -329,17 +458,23 @@ export default function MonEspacePage() {
               <div>
                 <h2 className="text-xl font-black text-slate-900 tracking-tight mb-6">{t('MonEspace.dashboard.recentActivity')}</h2>
                 <div className="bg-white border border-slate-100 rounded-2xl divide-y divide-slate-50">
-                  {MOCK_HISTORY.slice(0, 4).map((h, i) => (
-                    <div key={i} className="flex items-center justify-between px-6 py-4">
-                      <div>
-                        <div className="text-sm font-medium text-slate-800">{h.label}</div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">{h.date}</div>
-                      </div>
-                      <div className={`text-sm font-black ${h.points > 0 ? "text-emerald-600" : "text-rose-500"}`}>
-                        {h.points > 0 ? "+" : ""}{h.points} pts
-                      </div>
+                  {user?.points_history?.length === 0 ? (
+                    <div className="px-6 py-8 text-center text-slate-500 text-sm">
+                      Aucune activité récente.
                     </div>
-                  ))}
+                  ) : (
+                    user?.points_history?.slice(0, 4).map((h: any, i: number) => (
+                      <div key={i} className="flex items-center justify-between px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-slate-800">{h.description_fr || "Transaction de fidélité"}</div>
+                          <div className="text-[11px] text-slate-400 mt-0.5">{new Date(h.created_at).toLocaleDateString('fr-FR')}</div>
+                        </div>
+                        <div className={`text-sm font-black ${h.points > 0 ? "text-emerald-600" : "text-rose-500"}`}>
+                          {h.points > 0 ? "+" : ""}{h.points} pts
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -453,19 +588,25 @@ export default function MonEspacePage() {
               <div>
                 <h2 className="text-xl font-black text-slate-900 mb-6 tracking-tight">{t('MonEspace.fidelite.history')}</h2>
                 <div className="bg-white border border-slate-100 rounded-2xl divide-y divide-slate-50">
-                  {MOCK_HISTORY.map((h, i) => (
-                    <div key={i} className="flex items-center justify-between px-6 py-4">
-                      <div>
-                        <div className="text-sm font-medium text-slate-800">{h.label}</div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">{h.date}</div>
-                      </div>
-                      <div className={`text-sm font-black px-3 py-1 rounded-full ${
-                        h.points > 0 ? "text-emerald-700 bg-emerald-50" : "text-rose-600 bg-rose-50"
-                      }`}>
-                        {h.points > 0 ? "+" : ""}{h.points} pts
-                      </div>
+                  {user?.points_history?.length === 0 ? (
+                    <div className="px-6 py-12 text-center text-slate-500">
+                      Vous n'avez pas encore d'historique de points.
                     </div>
-                  ))}
+                  ) : (
+                    user?.points_history?.map((h: any, i: number) => (
+                      <div key={i} className="flex items-center justify-between px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-slate-800">{h.description_fr || "Transaction de fidélité"}</div>
+                          <div className="text-[11px] text-slate-400 mt-0.5">{new Date(h.created_at).toLocaleDateString('fr-FR')}</div>
+                        </div>
+                        <div className={`text-sm font-black px-3 py-1 rounded-full ${
+                          h.points > 0 ? "text-emerald-700 bg-emerald-50" : "text-rose-600 bg-rose-50"
+                        }`}>
+                          {h.points > 0 ? "+" : ""}{h.points} pts
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -565,58 +706,115 @@ export default function MonEspacePage() {
                 </Link>
               </div>
 
-              {MOCK_RESERVATIONS.map((res) => {
-                const isExpanded = expandedRes === res.id;
-                const isUpcoming = res.status === "upcoming";
-                return (
-                  <div key={res.id} className="bg-white border border-slate-100 rounded-2xl overflow-hidden">
-                    <button
-                      className="w-full px-6 py-5 flex items-center justify-between text-left"
-                      onClick={() => setExpandedRes(isExpanded ? null : res.id)}
+              {user.bookings?.length === 0 ? (
+                <div className="bg-white border border-slate-100 rounded-2xl p-8 text-center">
+                  <Calendar className="w-12 h-12 text-slate-200 mx-auto mb-4" />
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">Aucune réservation</h3>
+                  <p className="text-sm text-slate-500 mb-6">Vous n'avez pas encore de réservation associée à ce compte.</p>
+                  
+                  <div className="bg-slate-50 p-6 rounded-xl border border-slate-100 max-w-md mx-auto text-left">
+                    <h4 className="text-sm font-bold text-slate-900 mb-2">Vous avez déjà réservé ?</h4>
+                    <p className="text-xs text-slate-500 mb-4">
+                      Si vous avez effectué une réservation sans vous connecter ou avec un autre email, vous pouvez la lier à votre compte.
+                    </p>
+                    <form 
+                      className="flex flex-col gap-2"
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        const form = e.target as HTMLFormElement;
+                        const ref = (form.elements.namedItem('reference') as HTMLInputElement).value;
+                        const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+                        
+                        try {
+                          const res = await fetch('/api/bookings/claim', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ reference: ref, email })
+                          });
+                          const data = await res.json();
+                          if (data.error) {
+                            alert(data.error);
+                          } else {
+                            alert("Réservation liée avec succès !");
+                            window.location.reload();
+                          }
+                        } catch (err) {
+                          alert("Erreur lors de la liaison de la réservation.");
+                        }
+                      }}
                     >
-                      <div className="flex items-center gap-5">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isUpcoming ? "bg-blue-50" : "bg-slate-50"}`}>
-                          <Calendar className={`w-5 h-5 ${isUpcoming ? "text-[#233D8C]" : "text-slate-300"}`} />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-black text-slate-900 text-sm">{res.apt}</div>
-                          <div className="text-[12px] text-slate-400">{res.checkin} → {res.checkout} · {res.nights} {t('MonEspace.reservations.nights')}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right hidden md:block">
-                          <div className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full ${
-                            isUpcoming ? "bg-blue-50 text-[#233D8C]" : "bg-emerald-50 text-emerald-700"
-                          }`}>
-                            {isUpcoming ? t('MonEspace.reservations.upcoming') : t('MonEspace.reservations.done')}
+                      <input 
+                        name="reference"
+                        type="text" 
+                        placeholder="Numéro de réservation (ex: RES-...)" 
+                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#233D8C]"
+                        required
+                      />
+                      <input 
+                        name="email"
+                        type="email" 
+                        placeholder="Email utilisé lors de la réservation" 
+                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#233D8C]"
+                        required
+                      />
+                      <button 
+                        type="submit"
+                        className="w-full mt-2 bg-[#233D8C] text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-black transition-colors"
+                      >
+                        Lier la réservation
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              ) : (
+                user.bookings?.map((res) => {
+                  const isExpanded = expandedRes === res.id;
+                  const isUpcoming = res.status === "upcoming" || res.status === "pending" || res.status === "confirmed";
+                  return (
+                    <div key={res.id} className="bg-white border border-slate-100 rounded-2xl overflow-hidden">
+                      <button
+                        className="w-full px-6 py-5 flex items-center justify-between text-left"
+                        onClick={() => setExpandedRes(isExpanded ? null : res.id)}
+                      >
+                        <div className="flex items-center gap-5">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isUpcoming ? "bg-blue-50" : "bg-slate-50"}`}>
+                            <Calendar className={`w-5 h-5 ${isUpcoming ? "text-[#233D8C]" : "text-slate-300"}`} />
+                          </div>
+                          <div className="text-left">
+                            <div className="font-black text-slate-900 text-sm">{res.apartments?.name || 'Appartement'}</div>
+                            <div className="text-[12px] text-slate-400">{new Date(res.check_in_date).toLocaleDateString('fr-FR')} → {new Date(res.check_out_date).toLocaleDateString('fr-FR')} · {res.total_nights} {t('MonEspace.reservations.nights')}</div>
                           </div>
                         </div>
-                        <div className="text-[11px] font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
-                          +{res.points} pts
-                        </div>
-                        <ChevronDown className={`w-4 h-4 text-slate-300 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-                      </div>
-                    </button>
-
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden border-t border-slate-50"
-                        >
-                          <div className="px-6 py-5 bg-slate-50/50 flex flex-col md:flex-row gap-6">
-                            <div className="flex-1">
-                              <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-3">{t('MonEspace.reservations.details')}</div>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex gap-2"><span className="text-slate-400 w-24">{t('MonEspace.reservations.reference')}</span><span className="font-medium">{res.id}</span></div>
-                                <div className="flex gap-2"><span className="text-slate-400 w-24">{t('MonEspace.reservations.arrival')}</span><span className="font-medium">{res.checkin}</span></div>
-                                <div className="flex gap-2"><span className="text-slate-400 w-24">{t('MonEspace.reservations.departure')}</span><span className="font-medium">{res.checkout}</span></div>
-                                <div className="flex gap-2"><span className="text-slate-400 w-24">{t('MonEspace.reservations.duration')}</span><span className="font-medium">{res.nights} {t('MonEspace.reservations.nights')}</span></div>
-                                <div className="flex gap-2"><span className="text-slate-400 w-24">{t('MonEspace.reservations.pointsEarned')}</span><span className="font-black text-amber-600">+{res.points} pts</span></div>
-                              </div>
+                        <div className="flex items-center gap-4">
+                          <div className="text-right hidden md:block">
+                            <div className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full ${
+                              isUpcoming ? "bg-blue-50 text-[#233D8C]" : "bg-emerald-50 text-emerald-700"
+                            }`}>
+                              {isUpcoming ? t('MonEspace.reservations.upcoming') : t('MonEspace.reservations.done')}
                             </div>
+                          </div>
+                          <ChevronDown className={`w-4 h-4 text-slate-300 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                        </div>
+                      </button>
+
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden border-t border-slate-50"
+                          >
+                            <div className="px-6 py-5 bg-slate-50/50 flex flex-col md:flex-row gap-6">
+                              <div className="flex-1">
+                                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-3">{t('MonEspace.reservations.details')}</div>
+                                <div className="space-y-2 text-sm">
+                                  <div className="flex gap-2"><span className="text-slate-400 w-24">{t('MonEspace.reservations.reference')}</span><span className="font-medium">{res.reference}</span></div>
+                                  <div className="flex gap-2"><span className="text-slate-400 w-24">{t('MonEspace.reservations.arrival')}</span><span className="font-medium">{new Date(res.check_in_date).toLocaleDateString('fr-FR')}</span></div>
+                                  <div className="flex gap-2"><span className="text-slate-400 w-24">{t('MonEspace.reservations.departure')}</span><span className="font-medium">{new Date(res.check_out_date).toLocaleDateString('fr-FR')}</span></div>
+                                  <div className="flex gap-2"><span className="text-slate-400 w-24">{t('MonEspace.reservations.duration')}</span><span className="font-medium">{res.total_nights} {t('MonEspace.reservations.nights')}</span></div>
+                                </div>
+                              </div>
                             {isUpcoming && (
                               <div className="flex flex-col gap-3">
                                 <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">{t('MonEspace.reservations.actions')}</div>
@@ -638,7 +836,7 @@ export default function MonEspacePage() {
                     </AnimatePresence>
                   </div>
                 );
-              })}
+              }))}
             </motion.div>
           )}
 
@@ -713,10 +911,11 @@ export default function MonEspacePage() {
                     ))}
                     <button
                       type="submit"
-                      className="w-full mt-2 py-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-white transition-colors"
+                      disabled={isSubmitting}
+                      className={`w-full mt-2 py-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] text-white transition-colors ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                       style={{ background: selectedService.color }}
                     >
-                      {t('MonEspace.modal.submit')}
+                      {isSubmitting ? 'Envoi en cours...' : t('MonEspace.modal.submit')}
                     </button>
                   </form>
                 )}

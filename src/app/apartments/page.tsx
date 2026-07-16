@@ -117,10 +117,38 @@ function ApartmentsContent() {
     return true;
   });
 
+  const [availabilityMap, setAvailabilityMap] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    async function checkAvailability() {
+      if (arrival && departure && process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        try {
+          const { supabase } = await import("@/lib/supabase");
+          const { data, error } = await supabase.rpc('get_all_apartments_availability', {
+            p_check_in: arrival.toISOString().split('T')[0],
+            p_check_out: departure.toISOString().split('T')[0]
+          });
+          
+          if (data && !error) {
+            const map: Record<string, boolean> = {};
+            data.forEach((item: any) => { map[item.apartment_id] = item.is_available; });
+            setAvailabilityMap(map);
+          }
+        } catch (e) {
+          console.error("Availability check failed:", e);
+        }
+      } else {
+        setAvailabilityMap({});
+      }
+    }
+    checkAvailability();
+  }, [arrival, departure]);
+
   // Sort by availability first
   const sortedApartments = [...filteredApartments].sort((a, b) => {
-    const aAvail = checkMockAvailability(a.id, arrival, departure);
-    const bAvail = checkMockAvailability(b.id, arrival, departure);
+    // If we have real DB data, use availabilityMap. Otherwise use mock for demo.
+    const aAvail = Object.keys(availabilityMap).length > 0 ? (availabilityMap[a.id] ?? true) : checkMockAvailability(a.id, arrival, departure);
+    const bAvail = Object.keys(availabilityMap).length > 0 ? (availabilityMap[b.id] ?? true) : checkMockAvailability(b.id, arrival, departure);
     if (aAvail && !bAvail) return -1;
     if (!aAvail && bAvail) return 1;
     return 0;
@@ -372,7 +400,7 @@ function ApartmentsContent() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-20">
             {sortedApartments.map((apt, i) => {
-              const isAvailable = checkMockAvailability(apt.id, arrival, departure);
+              const isAvailable = Object.keys(availabilityMap).length > 0 ? (availabilityMap[apt.id] ?? true) : checkMockAvailability(apt.id, arrival, departure);
               return (
                 <motion.div
                   key={apt.id}

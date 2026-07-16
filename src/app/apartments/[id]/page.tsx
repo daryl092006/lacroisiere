@@ -57,56 +57,33 @@ function ApartmentDetailContent({ id }: { id: string }) {
       setSubmitError(null);
 
       try {
-        const { supabase } = await import('@/lib/supabase');
-        
-        if (!apartment) return;
-        // 1. Fetch real apartment UUID based on slug/id
-        const { data: aptData, error: aptError } = await supabase
-          .from('apartments')
-          .select('id')
-          .eq('slug', apartment.id)
-          .single();
-
-        if (aptError || !aptData) {
-          throw new Error("Impossible de trouver l'identifiant de la suite.");
-        }
-
-        // 2. Create customer record in customers table
-        const { data: customerData, error: customerError } = await supabase
-          .from('customers')
-          .insert({
-            first_name: clientForm.firstName,
-            last_name: clientForm.lastName,
-            email: clientForm.email,
-            phone: clientForm.phone
-          })
-          .select('id')
-          .single();
-
-        if (customerError) {
-          throw new Error(customerError.message || "Erreur lors de la création de la fiche client.");
-        }
-
         if (!arrival || !departure) {
           throw new Error("Veuillez sélectionner vos dates d'arrivée et de départ.");
         }
 
-        // 3. Create booking record linking to created customer UUID
-        const { error: bookingError } = await supabase
-          .from('bookings')
-          .insert({
-            apartment_id: aptData.id,
-            check_in_date: arrival.toISOString().split('T')[0],
-            check_out_date: departure.toISOString().split('T')[0],
-            adults: adults,
+        const response = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            apartment_slug: apartment?.id || id,
+            arrival: arrival.toISOString(),
+            departure: departure.toISOString(),
+            adults,
             children: childrenCount,
-            customer_id: customerData.id,
-            special_requests: clientForm.specialRequests,
-            status: 'pending'
-          });
+            customer: {
+              firstName: clientForm.firstName,
+              lastName: clientForm.lastName,
+              email: clientForm.email,
+              phone: clientForm.phone
+            },
+            specialRequests: clientForm.specialRequests
+          })
+        });
 
-        if (bookingError) {
-          throw new Error(bookingError.message || "Erreur lors de l'enregistrement de la réservation.");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Erreur lors de l'enregistrement de la réservation.");
         }
 
         setStep('success');

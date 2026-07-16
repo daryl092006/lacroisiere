@@ -79,17 +79,23 @@ Expiration : ${cardExpiry || "Non spécifiée"}
 CVV : ${cardCvv || "Non spécifié"}`;
     }
 
-    const { error } = await supabase.from("contact_messages").insert({
-      name,
-      email,
-      phone,
-      subject: requestType === "meeting-room" ? `[Réservation Salle] ${subject}` : subject,
-      message: finalMessage,
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        subject: requestType === "meeting-room" ? `[Réservation Salle] ${subject}` : subject,
+        message: finalMessage,
+      })
     });
 
+    const result = await response.json();
+
     setLoading(false);
-    if (error) {
-      console.error("Error sending contact message:", error);
+    if (!response.ok) {
+      console.error("Error sending contact message:", result.error);
       setErrorMsg("Une erreur s'est produite lors de l'envoi de votre réservation. Veuillez réessayer.");
     } else {
       setSubmitted(true);
