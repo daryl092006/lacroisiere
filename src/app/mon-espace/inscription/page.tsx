@@ -10,7 +10,6 @@ import { ArrowRight, Mail, Lock, Loader2, User } from "lucide-react";
 export default function InscriptionPage() {
   const router = useRouter();
   const supabase = createClientComponentClient();
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
